@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Theory Quiz – Harmonia</title>
+  <link rel="stylesheet" href="styles/home.css" />
+  <link rel="stylesheet" href="styles/training.css" />
+  <link rel="stylesheet" href="styles/theory-quiz.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+</head>
+<body>
+
+<!-- ===== NAVBAR ===== -->
+<nav class="navbar" id="navbar">
+  <div class="nav-inner">
+    <a href="home.html" class="nav-logo">
+      <div class="logo-icon">
+        <svg width="28" height="28" viewBox="0 0 36 36" fill="none">
+          <defs>
+            <linearGradient id="navLogoGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" style="stop-color:#a78bfa"/>
+              <stop offset="100%" style="stop-color:#ec4899"/>
+            </linearGradient>
+          </defs>
+          <path d="M13 24V12l12 3v9" stroke="url(#navLogoGrad)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+          <circle cx="11" cy="24" r="3" fill="url(#navLogoGrad)"/>
+          <circle cx="23" cy="22" r="3" fill="url(#navLogoGrad)"/>
+        </svg>
+      </div>
+      <span class="logo-text">Harmonia</span>
+    </a>
+
+    <ul class="nav-links" id="navLinks">
+      <li class="nav-item has-dropdown">
+        <button class="nav-link active-nav">
+          Training
+          <svg class="caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m6 9 6 6 6-6"/></svg>
+        </button>
+        <div class="dropdown">
+          <div class="dropdown-inner">
+            <a href="learning-path.html" class="dd-item">
+              <span class="dd-icon">🛤️</span>
+              <span class="dd-content"><strong>Learning Path</strong><span>Structured curriculum</span></span>
+            </a>
+            <a href="theory-quiz.html" class="dd-item">
+              <span class="dd-icon">🧠</span>
+              <span class="dd-content"><strong>Theory Quiz</strong><span>Test your knowledge</span></span>
+              <span class="dd-tag xp">+XP</span>
+            </a>
+            <a href="ear-training.html" class="dd-item">
+              <span class="dd-icon">👂</span>
+              <span class="dd-content"><strong>Ear Training</strong><span>Sharpen your hearing</span></span>
+            </a>
+            <a href="practice-mode.html" class="dd-item">
+              <span class="dd-icon">🎸</span>
+              <span class="dd-content"><strong>Practice Mode</strong><span>Guided sessions</span></span>
+              <span class="dd-tag new">New</span>
+            </a>
+          </div>
+        </div>
+      </li>
+      <li class="nav-item has-dropdown">
+        <button class="nav-link">AI Generator
+          <svg class="caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m6 9 6 6 6-6"/></svg>
+        </button>
+        <div class="dropdown">
+          <div class="dropdown-inner">
+            <a href="#" class="dd-item"><span class="dd-icon">🤖</span><span class="dd-content"><strong>AI Compose</strong><span>Generate original music</span></span></a>
+            <a href="#" class="dd-item"><span class="dd-icon">🎨</span><span class="dd-content"><strong>Style Transfer</strong><span>Reimagine your tracks</span></span><span class="dd-tag beta">Beta</span></a>
+            <a href="#" class="dd-item"><span class="dd-icon">✍️</span><span class="dd-content"><strong>Lyric Assistant</strong><span>AI-powered songwriting</span></span></a>
+          </div>
+        </div>
+      </li>
+      <li class="nav-item has-dropdown">
+        <button class="nav-link">Music History
+          <svg class="caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m6 9 6 6 6-6"/></svg>
+        </button>
+        <div class="dropdown">
+          <div class="dropdown-inner">
+            <a href="#" class="dd-item"><span class="dd-icon">🌍</span><span class="dd-content"><strong>Genre Explorer</strong><span>From jazz to EDM</span></span></a>
+            <a href="#" class="dd-item"><span class="dd-icon">📅</span><span class="dd-content"><strong>Era Timeline</strong><span>Centuries of music</span></span></a>
+            <a href="#" class="dd-item"><span class="dd-icon">🎼</span><span class="dd-content"><strong>Composer Library</strong><span>Masters & legends</span></span></a>
+          </div>
+        </div>
+      </li>
+      <li class="nav-item has-dropdown">
+        <button class="nav-link">Dashboard
+          <svg class="caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m6 9 6 6 6-6"/></svg>
+        </button>
+        <div class="dropdown">
+          <div class="dropdown-inner">
+            <a href="#" class="dd-item"><span class="dd-icon">🏆</span><span class="dd-content"><strong>Leaderboard</strong><span>Top performers</span></span></a>
+            <a href="#" class="dd-item"><span class="dd-icon">📈</span><span class="dd-content"><strong>My Progress</strong><span>Track your growth</span></span></a>
+            <a href="#" class="dd-item"><span class="dd-icon">🥇</span><span class="dd-content"><strong>Achievements</strong><span>Badges & rewards</span></span></a>
+          </div>
+        </div>
+      </li>
+    </ul>
+
+    <div class="nav-right">
+      <div class="search-wrap" id="searchWrap">
+        <button class="icon-btn search-toggle" id="searchToggle" onclick="toggleSearch()" aria-label="Search">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+        </button>
+        <div class="search-expand" id="searchExpand">
+          <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+          <input type="text" placeholder="Search lessons, instruments…" id="searchInput" />
+          <button class="search-close" onclick="toggleSearch()">✕</button>
+        </div>
+      </div>
+      <button class="icon-btn theme-btn" id="themeBtn" onclick="toggleTheme()" aria-label="Toggle theme">
+        <svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+        <svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+      </button>
+      <div class="profile-menu" id="profileMenu">
+        <button class="profile-btn" onclick="toggleProfile()" aria-label="Profile menu">
+          <div class="avatar">G</div>
+          <span class="profile-name">Guest</span>
+          <svg class="caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m6 9 6 6 6-6"/></svg>
+        </button>
+        <div class="profile-dropdown" id="profileDropdown">
+          <div class="pd-header">
+            <div class="pd-avatar">G</div>
+            <div><div class="pd-name">Guest User</div><div class="pd-email">Not signed in</div></div>
+          </div>
+          <hr class="pd-divider"/>
+          <a href="#" class="pd-item">My Profile</a>
+          <a href="#" class="pd-item">Settings</a>
+          <hr class="pd-divider"/>
+          <a href="index.html" class="pd-item pd-signout">Sign Out</a>
+        </div>
+      </div>
+      <a href="index.html" class="btn-signout">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        Sign Out
+      </a>
+      <button class="hamburger" id="hamburger" onclick="toggleMobileNav()" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </div>
+</nav>
+
+<!-- Mobile Nav -->
+<div class="mobile-overlay" id="mobileOverlay" onclick="toggleMobileNav()"></div>
+<div class="mobile-nav" id="mobileNav">
+  <div class="mobile-nav-header">
+    <span class="logo-text">Harmonia</span>
+    <button onclick="toggleMobileNav()">✕</button>
+  </div>
+  <div class="mobile-nav-links">
+    <details open><summary>Training</summary>
+      <a href="learning-path.html">Learning Path</a>
+      <a href="theory-quiz.html">Theory Quiz <span class="dd-tag xp">+XP</span></a>
+      <a href="ear-training.html">Ear Training</a>
+      <a href="practice-mode.html">Practice Mode <span class="dd-tag new">New</span></a>
+    </details>
+    <a href="index.html" class="mobile-signout">Sign Out</a>
+  </div>
+</div>
+
+<!-- ===== HERO ===== -->
+<section class="quiz-hero">
+  <div class="qh-bg">
+    <div class="qh-orb qh-orb-1"></div>
+    <div class="qh-orb qh-orb-2"></div>
+    <div class="qh-orb qh-orb-3"></div>
+    <div class="qh-grid"></div>
+  </div>
+  <div class="qh-ticker"></div>
+
+  <div class="container">
+    <!-- Breadcrumb -->
+    <nav class="breadcrumb" aria-label="breadcrumb">
+      <a href="home.html">Home</a>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="m9 18 6-6-6-6"/></svg>
+      <a href="training.html">Training</a>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="m9 18 6-6-6-6"/></svg>
+      <span>Theory Quiz</span>
+    </nav>
+
+    <div class="qh-content">
+      <div class="qh-text">
+        <div class="qh-badge">
+          <span class="badge-dot"></span>
+          500+ Questions · 8 Categories
+        </div>
+
+        <h1 class="qh-title">
+          Test Your<br/><span class="grad-text">Music Theory</span>
+        </h1>
+
+        <p class="qh-subtitle">
+          Challenge yourself across 8 theory topics — from note reading to advanced harmony. Earn XP, track combos, and climb the leaderboard.
+        </p>
+
+        <!-- XP Bar -->
+        <div class="qh-xp-bar">
+          <div class="qh-xp-row">
+            <div>
+              <div class="qh-xp-label">Your XP</div>
+              <div class="qh-xp-value" id="qhXP">0 XP</div>
+            </div>
+            <span class="qh-level-badge" id="qhLevel">Level 1</span>
+          </div>
+          <div class="qh-bar-wrap">
+            <div class="qh-bar-fill" id="qhXPBar" style="width:0%"></div>
+          </div>
+          <div class="qh-xp-next" id="qhXPNext">0 / 500 XP to Level 2</div>
+        </div>
+
+        <!-- Stats -->
+        <div class="qh-stats">
+          <div class="qh-stat">
+            <strong id="statQuizzesTaken">0</strong>
+            <span>Quizzes Taken</span>
+          </div>
+          <div class="qh-stat-div"></div>
+          <div class="qh-stat">
+            <strong id="statAvgScore">0%</strong>
+            <span>Avg Score</span>
+          </div>
+          <div class="qh-stat-div"></div>
+          <div class="qh-stat">
+            <strong id="statBestStreak">0🔥</strong>
+            <span>Best Streak</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Hero visual: category preview cards -->
+      <div class="qh-visual">
+        <div class="qh-vis-card">
+          <div class="qh-vis-icon">🎼</div>
+          <div class="qh-vis-info">
+            <strong>Notes & Scales</strong>
+            <span>Foundations of music</span>
+          </div>
+          <div class="qh-vis-xp">+150 XP</div>
+        </div>
+        <div class="qh-vis-card">
+          <div class="qh-vis-icon">🎹</div>
+          <div class="qh-vis-info">
+            <strong>Chords & Harmony</strong>
+            <span>Triads to extensions</span>
+          </div>
+          <div class="qh-vis-xp">+200 XP</div>
+        </div>
+        <div class="qh-vis-card">
+          <div class="qh-vis-icon">⚡</div>
+          <div class="qh-vis-info">
+            <strong>Blitz Mix</strong>
+            <span>All topics, fast!</span>
+          </div>
+          <div class="qh-vis-xp">+300 XP</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== TOPIC SELECTOR ===== -->
+<section class="topic-selector">
+  <div class="container">
+
+    <!-- Quick Challenge Strip -->
+    <div class="quick-strip">
+      <div class="qs-icon">⚡</div>
+      <div class="qs-info">
+        <h3>Quick Challenge — Random Quiz</h3>
+        <p>Pick a random topic and jump straight in, or try the Blitz Mix for a cross-topic challenge!</p>
+      </div>
+      <div class="qs-actions">
+        <button class="qs-btn-primary" id="btnRandomQuiz">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="16" height="16"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
+          Random Quiz
+        </button>
+        <button class="qs-btn-secondary" id="btnBlitzQuiz">
+          ⚡ Blitz Mix (All Topics)
+        </button>
+      </div>
+      <div class="qs-stats">
+        <div class="qs-stat"><strong>500+</strong><span>Questions</span></div>
+        <div class="qs-stat"><strong>8</strong><span>Categories</span></div>
+        <div class="qs-stat"><strong>+XP</strong><span>Every quiz</span></div>
+      </div>
+    </div>
+
+    <!-- Header -->
+    <div class="ts-header">
+      <div class="ts-header-left">
+        <span class="section-label">Choose a Topic</span>
+        <h2 class="section-title">Pick Your Quiz</h2>
+      </div>
+      <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+        <!-- Search -->
+        <div class="ts-search">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+          <input type="text" id="topicSearch" placeholder="Search topics…" />
+        </div>
+        <!-- Difficulty filter -->
+        <div class="diff-tabs">
+          <button class="diff-tab active" data-diff="all">All</button>
+          <button class="diff-tab" data-diff="easy">Easy</button>
+          <button class="diff-tab" data-diff="medium">Medium</button>
+          <button class="diff-tab" data-diff="hard">Hard</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Topics Grid -->
+    <div class="topics-grid" id="topicsGrid">
+      <!-- Populated by JS -->
+    </div>
+
+  </div>
+</section>
+
+<!-- ===== LEADERBOARD + HISTORY ===== -->
+<section class="leaderboard-strip">
+  <div class="container">
+    <div class="lb-grid">
+
+      <!-- Leaderboard -->
+      <div class="lb-card">
+        <div class="lb-header">
+          <h3>🏆 Leaderboard</h3>
+          <span class="lb-badge">Top Players</span>
+          <a href="#" class="lb-see-all">View all →</a>
+        </div>
+        <div class="lb-list" id="lbList">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+
+      <!-- Quiz History -->
+      <div class="lb-card">
+        <div class="lb-header">
+          <h3>📋 Your Quiz History</h3>
+          <a href="#" class="lb-see-all">View all →</a>
+        </div>
+        <div class="history-list" id="historyList">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ===== FOOTER ===== -->
+<footer class="footer">
+  <div class="container">
+    <div class="footer-top">
+      <div class="footer-brand">
+        <a href="home.html" class="nav-logo" style="margin-bottom:12px">
+          <div class="logo-icon">
+            <svg width="24" height="24" viewBox="0 0 36 36" fill="none">
+              <path d="M13 24V12l12 3v9" stroke="url(#fLogoGrad3)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+              <circle cx="11" cy="24" r="3" fill="url(#fLogoGrad3)"/>
+              <circle cx="23" cy="22" r="3" fill="url(#fLogoGrad3)"/>
+              <defs>
+                <linearGradient id="fLogoGrad3" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" style="stop-color:#a78bfa"/>
+                  <stop offset="100%" style="stop-color:#ec4899"/>
+                </linearGradient>
+              </defs>
+            </svg>
+          </div>
+          <span class="logo-text">Harmonia</span>
+        </a>
+        <p>The modern music learning platform for curious minds and creative souls.</p>
+        <div class="footer-social">
+          <a href="#" aria-label="Twitter">🐦</a>
+          <a href="#" aria-label="Instagram">📸</a>
+          <a href="#" aria-label="YouTube">▶️</a>
+          <a href="#" aria-label="Discord">💬</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h5>Training</h5>
+        <a href="learning-path.html">Learning Path</a>
+        <a href="theory-quiz.html">Theory Quiz</a>
+        <a href="ear-training.html">Ear Training</a>
+        <a href="practice-mode.html">Practice Mode</a>
+      </div>
+      <div class="footer-col">
+        <h5>Create & Explore</h5>
+        <a href="#">AI Compose</a>
+        <a href="#">Music History</a>
+        <a href="#">3D Anatomy</a>
+        <a href="#">Community</a>
+      </div>
+      <div class="footer-col">
+        <h5>Account</h5>
+        <a href="#">Dashboard</a>
+        <a href="#">Achievements</a>
+        <a href="#">Leaderboard</a>
+        <a href="#">Settings</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div class="footer-copy">© 2026 Harmonia. All rights reserved.</div>
+      <div class="accessibility">
+        <span>Accessibility:</span>
+        <button onclick="adjustFont(-1)" aria-label="Decrease font size">A−</button>
+        <button onclick="adjustFont(1)" aria-label="Increase font size">A+</button>
+        <button onclick="toggleTheme()" id="footerThemeBtn">🌙 Dark Mode</button>
+      </div>
+      <div class="footer-legal">
+        <a href="#">Privacy</a>
+        <a href="#">Terms</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<!-- ===== QUIZ MODAL ===== -->
+<div class="quiz-modal-overlay" id="quizModalOverlay">
+  <div class="quiz-modal" role="dialog" aria-modal="true" aria-label="Theory Quiz">
+
+    <!-- ── Quiz Area (questions) ── -->
+    <div id="quizArea">
+
+      <!-- Header: topic + close -->
+      <div class="qm-header">
+        <div class="qm-topic-badge" id="qmTopicBadge">🎵 Theory Quiz</div>
+        <button class="qm-close" onclick="closeModal()" aria-label="Close quiz">✕</button>
+      </div>
+
+      <!-- Progress strip -->
+      <div class="qm-progress-strip">
+        <div class="qm-progress-row">
+          <span class="qm-progress-label">Progress</span>
+          <span class="qm-progress-counter" id="qmProgressCounter">1 / 10</span>
+        </div>
+        <div class="qm-progress-track">
+          <div class="qm-progress-fill" id="qmProgressFill" style="width:0%"></div>
+        </div>
+        <div class="qm-dots" id="qmDots"></div>
+      </div>
+
+      <!-- Timer -->
+      <div class="qm-timer-row">
+        <span class="qm-timer-icon">⏱</span>
+        <div class="qm-timer-track">
+          <div class="qm-timer-fill" id="qmTimerFill" style="width:100%"></div>
+        </div>
+        <span class="qm-timer-text" id="qmTimerText">20</span>
+      </div>
+
+      <!-- Question body -->
+      <div class="qm-body">
+        <div class="qm-q-meta">
+          <span class="qm-q-type" id="qmQType">Theory</span>
+          <span class="qm-q-points" id="qmQPoints">+10 pts</span>
+        </div>
+
+        <div class="qm-question" id="qmQuestion">Loading question…</div>
+
+        <!-- Optional notation block -->
+        <div class="qm-notation" id="qmNotation" style="display:none"></div>
+
+        <!-- Answer options -->
+        <div class="qm-options" id="qmOptions"></div>
+
+        <!-- Explanation (shown after answering) -->
+        <div class="qm-explanation" id="qmExplanation"></div>
+      </div>
+
+      <!-- Footer: combo + skip + next -->
+      <div class="qm-footer">
+        <div class="qm-combo">
+          <span class="qm-combo-count" id="qmComboCount">0</span>
+          <span id="qmComboLabel">Combo</span>
+        </div>
+        <button class="qm-skip" onclick="skipQuestion()">Skip</button>
+        <button class="qm-next" id="qmNext" onclick="advanceQuestion()" disabled>
+          Next Question
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="15" height="15"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </button>
+      </div>
+    </div><!-- /quizArea -->
+
+    <!-- ── Results Area ── -->
+    <div class="quiz-results" id="quizResults">
+
+      <!-- SVG gradient defs (reuse) -->
+      <svg width="0" height="0" style="position:absolute">
+        <defs>
+          <linearGradient id="scoreGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" style="stop-color:#a78bfa"/>
+            <stop offset="100%" style="stop-color:#ec4899"/>
+          </linearGradient>
+        </defs>
+      </svg>
+
+      <div class="qr-header">
+        <span class="qr-emoji" id="qrEmoji">🎉</span>
+        <div class="qr-title" id="qrTitle">Great Work!</div>
+        <div class="qr-subtitle" id="qrSubtitle">You completed the quiz!</div>
+      </div>
+
+      <!-- Score ring -->
+      <div class="qr-score-wrap">
+        <div class="qr-score-ring">
+          <svg width="130" height="130" viewBox="0 0 130 130">
+            <circle class="qr-ring-bg" cx="65" cy="65" r="54"/>
+            <circle class="qr-ring-fill" id="qrRingFill" cx="65" cy="65" r="54"/>
+          </svg>
+          <div class="qr-score-inner">
+            <span class="qr-pct" id="qrPct">0%</span>
+            <span class="qr-pct-label">Score</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Stats grid -->
+      <div class="qr-stats">
+        <div class="qr-stat correct-s">
+          <strong id="qrCorrect">0</strong>
+          <span>Correct</span>
+        </div>
+        <div class="qr-stat wrong-s">
+          <strong id="qrWrong">0</strong>
+          <span>Wrong</span>
+        </div>
+        <div class="qr-stat xp-s">
+          <strong id="qrXP">+0</strong>
+          <span>XP Earned</span>
+        </div>
+        <div class="qr-stat time-s">
+          <strong id="qrTime">0s</strong>
+          <span>Time</span>
+        </div>
+      </div>
+
+      <!-- New achievements -->
+      <div class="qr-achievements" id="qrAchievements">
+        <div class="qr-ach-title">🏅 Achievements Unlocked</div>
+        <div class="qr-ach-list" id="qrAchList"></div>
+      </div>
+
+      <!-- Action buttons -->
+      <div class="qr-actions">
+        <button class="qr-btn-retry" onclick="retryQuiz()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="16" height="16"><path d="M1 4v6h6"/><path d="M3.51 15a9 9 0 1 0 .49-4"/></svg>
+          Try Again
+        </button>
+        <button class="qr-btn-other" onclick="pickNewTopic()">Choose Topic</button>
+      </div>
+
+      <p style="text-align:center;font-size:0.72rem;color:var(--muted);margin-top:4px;">
+        Tip: Press <kbd style="background:rgba(255,255,255,0.08);padding:1px 5px;border-radius:4px;font-size:0.65rem;">R</kbd> to retry or <kbd style="background:rgba(255,255,255,0.08);padding:1px 5px;border-radius:4px;font-size:0.65rem;">Esc</kbd> to pick new topic
+      </p>
+    </div><!-- /quizResults -->
+
+  </div>
+</div><!-- /quizModalOverlay -->
+
+<!-- ===== XP TOAST ===== -->
+<div class="xp-toast" id="xpToast">
+  <div class="xp-toast-icon">⭐</div>
+  <div class="xp-toast-info">
+    <strong id="xpToastXP">+50 XP</strong>
+    <span id="xpToastReason">Quiz completed</span>
+  </div>
+</div>
+
+<!-- ===== LEVEL UP OVERLAY ===== -->
+<div class="level-up-overlay" id="levelUpOverlay">
+  <div class="level-up-card">
+    <div class="lu-emoji">🎉</div>
+    <div class="lu-title">Level Up!</div>
+    <div class="lu-level" id="luLevel">Level 2</div>
+    <div class="lu-name" id="luName">Student</div>
+    <button class="lu-close" onclick="closeLevelUp()">Awesome! Continue →</button>
+  </div>
+</div>
+
+<!-- ===== CONFETTI CONTAINER ===== -->
+<div class="confetti-container" id="confettiContainer" aria-hidden="true"></div>
+
+<!-- Scripts -->
+<script src="scripts/training-db.js"></script>
+<script src="scripts/home.js"></script>
+<script src="scripts/theory-quiz.js"></script>
+</body>
+</html>
