@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Learning Path — Harmonia</title>
+  <link rel="stylesheet" href="styles/home.css" />
+  <link rel="stylesheet" href="styles/training.css" />
+  <link rel="stylesheet" href="styles/learning-path.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+</head>
+<body>
+
+<!-- ===== NAVBAR ===== -->
+<nav class="navbar" id="navbar">
+  <div class="nav-inner">
+    <a href="home.html" class="nav-logo">
+      <div class="logo-icon">
+        <svg width="28" height="28" viewBox="0 0 36 36" fill="none">
+          <defs>
+            <linearGradient id="navLogoGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" style="stop-color:#a78bfa"/>
+              <stop offset="100%" style="stop-color:#ec4899"/>
+            </linearGradient>
+          </defs>
+          <path d="M13 24V12l12 3v9" stroke="url(#navLogoGrad)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+          <circle cx="11" cy="24" r="3" fill="url(#navLogoGrad)"/>
+          <circle cx="23" cy="22" r="3" fill="url(#navLogoGrad)"/>
+        </svg>
+      </div>
+      <span class="logo-text">Harmonia</span>
+    </a>
+
+    <ul class="nav-links" id="navLinks">
+      <li class="nav-item has-dropdown">
+        <button class="nav-link active-nav">
+          Training
+          <svg class="caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m6 9 6 6 6-6"/></svg>
+        </button>
+        <div class="dropdown">
+          <div class="dropdown-inner">
+            <a href="learning-path.html" class="dd-item">
+              <span class="dd-icon">🛤️</span>
+              <span class="dd-content"><strong>Learning Path</strong><span>Structured curriculum</span></span>
+            </a>
+            <a href="theory-quiz.html" class="dd-item">
+              <span class="dd-icon">🧠</span>
+              <span class="dd-content"><strong>Theory Quiz</strong><span>Test your knowledge</span></span>
+              <span class="dd-tag xp">+XP</span>
+            </a>
+            <a href="ear-training.html" class="dd-item">
+              <span class="dd-icon">👂</span>
+              <span class="dd-content"><strong>Ear Training</strong><span>Sharpen your hearing</span></span>
+            </a>
+            <a href="practice-mode.html" class="dd-item">
+              <span class="dd-icon">🎸</span>
+              <span class="dd-content"><strong>Practice Mode</strong><span>Guided sessions</span></span>
+              <span class="dd-tag new">New</span>
+            </a>
+          </div>
+        </div>
+      </li>
+      <li class="nav-item has-dropdown">
+        <button class="nav-link">
+          AI Generator
+          <svg class="caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m6 9 6 6 6-6"/></svg>
+        </button>
+        <div class="dropdown">
+          <div class="dropdown-inner">
+            <a href="#" class="dd-item"><span class="dd-icon">🤖</span><span class="dd-content"><strong>AI Compose</strong><span>Generate original music</span></span></a>
+            <a href="#" class="dd-item"><span class="dd-icon">🎨</span><span class="dd-content"><strong>Style Transfer</strong><span>Reimagine your tracks</span></span><span class="dd-tag beta">Beta</span></a>
+            <a href="#" class="dd-item"><span class="dd-icon">✍️</span><span class="dd-content"><strong>Lyric Assistant</strong><span>AI-powered songwriting</span></span></a>
+          </div>
+        </div>
+      </li>
+      <li class="nav-item has-dropdown">
+        <button class="nav-link">
+          Music History
+          <svg class="caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m6 9 6 6 6-6"/></svg>
+        </button>
+        <div class="dropdown">
+          <div class="dropdown-inner">
+            <a href="#" class="dd-item"><span class="dd-icon">🌍</span><span class="dd-content"><strong>Genre Explorer</strong><span>From jazz to EDM</span></span></a>
+            <a href="#" class="dd-item"><span class="dd-icon">📅</span><span class="dd-content"><strong>Era Timeline</strong><span>Centuries of music</span></span></a>
+            <a href="#" class="dd-item"><span class="dd-icon">🎼</span><span class="dd-content"><strong>Composer Library</strong><span>Masters & legends</span></span></a>
+          </div>
+        </div>
+      </li>
+      <li class="nav-item has-dropdown">
+        <button class="nav-link">Dashboard
+          <svg class="caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m6 9 6 6 6-6"/></svg>
+        </button>
+        <div class="dropdown">
+          <div class="dropdown-inner">
+            <a href="#" class="dd-item"><span class="dd-icon">🏆</span><span class="dd-content"><strong>Leaderboard</strong><span>Top performers</span></span></a>
+            <a href="#" class="dd-item"><span class="dd-icon">📈</span><span class="dd-content"><strong>My Progress</strong><span>Track your growth</span></span></a>
+            <a href="#" class="dd-item"><span class="dd-icon">🥇</span><span class="dd-content"><strong>Achievements</strong><span>Badges & rewards</span></span></a>
+          </div>
+        </div>
+      </li>
+    </ul>
+
+    <div class="nav-right">
+      <div class="search-wrap" id="searchWrap">
+        <button class="icon-btn search-toggle" id="searchToggle" onclick="toggleSearch()" aria-label="Search">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+        </button>
+        <div class="search-expand" id="searchExpand">
+          <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+          <input type="text" placeholder="Search lessons, instruments…" id="searchInput" />
+          <button class="search-close" onclick="toggleSearch()">✕</button>
+        </div>
+      </div>
+      <button class="icon-btn theme-btn" id="themeBtn" onclick="toggleTheme()" aria-label="Toggle theme">
+        <svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+        <svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+      </button>
+      <div class="profile-menu" id="profileMenu">
+        <button class="profile-btn" onclick="toggleProfile()" aria-label="Profile menu">
+          <div class="avatar">G</div>
+          <span class="profile-name">Guest</span>
+          <svg class="caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m6 9 6 6 6-6"/></svg>
+        </button>
+        <div class="profile-dropdown" id="profileDropdown">
+          <div class="pd-header">
+            <div class="pd-avatar">G</div>
+            <div><div class="pd-name">Guest User</div><div class="pd-email">Not signed in</div></div>
+          </div>
+          <hr class="pd-divider"/>
+          <a href="#" class="pd-item">My Profile</a>
+          <a href="#" class="pd-item">Settings</a>
+          <hr class="pd-divider"/>
+          <a href="index.html" class="pd-item pd-signout">Sign Out</a>
+        </div>
+      </div>
+      <a href="index.html" class="btn-signout">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        Sign Out
+      </a>
+      <button class="hamburger" id="hamburger" onclick="toggleMobileNav()" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </div>
+</nav>
+
+<!-- Mobile Nav -->
+<div class="mobile-overlay" id="mobileOverlay" onclick="toggleMobileNav()"></div>
+<div class="mobile-nav" id="mobileNav">
+  <div class="mobile-nav-header">
+    <span class="logo-text">Harmonia</span>
+    <button onclick="toggleMobileNav()">✕</button>
+  </div>
+  <div class="mobile-nav-links">
+    <details open><summary>Training</summary>
+      <a href="learning-path.html">Learning Path</a>
+      <a href="theory-quiz.html">Theory Quiz</a>
+      <a href="ear-training.html">Ear Training</a>
+      <a href="practice-mode.html">Practice Mode</a>
+    </details>
+    <a href="index.html" class="mobile-signout">Sign Out</a>
+  </div>
+</div>
+
+
+<!-- ===== HERO ===== -->
+<section class="lp-hero">
+  <div class="lp-hero-bg">
+    <div class="lp-orb lp-orb-1"></div>
+    <div class="lp-orb lp-orb-2"></div>
+    <div class="lp-orb lp-orb-3"></div>
+    <div class="lp-grid-bg"></div>
+  </div>
+
+  <div class="container">
+    <nav class="breadcrumb" aria-label="breadcrumb">
+      <a href="home.html">Home</a>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="m9 18 6-6-6-6"/></svg>
+      <a href="training.html">Training</a>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="m9 18 6-6-6-6"/></svg>
+      <span>Learning Path</span>
+    </nav>
+
+    <div class="lp-hero-inner">
+      <div class="lp-hero-left">
+        <div class="lp-badge">
+          <span class="badge-dot"></span>
+          12 modules · 200+ lessons
+        </div>
+
+        <h1 class="lp-hero-title">
+          Your <span class="grad-text">Learning Path</span>
+        </h1>
+
+        <p class="lp-hero-sub">
+          A structured, curriculum-driven journey from absolute beginner to advanced musician. Adaptive lessons that evolve with your skill level.
+        </p>
+
+        <!-- Overall Progress -->
+        <div class="lp-overall-progress">
+          <div class="lp-op-header">
+            <span class="lp-op-title">Overall Completion</span>
+            <span class="lp-op-pct" id="lp-overall-pct">0%</span>
+          </div>
+          <div class="lp-op-bar">
+            <div class="lp-op-fill" id="lp-overall-fill" style="width:0%"></div>
+          </div>
+          <div class="lp-op-stats">
+            <span class="lp-op-stat">Lessons: <strong id="lp-stat-lessons">0 / 0</strong></span>
+            <span class="lp-op-stat">Streak: <strong id="lp-stat-streak">0🔥</strong></span>
+            <span class="lp-op-stat">XP Earned: <strong id="lp-stat-xp">0</strong></span>
+          </div>
+        </div>
+
+        <!-- Hero Stats -->
+        <div class="lp-hero-stats">
+          <div class="lp-hs">
+            <strong>12</strong>
+            <span>Modules</span>
+          </div>
+          <div class="lp-hs-div"></div>
+          <div class="lp-hs">
+            <strong>200+</strong>
+            <span>Lessons</span>
+          </div>
+          <div class="lp-hs-div"></div>
+          <div class="lp-hs">
+            <strong>40+</strong>
+            <span>Hours</span>
+          </div>
+          <div class="lp-hs-div"></div>
+          <div class="lp-hs">
+            <strong>+5K</strong>
+            <span>XP Available</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Hero Visual -->
+      <div class="lp-hero-visual" aria-hidden="true">
+        <div class="lp-ring lp-ring-1"></div>
+        <div class="lp-ring lp-ring-2"></div>
+        <div class="lp-ring lp-ring-3"></div>
+        <div class="lp-hero-icon">🛤️</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ===== MAIN LAYOUT ===== -->
+<div class="container">
+  <div class="lp-layout">
+
+    <!-- ── SIDEBAR ── -->
+    <aside class="lp-sidebar" aria-label="Module navigation">
+
+      <!-- Module List Card -->
+      <div class="lp-sidebar-card">
+        <div class="lp-sidebar-header">
+          <h3>Modules</h3>
+          <span style="font-size:0.72rem;color:var(--muted);">12 total</span>
+        </div>
+        <div class="lp-module-list" id="lpModuleList">
+          <!-- Rendered by JS -->
+        </div>
+      </div>
+
+      <!-- Quick Stats Card -->
+      <div class="lp-sidebar-card">
+        <div class="lp-sidebar-header">
+          <h3>Your Stats</h3>
+        </div>
+        <div class="lp-quick-stats">
+          <div class="lp-qs-row">
+            <span class="lp-qs-label">📚 Modules Done</span>
+            <span class="lp-qs-val" id="qs-completed">0 / 12</span>
+          </div>
+          <div class="lp-qs-row">
+            <span class="lp-qs-label">✅ Lessons Done</span>
+            <span class="lp-qs-val" id="qs-lessons">0 / 0</span>
+          </div>
+          <div class="lp-qs-row">
+            <span class="lp-qs-label">⭐ XP Earned</span>
+            <span class="lp-qs-val" id="qs-xp-earned">0 XP</span>
+          </div>
+          <div class="lp-qs-row">
+            <span class="lp-qs-label">🔥 Current Streak</span>
+            <span class="lp-qs-val" id="qs-streak">0 days</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Certificate Card -->
+      <div class="lp-sidebar-card">
+        <div class="lp-cert-card">
+          <div class="lp-cert-icon">🏆</div>
+          <h4>Completion Certificate</h4>
+          <p>Finish all 12 modules to earn your Harmonia Learning Path certificate.</p>
+          <span class="lp-cert-progress" id="cert-progress">0% complete</span>
+        </div>
+      </div>
+
+    </aside>
+
+    <!-- ── MAIN CONTENT ── -->
+    <main class="lp-content" id="lpContent">
+
+      <!-- Module Header (rendered by JS) -->
+      <div class="lp-module-header" id="lpModuleHeader">
+        <!-- Populated by JS -->
+      </div>
+
+      <!-- Module Complete Banner -->
+      <div class="lp-module-complete-banner" id="lpModuleCompleteBanner">
+        <div class="lp-mc-icon">🎉</div>
+        <div class="lp-mc-text">
+          <h3>Module Complete!</h3>
+          <p>Great work — move to the next module to continue your journey.</p>
+        </div>
+        <button class="lp-mc-btn" onclick="goToNextModule()">
+          Next Module →
+        </button>
+      </div>
+
+      <!-- Lesson Search -->
+      <div class="lp-search-bar">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+          <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+        </svg>
+        <input type="text" id="lpSearchInput" placeholder="Search lessons in this module…" />
+      </div>
+
+      <!-- Section Label -->
+      <div class="lp-section-label">Lessons</div>
+
+      <!-- Lesson List (rendered by JS) -->
+      <div class="lp-lessons" id="lpLessonList">
+        <!-- Populated by JS -->
+      </div>
+
+    </main>
+  </div>
+</div>
+
+
+<!-- ===== LESSON MODAL ===== -->
+<div class="lp-modal-overlay" id="lpModalOverlay" role="dialog" aria-modal="true" aria-labelledby="lp-modal-title-el">
+
+  <!-- Click backdrop to close -->
+  <div style="position:absolute;inset:0;" onclick="closeModal()"></div>
+
+  <div class="lp-modal" id="lpModal" onclick="event.stopPropagation()">
+
+    <!-- Modal Header -->
+    <div class="lp-modal-header">
+      <div class="lp-modal-header-top">
+        <div class="lp-modal-title-group">
+          <div class="lp-modal-icon" id="lp-modal-icon-el">🎵</div>
+          <div>
+            <h2 id="lp-modal-title-el">Lesson Title</h2>
+            <p id="lp-modal-sub-el">Module · Lesson 1 of 5</p>
+          </div>
+        </div>
+        <button class="lp-modal-close" onclick="closeModal()" aria-label="Close lesson">✕</button>
+      </div>
+
+      <!-- Lesson Nav -->
+      <div class="lp-modal-nav">
+        <button class="lp-modal-prev" id="lp-modal-prev" aria-label="Previous lesson">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="14" height="14"><path d="M15 18l-6-6 6-6"/></svg>
+          Prev
+        </button>
+        <span class="lp-modal-nav-info" id="lp-modal-nav-info">1 / 5</span>
+        <button class="lp-modal-next" id="lp-modal-next" aria-label="Next lesson">
+          Next
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="14" height="14"><path d="M9 18l6-6-6-6"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Lesson Body (rendered by JS) -->
+    <div class="lp-lesson-content" id="lpLessonBody">
+      <!-- Populated by JS -->
+    </div>
+
+    <!-- Modal Footer -->
+    <div class="lp-modal-footer">
+      <div class="lp-modal-footer-left">
+        <div class="lp-lesson-info-footer">
+          <strong id="lp-footer-lesson">Module · Lesson</strong>
+          <br/>
+          <span id="lp-footer-xp">+25 XP on completion</span>
+        </div>
+      </div>
+      <button class="lp-complete-btn" id="lp-complete-btn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="16" height="16">
+          <polyline points="20 6 9 17 4 12"/>
+        </svg>
+        Mark as Complete (+XP)
+      </button>
+    </div>
+
+  </div>
+</div>
+
+
+<!-- ===== XP TOAST ===== -->
+<div class="lp-xp-toast" id="lpXPToast" role="status" aria-live="polite">
+  <div class="lp-xp-toast-icon">⭐</div>
+  <div class="lp-xp-toast-text">
+    <strong id="lp-toast-xp">+25 XP</strong>
+    <span id="lp-toast-label">Lesson complete!</span>
+  </div>
+</div>
+
+
+<!-- ===== LEVEL UP OVERLAY ===== -->
+<div class="lp-levelup-overlay" id="lpLevelUpOverlay" role="dialog" aria-modal="true">
+  <div class="lp-levelup-card">
+    <div class="lp-levelup-icon">🎉</div>
+    <h2 id="lp-levelup-num">Level 2!</h2>
+    <p id="lp-levelup-title">You are now a Student</p>
+    <p style="font-size:0.82rem;color:var(--muted);">Keep learning to unlock more achievements and climb the leaderboard.</p>
+    <button class="lp-levelup-dismiss" onclick="dismissLevelUp()">
+      Continue Learning →
+    </button>
+  </div>
+</div>
+
+
+<!-- ===== FOOTER ===== -->
+<footer class="footer">
+  <div class="container">
+    <div class="footer-top">
+      <div class="footer-brand">
+        <a href="home.html" class="nav-logo" style="margin-bottom:12px">
+          <div class="logo-icon">
+            <svg width="24" height="24" viewBox="0 0 36 36" fill="none">
+              <path d="M13 24V12l12 3v9" stroke="url(#fLogoGrad3)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+              <circle cx="11" cy="24" r="3" fill="url(#fLogoGrad3)"/>
+              <circle cx="23" cy="22" r="3" fill="url(#fLogoGrad3)"/>
+              <defs>
+                <linearGradient id="fLogoGrad3" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" style="stop-color:#a78bfa"/>
+                  <stop offset="100%" style="stop-color:#ec4899"/>
+                </linearGradient>
+              </defs>
+            </svg>
+          </div>
+          <span class="logo-text">Harmonia</span>
+        </a>
+        <p>The modern music learning platform for curious minds and creative souls.</p>
+        <div class="footer-social">
+          <a href="#" aria-label="Twitter">🐦</a>
+          <a href="#" aria-label="Instagram">📸</a>
+          <a href="#" aria-label="YouTube">▶️</a>
+          <a href="#" aria-label="Discord">💬</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h5>Training</h5>
+        <a href="learning-path.html">Learning Path</a>
+        <a href="theory-quiz.html">Theory Quiz</a>
+        <a href="ear-training.html">Ear Training</a>
+        <a href="practice-mode.html">Practice Mode</a>
+      </div>
+      <div class="footer-col">
+        <h5>Create & Explore</h5>
+        <a href="#">AI Compose</a>
+        <a href="#">Music History</a>
+        <a href="#">3D Anatomy</a>
+        <a href="#">Community</a>
+      </div>
+      <div class="footer-col">
+        <h5>Account</h5>
+        <a href="#">Dashboard</a>
+        <a href="#">Achievements</a>
+        <a href="#">Leaderboard</a>
+        <a href="#">Settings</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div class="footer-copy">© 2026 Harmonia. All rights reserved.</div>
+      <div class="accessibility">
+        <span>Accessibility:</span>
+        <button onclick="adjustFont(-1)" aria-label="Decrease font size">A−</button>
+        <button onclick="adjustFont(1)" aria-label="Increase font size">A+</button>
+        <button onclick="toggleTheme()" id="footerThemeBtn">🌙 Dark Mode</button>
+      </div>
+      <div class="footer-legal">
+        <a href="#">Privacy</a>
+        <a href="#">Terms</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+
+<!-- Scripts -->
+<script src="scripts/training-db.js"></script>
+<script src="scripts/home.js"></script>
+<script src="scripts/learning-path.js"></script>
+
+</body>
+</html>
