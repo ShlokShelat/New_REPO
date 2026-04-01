@@ -1,0 +1,1914 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>3D Instrument Anatomy – Harmonia</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <style>
+    /* ===== RESET & VARIABLES ===== */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg:        #080810;
+      --surface:   #0f0f1a;
+      --surface2:  #16162a;
+      --surface3:  #1e1e30;
+      --border:    rgba(255,255,255,0.07);
+      --border-hi: rgba(167,139,250,0.35);
+      --text:      #e2e8f0;
+      --muted:     #64748b;
+      --accent1:   #a78bfa;
+      --accent2:   #ec4899;
+      --accent3:   #38bdf8;
+      --grad:      linear-gradient(135deg, var(--accent1), var(--accent2));
+      --nav-h:     64px;
+      --radius:    14px;
+      --container: 1200px;
+      --font-base: 1rem;
+    }
+    [data-theme="light"] {
+      --bg: #f8f7ff; --surface: #ffffff; --surface2: #f1f0fb;
+      --surface3: #e9e8f8; --border: rgba(0,0,0,0.08);
+      --text: #1a1a2e; --muted: #64748b;
+    }
+    html { font-size: var(--font-base); scroll-behavior: smooth; }
+    body { font-family: 'Inter', system-ui, sans-serif; background: var(--bg); color: var(--text); overflow-x: hidden; transition: background 0.3s, color 0.3s; }
+    a { text-decoration: none; color: inherit; }
+    ul { list-style: none; }
+    .container { max-width: var(--container); margin: 0 auto; padding: 0 24px; }
+
+    /* ===== NAVBAR ===== */
+    .navbar { position: fixed; top: 0; left: 0; right: 0; height: var(--nav-h); background: rgba(8,8,16,0.85); backdrop-filter: blur(20px) saturate(180%); border-bottom: 1px solid var(--border); z-index: 900; transition: background 0.3s; }
+    .navbar.scrolled { background: rgba(8,8,16,0.97); box-shadow: 0 4px 30px rgba(0,0,0,0.3); }
+    .nav-inner { max-width: var(--container); margin: 0 auto; padding: 0 24px; height: 100%; display: flex; align-items: center; gap: 8px; }
+    .nav-logo { display: flex; align-items: center; gap: 8px; flex-shrink: 0; text-decoration: none; }
+    .logo-icon { width: 38px; height: 38px; background: rgba(167,139,250,0.1); border: 1px solid rgba(167,139,250,0.2); border-radius: 10px; display: flex; align-items: center; justify-content: center; }
+    .logo-text { font-size: 1.2rem; font-weight: 800; background: linear-gradient(135deg, #a78bfa, #ec4899); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+    .nav-links { display: flex; align-items: center; gap: 2px; margin-left: 12px; flex: 1; }
+    .nav-item { position: relative; }
+    .nav-link { background: none; border: none; color: var(--muted); font-size: 0.845rem; font-weight: 500; font-family: inherit; padding: 8px 12px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; gap: 4px; transition: color 0.2s, background 0.2s; white-space: nowrap; }
+    .nav-link:hover, .nav-item:hover .nav-link { color: var(--text); background: rgba(255,255,255,0.05); }
+    .nav-link.active-nav { color: var(--accent1) !important; background: rgba(167,139,250,0.08) !important; }
+    .nav-link .caret { width: 13px; height: 13px; transition: transform 0.25s; }
+    .nav-item:hover .nav-link .caret { transform: rotate(180deg); }
+    .dropdown { position: absolute; top: calc(100% + 8px); left: 50%; transform: translateX(-50%) translateY(-8px); opacity: 0; pointer-events: none; transition: opacity 0.2s, transform 0.25s cubic-bezier(0.34,1.56,0.64,1); min-width: 240px; z-index: 999; }
+    .nav-item:hover .dropdown { opacity: 1; pointer-events: all; transform: translateX(-50%) translateY(0); }
+    .dropdown-inner { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 8px; box-shadow: 0 20px 60px rgba(0,0,0,0.5); backdrop-filter: blur(20px); }
+    .dropdown-inner::before { content: ''; position: absolute; top: -6px; left: 50%; width: 12px; height: 12px; background: var(--surface); border-top: 1px solid var(--border); border-left: 1px solid var(--border); transform: translateX(-50%) rotate(45deg); }
+    .dd-item { display: flex; align-items: center; gap: 12px; padding: 10px 12px; border-radius: 9px; transition: background 0.15s; color: var(--text); text-decoration: none; position: relative; }
+    .dd-item:hover { background: rgba(255,255,255,0.05); }
+    .dd-icon { font-size: 1.1rem; flex-shrink: 0; width: 24px; text-align: center; }
+    .dd-content { flex: 1; display: flex; flex-direction: column; gap: 1px; }
+    .dd-content strong { font-size: 0.845rem; font-weight: 600; }
+    .dd-content span { font-size: 0.75rem; color: var(--muted); }
+    .dd-tag { font-size: 0.65rem; font-weight: 700; padding: 2px 7px; border-radius: 99px; flex-shrink: 0; }
+    .dd-tag.new { background: rgba(16,185,129,0.15); color: #34d399; border: 1px solid rgba(16,185,129,0.3); }
+    .dd-tag.beta { background: rgba(14,165,233,0.15); color: #38bdf8; border: 1px solid rgba(14,165,233,0.3); }
+    .dd-tag.xp { background: rgba(234,179,8,0.15); color: #fbbf24; border: 1px solid rgba(234,179,8,0.3); }
+    .nav-right { display: flex; align-items: center; gap: 6px; margin-left: auto; }
+    .icon-btn { width: 36px; height: 36px; background: none; border: none; color: var(--muted); cursor: pointer; border-radius: 8px; display: flex; align-items: center; justify-content: center; transition: background 0.2s, color 0.2s; }
+    .icon-btn:hover { background: rgba(255,255,255,0.07); color: var(--text); }
+    .icon-btn svg { width: 18px; height: 18px; }
+    .search-wrap { position: relative; }
+    .search-expand { position: absolute; right: 0; top: 50%; transform: translateY(-50%); display: flex; align-items: center; background: var(--surface2); border: 1px solid var(--border-hi); border-radius: 10px; overflow: hidden; width: 0; opacity: 0; transition: width 0.3s cubic-bezier(0.34,1.56,0.64,1), opacity 0.2s; pointer-events: none; }
+    .search-wrap.open .search-expand { width: 280px; opacity: 1; pointer-events: all; }
+    .search-wrap.open .search-toggle { opacity: 0; pointer-events: none; }
+    .search-expand input { flex: 1; background: none; border: none; outline: none; color: var(--text); font-size: 0.875rem; font-family: inherit; padding: 9px 12px 9px 36px; }
+    .search-expand .search-icon { position: absolute; left: 10px; width: 16px; height: 16px; color: var(--muted); }
+    .search-close { background: none; border: none; color: var(--muted); padding: 0 12px; cursor: pointer; font-size: 0.8rem; }
+    .profile-menu { position: relative; }
+    .profile-btn { display: flex; align-items: center; gap: 7px; background: rgba(255,255,255,0.05); border: 1px solid var(--border); border-radius: 10px; padding: 5px 10px 5px 5px; cursor: pointer; color: var(--text); font-size: 0.83rem; font-family: inherit; transition: background 0.2s; }
+    .profile-btn:hover { background: rgba(255,255,255,0.09); }
+    .avatar { width: 28px; height: 28px; background: linear-gradient(135deg, #7c3aed, #db2777); border-radius: 7px; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.8rem; }
+    .profile-dropdown { position: absolute; top: calc(100% + 8px); right: 0; background: var(--surface); border: 1px solid var(--border); border-radius: 14px; min-width: 220px; box-shadow: 0 20px 50px rgba(0,0,0,0.5); padding: 8px; opacity: 0; transform: translateY(-8px); pointer-events: none; transition: opacity 0.2s, transform 0.25s cubic-bezier(0.34,1.56,0.64,1); z-index: 999; }
+    .profile-menu.open .profile-dropdown { opacity: 1; transform: none; pointer-events: all; }
+    .pd-header { display: flex; align-items: center; gap: 12px; padding: 10px 10px 14px; }
+    .pd-avatar { width: 38px; height: 38px; background: linear-gradient(135deg, #7c3aed, #db2777); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-weight: 700; }
+    .pd-name { font-size: 0.875rem; font-weight: 600; }
+    .pd-email { font-size: 0.75rem; color: var(--muted); }
+    .pd-divider { border: none; border-top: 1px solid var(--border); margin: 4px 0; }
+    .pd-item { display: block; padding: 9px 10px; border-radius: 8px; font-size: 0.845rem; transition: background 0.15s; color: var(--text); }
+    .pd-item:hover { background: rgba(255,255,255,0.05); }
+    .pd-signout { color: #f87171; }
+    .pd-signout:hover { background: rgba(239,68,68,0.08); }
+    .btn-signout { display: flex; align-items: center; gap: 6px; background: none; border: 1px solid rgba(239,68,68,0.3); color: #f87171; padding: 7px 12px; border-radius: 9px; font-size: 0.8rem; font-weight: 500; cursor: pointer; text-decoration: none; transition: background 0.2s, border-color 0.2s; }
+    .btn-signout:hover { background: rgba(239,68,68,0.1); border-color: rgba(239,68,68,0.5); }
+    .hamburger { display: none; background: none; border: none; cursor: pointer; padding: 4px; flex-direction: column; gap: 5px; margin-left: 4px; }
+    .hamburger span { display: block; width: 22px; height: 2px; background: var(--text); border-radius: 99px; transition: transform 0.3s; }
+    .mobile-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 950; backdrop-filter: blur(4px); }
+    .mobile-overlay.open { display: block; }
+    .mobile-nav { position: fixed; top: 0; right: 0; bottom: 0; width: 300px; background: var(--surface); border-left: 1px solid var(--border); z-index: 960; transform: translateX(100%); transition: transform 0.35s cubic-bezier(0.34,1.56,0.64,1); overflow-y: auto; }
+    .mobile-nav.open { transform: translateX(0); }
+    .mobile-nav-header { display: flex; align-items: center; justify-content: space-between; padding: 20px; border-bottom: 1px solid var(--border); }
+    .mobile-nav-header button { background: none; border: none; color: var(--muted); font-size: 1.1rem; cursor: pointer; }
+    .mobile-nav-links { padding: 12px; }
+    .mobile-nav-links details { border-radius: 10px; overflow: hidden; }
+    .mobile-nav-links summary { padding: 12px 14px; font-size: 0.9rem; font-weight: 600; cursor: pointer; list-style: none; color: var(--text); transition: background 0.15s; border-radius: 10px; }
+    .mobile-nav-links summary:hover { background: rgba(255,255,255,0.05); }
+    .mobile-nav-links a { display: block; padding: 10px 14px 10px 28px; font-size: 0.845rem; color: var(--muted); transition: color 0.15s; }
+    .mobile-nav-links a:hover { color: var(--text); }
+    .mobile-signout { display: block; margin-top: 16px; padding: 12px 14px; border: 1px solid rgba(239,68,68,0.3); border-radius: 10px; color: #f87171; font-size: 0.875rem; font-weight: 500; text-align: center; text-decoration: none; }
+    @media (max-width: 1024px) { .nav-links { display: none; } .hamburger { display: flex; } .btn-signout { display: none; } }
+
+    /* ===== PAGE HERO ===== */
+    .anatomy-hero {
+      padding: calc(var(--nav-h) + 48px) 0 40px;
+      position: relative; overflow: hidden;
+    }
+    .ah-bg { position: absolute; inset: 0; pointer-events: none; }
+    .ah-orb { position: absolute; border-radius: 50%; filter: blur(100px); opacity: 0.1; }
+    .ah-orb-1 { width: 500px; height: 500px; background: #0ea5e9; top: -150px; left: -80px; }
+    .ah-orb-2 { width: 400px; height: 400px; background: #7c3aed; bottom: -100px; right: -60px; }
+    .ah-grid { position: absolute; inset: 0; background-image: linear-gradient(rgba(56,189,248,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(56,189,248,0.03) 1px, transparent 1px); background-size: 48px 48px; }
+    .ah-inner { position: relative; z-index: 1; }
+    .breadcrumb { display: flex; align-items: center; gap: 8px; font-size: 0.8rem; color: var(--muted); margin-bottom: 24px; }
+    .breadcrumb a { color: var(--muted); text-decoration: none; transition: color 0.2s; }
+    .breadcrumb a:hover { color: var(--accent3); }
+    .breadcrumb span { color: var(--text); font-weight: 500; }
+    .ah-content { display: flex; align-items: flex-start; justify-content: space-between; gap: 40px; flex-wrap: wrap; }
+    .ah-text { flex: 1; min-width: 300px; }
+    .ah-badge { display: inline-flex; align-items: center; gap: 8px; background: rgba(56,189,248,0.1); border: 1px solid rgba(56,189,248,0.25); border-radius: 99px; padding: 6px 16px; font-size: 0.8rem; font-weight: 500; color: var(--accent3); margin-bottom: 16px; }
+    .ah-badge-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--accent3); animation: pulse3d 1.8s ease-in-out infinite; }
+    @keyframes pulse3d { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.5;transform:scale(1.4)} }
+    .ah-title { font-size: clamp(2rem, 4.5vw, 3.2rem); font-weight: 900; line-height: 1.1; letter-spacing: -1.5px; margin-bottom: 14px; }
+    .grad-text-blue { background: linear-gradient(135deg, #38bdf8, #a78bfa); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+    .ah-sub { font-size: 1rem; color: var(--muted); max-width: 480px; line-height: 1.65; margin-bottom: 24px; }
+    .ah-stats { display: flex; gap: 20px; flex-wrap: wrap; }
+    .ah-stat { display: flex; flex-direction: column; gap: 2px; }
+    .ah-stat strong { font-size: 1.3rem; font-weight: 800; background: linear-gradient(135deg, #38bdf8, #a78bfa); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+    .ah-stat span { font-size: 0.72rem; color: var(--muted); }
+    .ah-stat-div { width: 1px; height: 32px; background: var(--border); }
+
+    /* Instrument Selector */
+    .instrument-selector { display: flex; gap: 10px; flex-wrap: wrap; }
+    .instr-btn { display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 14px 18px; background: var(--surface2); border: 1px solid var(--border); border-radius: 14px; cursor: pointer; transition: all 0.25s; font-family: inherit; color: var(--muted); min-width: 80px; }
+    .instr-btn:hover { border-color: rgba(56,189,248,0.4); background: rgba(56,189,248,0.05); color: var(--text); transform: translateY(-2px); }
+    .instr-btn.active { border-color: rgba(56,189,248,0.6); background: rgba(56,189,248,0.1); color: var(--accent3); box-shadow: 0 0 20px rgba(56,189,248,0.15); }
+    .instr-btn .instr-emoji { font-size: 1.5rem; }
+    .instr-btn .instr-name { font-size: 0.72rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+
+    /* ===== MAIN LAYOUT ===== */
+    .anatomy-main { padding: 0 0 80px; }
+    .anatomy-layout { display: grid; grid-template-columns: 1fr 340px; gap: 24px; align-items: start; }
+    @media (max-width: 1024px) { .anatomy-layout { grid-template-columns: 1fr; } }
+
+    /* ===== 3D CANVAS SECTION ===== */
+    .canvas-section { background: var(--surface); border: 1px solid var(--border); border-radius: 24px; overflow: hidden; position: relative; }
+    .canvas-header { padding: 20px 24px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+    .canvas-title { display: flex; align-items: center; gap: 10px; }
+    .canvas-title h2 { font-size: 1.1rem; font-weight: 700; }
+    .canvas-title .live-dot { width: 8px; height: 8px; background: #38bdf8; border-radius: 50%; animation: livePulse 2s ease-in-out infinite; box-shadow: 0 0 8px #38bdf8; }
+    @keyframes livePulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+    .canvas-actions { display: flex; gap: 8px; }
+    .canvas-btn { display: flex; align-items: center; gap: 6px; padding: 7px 14px; background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; font-size: 0.78rem; font-weight: 500; color: var(--muted); cursor: pointer; transition: all 0.2s; font-family: inherit; }
+    .canvas-btn:hover { color: var(--text); border-color: var(--border-hi); }
+    .canvas-btn.active { background: rgba(56,189,248,0.1); border-color: rgba(56,189,248,0.4); color: var(--accent3); }
+
+    /* 3D Viewer */
+    .viewer-wrap { position: relative; }
+    #anatomy-canvas { width: 100%; height: 540px; display: block; cursor: grab; background: radial-gradient(ellipse at center, #0d1117 0%, #080810 100%); }
+    #anatomy-canvas:active { cursor: grabbing; }
+    .canvas-loading { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 16px; background: radial-gradient(ellipse at center, #0d1117 0%, #080810 100%); z-index: 10; transition: opacity 0.5s; }
+    .canvas-loading.hidden { opacity: 0; pointer-events: none; }
+    .loading-spinner { width: 48px; height: 48px; border: 3px solid rgba(56,189,248,0.15); border-top-color: #38bdf8; border-radius: 50%; animation: spin3d 0.9s linear infinite; }
+    @keyframes spin3d { to { transform: rotate(360deg); } }
+    .loading-text { font-size: 0.875rem; color: var(--muted); }
+
+    /* Floating Toolbar */
+    .anatomy-toolbar { position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%); display: flex; gap: 6px; padding: 8px; background: rgba(8,8,16,0.8); backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; z-index: 5; white-space: nowrap; }
+    .toolbar-btn { display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 10px 16px; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: 10px; cursor: pointer; transition: all 0.2s; font-family: inherit; color: var(--muted); min-width: 64px; }
+    .toolbar-btn:hover { background: rgba(255,255,255,0.08); color: var(--text); border-color: rgba(255,255,255,0.15); }
+    .toolbar-btn.active { background: rgba(56,189,248,0.15); border-color: rgba(56,189,248,0.4); color: #38bdf8; }
+    .toolbar-btn svg { width: 18px; height: 18px; }
+    .toolbar-btn span { font-size: 0.65rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+    .toolbar-sep { width: 1px; background: rgba(255,255,255,0.08); align-self: stretch; margin: 4px 0; }
+
+    /* Part Labels overlay */
+    .labels-overlay { position: absolute; inset: 0; pointer-events: none; z-index: 4; }
+    .part-label { position: absolute; display: flex; align-items: center; gap: 6px; opacity: 0; transition: opacity 0.3s; pointer-events: none; }
+    .part-label.visible { opacity: 1; }
+    .part-label-dot { width: 8px; height: 8px; background: #38bdf8; border-radius: 50%; box-shadow: 0 0 10px #38bdf8; flex-shrink: 0; }
+    .part-label-line { width: 30px; height: 1px; background: rgba(56,189,248,0.5); }
+    .part-label-text { background: rgba(8,8,16,0.85); border: 1px solid rgba(56,189,248,0.3); border-radius: 6px; padding: 4px 10px; font-size: 0.72rem; font-weight: 600; color: #38bdf8; white-space: nowrap; }
+
+    /* Canvas footer info */
+    .canvas-footer { padding: 14px 24px; border-top: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; }
+    .canvas-hints { display: flex; gap: 16px; flex-wrap: wrap; }
+    .hint-item { display: flex; align-items: center; gap: 6px; font-size: 0.75rem; color: var(--muted); }
+    .hint-key { background: var(--surface2); border: 1px solid var(--border); border-radius: 5px; padding: 2px 7px; font-size: 0.68rem; font-weight: 600; color: var(--text); }
+    .canvas-mode-badge { font-size: 0.72rem; font-weight: 700; padding: 4px 12px; border-radius: 99px; background: rgba(56,189,248,0.1); color: var(--accent3); border: 1px solid rgba(56,189,248,0.2); }
+
+    /* ===== INFO PANEL ===== */
+    .info-panel { display: flex; flex-direction: column; gap: 16px; }
+
+    /* Part list card */
+    .panel-card { background: var(--surface); border: 1px solid var(--border); border-radius: 20px; padding: 20px; }
+    .panel-card-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+    .panel-card-title { font-size: 0.95rem; font-weight: 700; }
+    .panel-card-badge { font-size: 0.65rem; font-weight: 700; padding: 3px 10px; border-radius: 99px; background: rgba(56,189,248,0.1); color: var(--accent3); border: 1px solid rgba(56,189,248,0.2); }
+
+    .parts-list { display: flex; flex-direction: column; gap: 6px; }
+    .part-item { display: flex; align-items: center; gap: 10px; padding: 10px 12px; background: var(--surface2); border: 1px solid var(--border); border-radius: 10px; cursor: pointer; transition: all 0.2s; }
+    .part-item:hover { border-color: rgba(56,189,248,0.3); background: rgba(56,189,248,0.05); }
+    .part-item.selected { border-color: rgba(56,189,248,0.5); background: rgba(56,189,248,0.08); }
+    .part-color-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+    .part-item-info { flex: 1; }
+    .part-item-name { font-size: 0.83rem; font-weight: 600; }
+    .part-item-sub { font-size: 0.72rem; color: var(--muted); }
+    .part-item-arrow { font-size: 0.7rem; color: var(--muted); }
+    .part-item.selected .part-item-arrow { color: var(--accent3); }
+
+    /* Detail card */
+    .detail-card { background: var(--surface); border: 1px solid var(--border); border-radius: 20px; overflow: hidden; }
+    .detail-card-top { padding: 20px; background: linear-gradient(135deg, rgba(56,189,248,0.06), rgba(124,58,237,0.06)); border-bottom: 1px solid var(--border); }
+    .detail-icon { font-size: 2.5rem; margin-bottom: 10px; }
+    .detail-name { font-size: 1.1rem; font-weight: 800; margin-bottom: 4px; }
+    .detail-category { font-size: 0.75rem; color: var(--accent3); font-weight: 600; text-transform: uppercase; letter-spacing: 1px; }
+    .detail-body { padding: 20px; }
+    .detail-desc { font-size: 0.845rem; color: var(--muted); line-height: 1.65; margin-bottom: 16px; }
+    .detail-facts { display: flex; flex-direction: column; gap: 8px; }
+    .detail-fact { display: flex; justify-content: space-between; align-items: center; padding: 8px 12px; background: var(--surface2); border-radius: 8px; }
+    .detail-fact-label { font-size: 0.75rem; color: var(--muted); }
+    .detail-fact-value { font-size: 0.78rem; font-weight: 600; color: var(--text); }
+    .detail-empty { padding: 40px 20px; text-align: center; }
+    .detail-empty .empty-icon { font-size: 2.5rem; opacity: 0.3; margin-bottom: 10px; }
+    .detail-empty p { font-size: 0.83rem; color: var(--muted); }
+
+    /* Fun fact card */
+    .funfact-card { background: linear-gradient(135deg, rgba(56,189,248,0.08), rgba(124,58,237,0.08)); border: 1px solid rgba(56,189,248,0.2); border-radius: 16px; padding: 16px; }
+    .funfact-label { font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; color: var(--accent3); margin-bottom: 8px; }
+    .funfact-text { font-size: 0.845rem; color: var(--text); line-height: 1.6; font-style: italic; }
+
+    /* ===== EXPLODE ANIMATION ===== */
+    @keyframes explodePulse {
+      0%,100% { box-shadow: 0 0 0 rgba(56,189,248,0); }
+      50% { box-shadow: 0 0 30px rgba(56,189,248,0.2); }
+    }
+    .canvas-section.exploded { animation: explodePulse 2s ease-in-out infinite; }
+
+    /* ===== FOOTER ===== */
+    .footer { background: var(--surface); border-top: 1px solid var(--border); padding: 64px 0 32px; }
+    .footer-top { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 40px; margin-bottom: 48px; }
+    .footer-brand p { font-size: 0.875rem; color: var(--muted); line-height: 1.6; max-width: 280px; margin-top: 8px; }
+    .footer-social { display: flex; gap: 12px; margin-top: 16px; }
+    .footer-social a { font-size: 1.2rem; text-decoration: none; transition: transform 0.2s; }
+    .footer-social a:hover { transform: scale(1.2); }
+    .footer-col { display: flex; flex-direction: column; gap: 10px; }
+    .footer-col h5 { font-size: 0.8rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; color: var(--accent3); margin-bottom: 4px; }
+    .footer-col a { font-size: 0.845rem; color: var(--muted); text-decoration: none; transition: color 0.2s; }
+    .footer-col a:hover { color: var(--text); }
+    .footer-bottom { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; padding-top: 24px; border-top: 1px solid var(--border); font-size: 0.8rem; color: var(--muted); }
+    .footer-legal { display: flex; gap: 16px; }
+    .footer-legal a { color: var(--muted); text-decoration: none; }
+    .footer-legal a:hover { color: var(--text); }
+    .accessibility { display: flex; align-items: center; gap: 8px; }
+    .accessibility button { background: var(--surface2); border: 1px solid var(--border); color: var(--text); padding: 4px 10px; border-radius: 6px; font-size: 0.78rem; cursor: pointer; transition: background 0.2s; }
+    .accessibility button:hover { background: var(--surface3); }
+    @media (max-width: 1024px) { .footer-top { grid-template-columns: 1fr 1fr; } }
+    @media (max-width: 640px) { .footer-top { grid-template-columns: 1fr; } .footer-bottom { flex-direction: column; align-items: flex-start; } }
+
+    /* ===== TOAST ===== */
+    .toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(80px); background: var(--surface2); border: 1px solid var(--border); border-radius: 10px; padding: 12px 20px; font-size: 0.875rem; box-shadow: 0 8px 30px rgba(0,0,0,0.4); transition: transform 0.35s cubic-bezier(0.34,1.56,0.64,1), opacity 0.3s; opacity: 0; z-index: 9999; white-space: nowrap; }
+    .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+    .toast.info { border-color: rgba(56,189,248,0.4); color: #38bdf8; }
+    .toast.success { border-color: rgba(52,211,153,0.4); color: #34d399; }
+
+    @media (max-width: 640px) {
+      .anatomy-toolbar { flex-wrap: wrap; justify-content: center; width: calc(100% - 40px); }
+      #anatomy-canvas { height: 360px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ===== NAVBAR ===== -->
+<nav class="navbar" id="navbar">
+  <div class="nav-inner">
+    <a href="home.html" class="nav-logo">
+      <div class="logo-icon">
+        <svg width="28" height="28" viewBox="0 0 36 36" fill="none">
+          <defs><linearGradient id="navLogoGrad" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#a78bfa"/><stop offset="100%" style="stop-color:#ec4899"/></linearGradient></defs>
+          <path d="M13 24V12l12 3v9" stroke="url(#navLogoGrad)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+          <circle cx="11" cy="24" r="3" fill="url(#navLogoGrad)"/>
+          <circle cx="23" cy="22" r="3" fill="url(#navLogoGrad)"/>
+        </svg>
+      </div>
+      <span class="logo-text">Harmonia</span>
+    </a>
+    <ul class="nav-links">
+      <li class="nav-item has-dropdown">
+        <button class="nav-link">Training<svg class="caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m6 9 6 6 6-6"/></svg></button>
+        <div class="dropdown"><div class="dropdown-inner">
+          <a href="training.html" class="dd-item"><span class="dd-icon">🛤️</span><span class="dd-content"><strong>Learning Path</strong><span>Structured curriculum</span></span></a>
+          <a href="theory-quiz.html" class="dd-item"><span class="dd-icon">🧠</span><span class="dd-content"><strong>Theory Quiz</strong><span>Test your knowledge</span></span><span class="dd-tag xp">+XP</span></a>
+          <a href="ear-training.html" class="dd-item"><span class="dd-icon">👂</span><span class="dd-content"><strong>Ear Training</strong><span>Sharpen your hearing</span></span></a>
+          <a href="practice-mode.html" class="dd-item"><span class="dd-icon">🎸</span><span class="dd-content"><strong>Practice Mode</strong><span>Guided sessions</span></span><span class="dd-tag new">New</span></a>
+        </div></div>
+      </li>
+      <li class="nav-item has-dropdown">
+        <button class="nav-link">AI Generator<svg class="caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m6 9 6 6 6-6"/></svg></button>
+        <div class="dropdown"><div class="dropdown-inner">
+          <a href="#" class="dd-item"><span class="dd-icon">🤖</span><span class="dd-content"><strong>AI Compose</strong><span>Generate original music</span></span></a>
+          <a href="#" class="dd-item"><span class="dd-icon">🎨</span><span class="dd-content"><strong>Style Transfer</strong><span>Reimagine your tracks</span></span><span class="dd-tag beta">Beta</span></a>
+          <a href="#" class="dd-item"><span class="dd-icon">✍️</span><span class="dd-content"><strong>Lyric Assistant</strong><span>AI-powered songwriting</span></span></a>
+        </div></div>
+      </li>
+      <li class="nav-item has-dropdown">
+        <button class="nav-link">Music History<svg class="caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m6 9 6 6 6-6"/></svg></button>
+        <div class="dropdown"><div class="dropdown-inner">
+          <a href="#" class="dd-item"><span class="dd-icon">🌍</span><span class="dd-content"><strong>Genre Explorer</strong><span>From jazz to EDM</span></span></a>
+          <a href="#" class="dd-item"><span class="dd-icon">📅</span><span class="dd-content"><strong>Era Timeline</strong><span>Centuries of music</span></span></a>
+          <a href="#" class="dd-item"><span class="dd-icon">🎼</span><span class="dd-content"><strong>Composer Library</strong><span>Masters & legends</span></span></a>
+        </div></div>
+      </li>
+      <li class="nav-item has-dropdown">
+        <button class="nav-link active-nav">3D Anatomy<svg class="caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m6 9 6 6 6-6"/></svg></button>
+        <div class="dropdown"><div class="dropdown-inner">
+          <a href="instrument-parts.html" class="dd-item"><span class="dd-icon">🎻</span><span class="dd-content"><strong>Instrument Parts</strong><span>Interactive 3D models</span></span></a>
+          <a href="sound-physics.html" class="dd-item"><span class="dd-icon">🔊</span><span class="dd-content"><strong>Sound Physics</strong><span>How acoustics work</span></span></a>
+        </div></div>
+      </li>
+      <li class="nav-item has-dropdown">
+        <button class="nav-link">Dashboard<svg class="caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m6 9 6 6 6-6"/></svg></button>
+        <div class="dropdown"><div class="dropdown-inner">
+          <a href="#" class="dd-item"><span class="dd-icon">🏆</span><span class="dd-content"><strong>Leaderboard</strong><span>Top performers</span></span></a>
+          <a href="#" class="dd-item"><span class="dd-icon">📈</span><span class="dd-content"><strong>My Progress</strong><span>Track your growth</span></span></a>
+          <a href="#" class="dd-item"><span class="dd-icon">🥇</span><span class="dd-content"><strong>Achievements</strong><span>Badges & rewards</span></span></a>
+        </div></div>
+      </li>
+    </ul>
+    <div class="nav-right">
+      <div class="search-wrap" id="searchWrap">
+        <button class="icon-btn search-toggle" id="searchToggle" onclick="toggleSearch()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg></button>
+        <div class="search-expand" id="searchExpand">
+          <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+          <input type="text" placeholder="Search instruments, parts…" id="searchInput" />
+          <button class="search-close" onclick="toggleSearch()">✕</button>
+        </div>
+      </div>
+      <button class="icon-btn" id="themeBtn" onclick="toggleTheme()">
+        <svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+        <svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+      </button>
+      <div class="profile-menu" id="profileMenu">
+        <button class="profile-btn" onclick="toggleProfile()">
+          <div class="avatar">G</div>
+          <span class="profile-name">Guest</span>
+          <svg class="caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m6 9 6 6 6-6"/></svg>
+        </button>
+        <div class="profile-dropdown" id="profileDropdown">
+          <div class="pd-header"><div class="pd-avatar">G</div><div><div class="pd-name">Guest User</div><div class="pd-email">Not signed in</div></div></div>
+          <hr class="pd-divider"/>
+          <a href="#" class="pd-item">My Profile</a>
+          <a href="#" class="pd-item">Settings</a>
+          <hr class="pd-divider"/>
+          <a href="index.html" class="pd-item pd-signout">Sign Out</a>
+        </div>
+      </div>
+      <a href="index.html" class="btn-signout">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        Sign Out
+      </a>
+      <button class="hamburger" id="hamburger" onclick="toggleMobileNav()"><span></span><span></span><span></span></button>
+    </div>
+  </div>
+</nav>
+
+<div class="mobile-overlay" id="mobileOverlay" onclick="toggleMobileNav()"></div>
+<div class="mobile-nav" id="mobileNav">
+  <div class="mobile-nav-header"><span class="logo-text">Harmonia</span><button onclick="toggleMobileNav()">✕</button></div>
+  <div class="mobile-nav-links">
+    <details><summary>Training</summary><a href="training.html">Learning Path</a><a href="theory-quiz.html">Theory Quiz</a><a href="ear-training.html">Ear Training</a></details>
+    <details open><summary>3D Anatomy</summary><a href="instrument-parts.html">Instrument Parts</a><a href="sound-physics.html">Sound Physics</a></details>
+    <a href="index.html" class="mobile-signout">Sign Out</a>
+  </div>
+</div>
+
+<!-- ===== HERO ===== -->
+<section class="anatomy-hero">
+  <div class="ah-bg">
+    <div class="ah-orb ah-orb-1"></div>
+    <div class="ah-orb ah-orb-2"></div>
+    <div class="ah-grid"></div>
+  </div>
+  <div class="container ah-inner">
+    <nav class="breadcrumb">
+      <a href="home.html">Home</a>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="m9 18 6-6-6-6"/></svg>
+      <a href="#">3D Anatomy</a>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="m9 18 6-6-6-6"/></svg>
+      <span>Instrument Parts</span>
+    </nav>
+    <div class="ah-content">
+      <div class="ah-text">
+        <div class="ah-badge"><span class="ah-badge-dot"></span> Interactive 3D Viewer</div>
+        <h1 class="ah-title">Explore Instruments<br/><span class="grad-text-blue">in 3D</span></h1>
+        <p class="ah-sub">Rotate, zoom, and dissect musical instruments to understand every component — from the body and strings to bridges and tuning pegs.</p>
+        <div class="ah-stats">
+          <div class="ah-stat"><strong>7</strong><span>Instruments</span></div>
+          <div class="ah-stat-div"></div>
+          <div class="ah-stat"><strong>50+</strong><span>Named Parts</span></div>
+          <div class="ah-stat-div"></div>
+          <div class="ah-stat"><strong>360°</strong><span>View</span></div>
+          <div class="ah-stat-div"></div>
+          <div class="ah-stat"><strong>HD</strong><span>Models</span></div>
+        </div>
+      </div>
+      <!-- Instrument Selector -->
+      <div class="instrument-selector" id="instrumentSelector">
+        <button class="instr-btn active" data-instrument="violin" onclick="selectInstrument(this,'violin')">
+          <span class="instr-emoji">🎻</span>
+          <span class="instr-name">Violin</span>
+        </button>
+        <button class="instr-btn" data-instrument="guitar" onclick="selectInstrument(this,'guitar')">
+          <span class="instr-emoji">🎸</span>
+          <span class="instr-name">Guitar</span>
+        </button>
+        <button class="instr-btn" data-instrument="piano" onclick="selectInstrument(this,'piano')">
+          <span class="instr-emoji">🎹</span>
+          <span class="instr-name">Piano</span>
+        </button>
+        <button class="instr-btn" data-instrument="trumpet" onclick="selectInstrument(this,'trumpet')">
+          <span class="instr-emoji">🎺</span>
+          <span class="instr-name">Trumpet</span>
+        </button>
+        <button class="instr-btn" data-instrument="drums" onclick="selectInstrument(this,'drums')">
+          <span class="instr-emoji">🥁</span>
+          <span class="instr-name">Drums</span>
+        </button>
+        <button class="instr-btn" data-instrument="flute" onclick="selectInstrument(this,'flute')">
+          <span class="instr-emoji">🪈</span>
+          <span class="instr-name">Flute</span>
+        </button>
+        <button class="instr-btn" data-instrument="cello" onclick="selectInstrument(this,'cello')">
+          <span class="instr-emoji">🪗</span>
+          <span class="instr-name">Cello</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== MAIN ANATOMY SECTION ===== -->
+<section class="anatomy-main">
+  <div class="container">
+    <div class="anatomy-layout">
+
+      <!-- 3D Canvas -->
+      <div class="canvas-section" id="canvasSection">
+        <div class="canvas-header">
+          <div class="canvas-title">
+            <div class="live-dot"></div>
+            <h2 id="canvasTitle">Violin — 3D Anatomy</h2>
+          </div>
+          <div class="canvas-actions">
+            <button class="canvas-btn" onclick="screenshotView()">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+              Screenshot
+            </button>
+            <button class="canvas-btn" onclick="shareModel()">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+              Share
+            </button>
+          </div>
+        </div>
+
+        <div class="viewer-wrap">
+          <canvas id="anatomy-canvas"></canvas>
+
+          <!-- Loading overlay -->
+          <div class="canvas-loading" id="canvasLoading">
+            <div class="loading-spinner"></div>
+            <div class="loading-text" id="loadingText">Rendering 3D model…</div>
+          </div>
+
+          <!-- Part labels overlay -->
+          <div class="labels-overlay" id="labelsOverlay"></div>
+
+          <!-- Floating Toolbar -->
+          <div class="anatomy-toolbar">
+            <button class="toolbar-btn active" id="btnRotate" onclick="setMode('rotate')">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.2"/></svg>
+              <span>Rotate</span>
+            </button>
+            <div class="toolbar-sep"></div>
+            <button class="toolbar-btn" id="btnWireframe" onclick="toggleWireframe()">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+              <span>Wireframe</span>
+            </button>
+            <button class="toolbar-btn" id="btnLabels" onclick="toggleLabels()">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
+              <span>Labels</span>
+            </button>
+            <button class="toolbar-btn" id="btnExplode" onclick="toggleExplode()">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+              <span>Explode</span>
+            </button>
+            <div class="toolbar-sep"></div>
+            <button class="toolbar-btn" id="btnReset" onclick="resetView()">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+              <span>Reset</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="canvas-footer">
+          <div class="canvas-hints">
+            <div class="hint-item"><span class="hint-key">Drag</span> Rotate</div>
+            <div class="hint-item"><span class="hint-key">Scroll</span> Zoom</div>
+            <div class="hint-item"><span class="hint-key">Right drag</span> Pan</div>
+            <div class="hint-item"><span class="hint-key">Click part</span> Select</div>
+          </div>
+          <div class="canvas-mode-badge" id="modeBadge">Interactive Mode</div>
+        </div>
+      </div>
+
+      <!-- Info Panel -->
+      <div class="info-panel">
+
+        <!-- Parts List -->
+        <div class="panel-card">
+          <div class="panel-card-header">
+            <div class="panel-card-title" id="partListTitle">Violin Parts</div>
+            <div class="panel-card-badge" id="partCount">14 parts</div>
+          </div>
+          <div class="parts-list" id="partsList"></div>
+        </div>
+
+        <!-- Detail Card -->
+        <div class="detail-card" id="detailCard">
+          <div class="detail-empty">
+            <div class="empty-icon">🎻</div>
+            <p>Click on a part in the list or 3D model to learn about it.</p>
+          </div>
+        </div>
+
+        <!-- Fun Fact -->
+        <div class="funfact-card" id="funfactCard">
+          <div class="funfact-label">✨ Did You Know?</div>
+          <div class="funfact-text" id="funfactText">A violin's body shape took over 200 years to evolve into its current form, perfected by luthiers in Cremona, Italy during the 16th–17th centuries.</div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== FOOTER ===== -->
+<footer class="footer">
+  <div class="container">
+    <div class="footer-top">
+      <div class="footer-brand">
+        <a href="home.html" class="nav-logo" style="margin-bottom:12px">
+          <div class="logo-icon">
+            <svg width="24" height="24" viewBox="0 0 36 36" fill="none">
+              <path d="M13 24V12l12 3v9" stroke="url(#fLogoGrad3)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+              <circle cx="11" cy="24" r="3" fill="url(#fLogoGrad3)"/>
+              <circle cx="23" cy="22" r="3" fill="url(#fLogoGrad3)"/>
+              <defs><linearGradient id="fLogoGrad3" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#a78bfa"/><stop offset="100%" style="stop-color:#ec4899"/></linearGradient></defs>
+            </svg>
+          </div>
+          <span class="logo-text">Harmonia</span>
+        </a>
+        <p>The modern music learning platform for curious minds and creative souls.</p>
+        <div class="footer-social">
+          <a href="#" aria-label="Twitter">🐦</a>
+          <a href="#" aria-label="Instagram">📸</a>
+          <a href="#" aria-label="YouTube">▶️</a>
+          <a href="#" aria-label="Discord">💬</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h5>Training</h5>
+        <a href="training.html">Learning Path</a>
+        <a href="theory-quiz.html">Theory Quiz</a>
+        <a href="ear-training.html">Ear Training</a>
+        <a href="practice-mode.html">Practice Mode</a>
+      </div>
+      <div class="footer-col">
+        <h5>3D Anatomy</h5>
+        <a href="instrument-parts.html">Instrument Parts</a>
+        <a href="sound-physics.html">Sound Physics</a>
+        <a href="#">Genre Explorer</a>
+        <a href="#">Composer Library</a>
+      </div>
+      <div class="footer-col">
+        <h5>Account</h5>
+        <a href="#">Dashboard</a>
+        <a href="#">Achievements</a>
+        <a href="#">Leaderboard</a>
+        <a href="#">Settings</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div>©️ 2026 Harmonia. All rights reserved.</div>
+      <div class="accessibility">
+        <span>Accessibility:</span>
+        <button onclick="adjustFont(-1)">A−</button>
+        <button onclick="adjustFont(1)">A+</button>
+        <button onclick="toggleTheme()" id="footerThemeBtn">🌙 Dark Mode</button>
+      </div>
+      <div class="footer-legal">
+        <a href="#">Privacy</a>
+        <a href="#">Terms</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<div class="toast" id="toast"></div>
+
+<!-- Three.js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+// =====================================================
+//  HARMONIA — 3D INSTRUMENT ANATOMY
+//  instrument-parts.js (inline)
+// =====================================================
+
+/* ===== INSTRUMENT DATA ===== */
+const INSTRUMENTS = {
+  violin: {
+    name: 'Violin',
+    emoji: '🎻',
+    funfact: 'A violin\'s body shape took over 200 years to evolve into its current form, perfected by luthiers in Cremona, Italy during the 16th–17th centuries.',
+    parts: [
+      { id:'scroll',       name:'Scroll',          sub:'Decorative head',   color:'#c8a96e', emoji:'🌀', category:'Head', desc:'The scroll is the decorative carved spiral at the top of the violin pegbox. While purely ornamental, it is considered a mark of the luthier\'s artistry and skill.', facts:[{l:'Material',v:'Spruce or Maple'},{l:'Function',v:'Decorative'},{l:'Location',v:'Head of instrument'}] },
+      { id:'pegbox',       name:'Peg Box',          sub:'Holds tuning pegs', color:'#a0754b', emoji:'📦', category:'Head', desc:'The peg box is the hollow box at the top of the neck that houses the four tuning pegs. Each peg is friction-fit into a hole and used to adjust string tension and pitch.', facts:[{l:'Pegs',v:'4 (E,A,D,G)'},{l:'Material',v:'Ebony or Rosewood'},{l:'Function',v:'Houses tuning pegs'}] },
+      { id:'pegs',         name:'Tuning Pegs',      sub:'4 friction pegs',   color:'#2d1810', emoji:'🔧', category:'Head', desc:'Violin tuning pegs are tapered wooden pins that are friction-fit into the peg box. Turning them adjusts string tension and therefore pitch. Fine-tuners on the tailpiece assist for micro adjustments.', facts:[{l:'Number',v:'4 pegs'},{l:'Material',v:'Ebony, Boxwood'},{l:'Turn direction',v:'Clockwise tightens'}] },
+      { id:'neck',         name:'Neck',             sub:'Spruce/maple neck',  color:'#c8a96e', emoji:'📏', category:'Neck', desc:'The neck connects the scroll/pegbox to the body. It is glued to the instrument body at a carefully calibrated angle that determines string height and playability. The fingerboard is glued on top.', facts:[{l:'Length',v:'~130mm (full size)'},{l:'Material',v:'Maple'},{l:'Angle',v:'~5° backwards'}] },
+      { id:'fingerboard',  name:'Fingerboard',      sub:'Ebony playing surface',color:'#1a1008',emoji:'🖤', category:'Neck', desc:'The fingerboard is a smooth, curved slab of ebony glued to the top of the neck. Players press strings against it to change pitch. It has no frets — the violin is a fretless instrument requiring precise finger placement.', facts:[{l:'Material',v:'Ebony (premium)'},{l:'Length',v:'~270mm'},{l:'Frets',v:'None — fretless'}] },
+      { id:'nut',          name:'Nut',              sub:'String spacer at top', color:'#f0e8d0', emoji:'⚡', category:'Neck', desc:'The nut is a small carved piece of ebony or bone at the top of the fingerboard. It has four tiny grooves that space the strings correctly and determine the string\'s playing height (action) at the neck end.', facts:[{l:'Material',v:'Ebony or Bone'},{l:'Grooves',v:'4 string slots'},{l:'Function',v:'Spacing & action'}] },
+      { id:'body',         name:'Body',             sub:'Hollow resonance box', color:'#d4a857', emoji:'🎻', category:'Body', desc:'The violin body is a hollow wooden resonance box consisting of two arched plates (top/back) joined by curved ribs. The shape — with its characteristic waist — allows bow clearance while maximizing acoustic resonance.', facts:[{l:'Top plate',v:'Spruce'},{l:'Back & sides',v:'Maple'},{l:'Body length',v:'~356mm (full size)'}] },
+      { id:'top-plate',   name:'Top Plate',         sub:'Spruce soundboard',   color:'#e8d5a0', emoji:'🪵', category:'Body', desc:'The top plate (or belly) is the most acoustically critical part of the violin, carved from spruce. Its graduated thickness — thicker in the center, thinner at the edges — controls resonance and tone character across different frequencies.', facts:[{l:'Material',v:'Sitka or European Spruce'},{l:'Thickness',v:'2.0–4.5mm (graduated)'},{l:'F-holes',v:'2 carved openings'}] },
+      { id:'fholes',       name:'F-Holes',          sub:'Sound openings',       color:'#1a1008', emoji:'〰️', category:'Body', desc:'F-holes are the two f-shaped openings cut into the top plate of the violin. They allow sound to escape from the body and also make the top plate more flexible for improved resonance. Their exact shape and position affect the instrument\'s tone.', facts:[{l:'Shape',v:'Stylized letter F'},{l:'Function',v:'Sound projection'},{l:'Effect',v:'Controls top flexibility'}] },
+      { id:'bridge',       name:'Bridge',           sub:'Transmits vibrations',  color:'#c8a96e', emoji:'🌉', category:'Body', desc:'The bridge is a precisely carved piece of maple that stands upright on the top plate, transmitting string vibrations to the body. It is not glued — held in place only by string tension. The bridge shape and fit are critical to tone.', facts:[{l:'Material',v:'Maple'},{l:'Attachment',v:'Friction only'},{l:'Adjustable',v:'Yes — affects tone & height'}] },
+      { id:'soundpost',    name:'Sound Post',       sub:'Interior bass amplifier', color:'#c0a060', emoji:'🏛️', category:'Interior', desc:'The sound post is a small wooden dowel inside the violin, positioned just behind the treble foot of the bridge. It transfers vibrations between the top and back plates and dramatically affects the tone. Even tiny movements of the sound post change the sound.', facts:[{l:'Material',v:'Spruce'},{l:'Location',v:'Inside body, behind bridge'},{l:'Function',v:'Connects top & back plates'}] },
+      { id:'bassbar',      name:'Bass Bar',         sub:'Interior resonance bar', color:'#a08040', emoji:'🔩', category:'Interior', desc:'The bass bar is a long strip of spruce glued to the inside of the top plate, running lengthwise under the bass string side of the bridge. It distributes low-frequency vibrations across the top plate and provides structural support.', facts:[{l:'Material',v:'Spruce'},{l:'Location',v:'Inside top plate, bass side'},{l:'Function',v:'Distributes bass frequencies'}] },
+      { id:'tailpiece',    name:'Tailpiece',        sub:'String anchor',          color:'#2d1810', emoji:'⚓', category:'Lower', desc:'The tailpiece anchors the strings at the lower end of the instrument. It is attached to the end block via a tailgut looped around the endpin. Many tailpieces include built-in fine tuners for precise pitch adjustment.', facts:[{l:'Material',v:'Ebony, Carbon fiber'},{l:'Fine tuners',v:'0–4 (optional)'},{l:'Attached via',v:'Tailgut to endpin'}] },
+      { id:'chinrest',     name:'Chin Rest',        sub:'Player comfort fitting', color:'#1a1008', emoji:'🫦', category:'Lower', desc:'The chin rest is a shaped piece of wood or composite material attached to the lower bout of the violin. It helps the player hold the instrument between their chin and shoulder, reducing neck strain during performance.', facts:[{l:'Material',v:'Ebony, Boxwood, Composite'},{l:'Attachment',v:'Clamps to lower bout'},{l:'Inventor',v:'Louis Spohr, c.1820'}] },
+    ]
+  },
+  guitar: {
+    name: 'Guitar',
+    emoji: '🎸',
+    funfact: 'A standard acoustic guitar has about 160 lbs (73 kg) of string tension pulling on the neck — which is why proper truss rod adjustment is critical for a playable instrument.',
+    parts: [
+      { id:'headstock',    name:'Headstock',        sub:'Machine heads anchor',   color:'#8B4513', emoji:'🎸', category:'Head', desc:'The headstock is the flat plate at the end of the guitar neck that holds the machine heads (tuning machines). Its shape varies by manufacturer and is often a distinctive brand identifier. It can be flat or angled back from the neck.', facts:[{l:'Angle',v:'0° (Fender) or 13° (Gibson)'},{l:'Material',v:'Same as neck'},{l:'Tuning pegs',v:'6 machine heads'}] },
+      { id:'tuning-machines', name:'Tuning Machines', sub:'Gear-driven tuners', color:'#888888', emoji:'⚙️', category:'Head', desc:'Tuning machines (machine heads) are gear-driven mechanisms that allow precise string tension adjustment. They consist of a button, post, and internal worm gear that gives high mechanical advantage — small button turns create tiny pitch changes.', facts:[{l:'Gear ratio',v:'14:1 to 18:1 typical'},{l:'Material',v:'Metal (chrome, gold, black)'},{l:'Posts',v:'6 (3 per side or inline)'}] },
+      { id:'guitar-nut',   name:'Nut',              sub:'Open string spacing',    color:'#f0e8d0', emoji:'📐', category:'Head', desc:'The nut is a small slotted piece at the junction of the headstock and neck. It sets string height (action) and spacing at the upper end of the neck, affecting playability and intonation of open strings.', facts:[{l:'Material',v:'Bone, Plastic, Tusq'},{l:'Slots',v:'6 string grooves'},{l:'Height',v:'Critical for playability'}] },
+      { id:'guitar-neck',  name:'Neck',             sub:'Plays and sustains',     color:'#c8a96e', emoji:'📏', category:'Neck', desc:'The guitar neck provides the playing surface for the fretting hand. It houses the truss rod (a metal rod for relief adjustment), is capped by the fingerboard, and connects to the body via a bolt-on, set-neck, or neck-through joint.', facts:[{l:'Material',v:'Maple, Mahogany'},{l:'Join',v:'Bolt-on, Set, or Thru'},{l:'Truss rod',v:'Yes — adjusts relief'}] },
+      { id:'frets',        name:'Frets',            sub:'Chromatic scale markers', color:'#d4d4d4', emoji:'🎼', category:'Neck', desc:'Frets are thin metal strips embedded across the fingerboard. Each fret raises pitch by one semitone. When a string is pressed behind a fret, it contacts the fret wire and produces the fret\'s pitch rather than the string\'s full length.', facts:[{l:'Standard number',v:'20–24 frets'},{l:'Material',v:'Nickel-silver alloy'},{l:'Spacing',v:'12th fret = 1 octave'}] },
+      { id:'guitar-body',  name:'Body',             sub:'Acoustic resonance box',  color:'#c88030', emoji:'🫙', category:'Body', desc:'The acoustic guitar body is a hollow resonance chamber. The top (soundboard), back, and sides work together to amplify string vibrations acoustically. Body shape (dreadnought, concert, jumbo) affects volume and tonal balance.', facts:[{l:'Top',v:'Spruce or Cedar'},{l:'Back & Sides',v:'Mahogany, Rosewood'},{l:'Shapes',v:'Dreadnought, OM, Jumbo…'}] },
+      { id:'soundhole',    name:'Sound Hole',       sub:'Acoustic projection port', color:'#1a0a00', emoji:'⭕', category:'Body', desc:'The sound hole is the circular opening in the center of the acoustic guitar top. It projects the sound produced inside the body outward. Roundel inlays (rosettes) around the hole add decorative detail and reinforce the opening.', facts:[{l:'Shape',v:'Round (or oval on some)'},{l:'Diameter',v:'~100mm typical'},{l:'Rosette',v:'Decorative inlay around edge'}] },
+      { id:'guitar-bridge', name:'Bridge',          sub:'Saddle & pin anchor',     color:'#3d1f00', emoji:'🌉', category:'Body', desc:'The acoustic guitar bridge is glued to the soundboard and transfers string vibrations into the top. String ends are secured with bridge pins, and the saddle (a small strip) sets intonation and action at the body end.', facts:[{l:'Material',v:'Rosewood, Ebony'},{l:'Saddle',v:'Bone or Tusq'},{l:'Pins',v:'6 bridge pins'}] },
+      { id:'saddle',       name:'Saddle',           sub:'Intonation component',    color:'#f5f0e0', emoji:'🔲', category:'Body', desc:'The saddle is a small strip sitting in a slot in the bridge that the strings pass over. It determines the exact string length for accurate intonation. Compensated saddles have slight offsets to improve intonation across all strings.', facts:[{l:'Material',v:'Bone, Tusq, Plastic'},{l:'Function',v:'Sets intonation & action'},{l:'Compensation',v:'Staggered for accuracy'}] },
+      { id:'bracing',      name:'Bracing',          sub:'Internal top reinforcement', color:'#d0b060', emoji:'🏗️', category:'Interior', desc:'Acoustic guitar bracing is a pattern of wooden struts glued inside the top and back plates. Scalloped X-bracing (common on steel-string guitars) stiffens the soundboard against string tension while allowing vibration for projection.', facts:[{l:'Pattern',v:'X-bracing (steel string)'},{l:'Material',v:'Spruce'},{l:'Function',v:'Strength & tone control'}] },
+      { id:'strap-button', name:'Strap Button',     sub:'Strap attachment point',   color:'#888888', emoji:'🔘', category:'Lower', desc:'Strap buttons are metal posts screwed into the body (heel and end block) that guitar straps attach to. End strap pins typically accept standard strap locks for secure attachment during standing performance.', facts:[{l:'Number',v:'2 (heel & endpin)'},{l:'Material',v:'Nickel or Chrome'},{l:'Locking options',v:'Strap locks available'}] },
+    ]
+  },
+  piano: {
+    name: 'Piano',
+    emoji: '🎹',
+    funfact: 'A modern grand piano has roughly 12,000 individual parts. The action mechanism alone contains over 5,000 components — requiring extraordinary precision in both manufacture and regulation.',
+    parts: [
+      { id:'keys',         name:'Keys',             sub:'88 keyboard range',    color:'#f5f5f5', emoji:'⬜', category:'Keyboard', desc:'A standard piano has 88 keys: 52 white and 36 black. White keys correspond to natural notes; black keys to sharps/flats. Keys are levers that, when pressed, trigger the action mechanism to strike strings.', facts:[{l:'Total keys',v:'88'},{l:'White keys',v:'52'},{l:'Black keys',v:'36'}] },
+      { id:'hammers',      name:'Hammers',          sub:'Felt-covered strikers', color:'#f0e0c0', emoji:'🔨', category:'Action', desc:'Piano hammers are covered in dense felt and strike the strings when keys are pressed. Hammer weight and density determine touch response. After striking, the hammer must rebound immediately to allow the string to vibrate freely.', facts:[{l:'Material',v:'Wood + felt covering'},{l:'Action',v:'Strike and rebound'},{l:'Voicing',v:'Needled for tone'}] },
+      { id:'strings',      name:'Strings',          sub:'Steel + copper wound',  color:'#888888', emoji:'〰️', category:'Soundboard', desc:'Piano strings are made of high-tensile steel wire. Bass strings are wound with copper to add mass without excessive length. Each key typically strikes 2–3 strings tuned in unison for richness. The piano has approximately 230 strings.', facts:[{l:'Total',v:'~230 strings'},{l:'Bass',v:'Single copper-wound'},{l:'Treble',v:'3 strings per note'}] },
+      { id:'soundboard',   name:'Soundboard',       sub:'Acoustic amplifier',    color:'#e0c878', emoji:'🪵', category:'Soundboard', desc:'The piano soundboard is a large, slightly arched sheet of spruce that converts string vibrations into audible sound. Its large surface area amplifies vibrations acoustically. The soundboard\'s condition is the primary determinant of a piano\'s tonal quality.', facts:[{l:'Material',v:'Spruce'},{l:'Size',v:'~2.3m² (grand piano)'},{l:'Crown',v:'Slightly arched upward'}] },
+      { id:'dampers',      name:'Dampers',          sub:'Stops string vibration', color:'#8080a0', emoji:'🛑', category:'Action', desc:'Dampers are felt pads that rest on strings and stop them from vibrating when a key is released. The damper pedal lifts all dampers simultaneously, allowing strings to vibrate freely and blend together.', facts:[{l:'Function',v:'Stop string vibrations'},{l:'Damper pedal',v:'Lifts all dampers'},{l:'High notes',v:'No dampers above F6'}] },
+      { id:'pedals',       name:'Pedals',           sub:'Sustain, Soft, Una Corda', color:'#c8a020', emoji:'🦶', category:'Lower', desc:'The grand piano has three pedals: the right (damper/sustain) pedal lifts all dampers; the left (una corda) pedal shifts hammers to strike fewer strings; the middle (sostenuto) pedal sustains selected notes. Uprights may differ.', facts:[{l:'Damper pedal',v:'Most used — sustain'},{l:'Una corda',v:'Soft — shifts hammers'},{l:'Sostenuto',v:'Selective sustain'}] },
+      { id:'lid',          name:'Lid',              sub:'Sound projection prop',  color:'#1a1008', emoji:'🪪', category:'Case', desc:'The grand piano lid can be propped open to various heights to project sound outward toward the audience. Full open gives maximum projection and brightness; half stick gives a warmer, blended tone. Studio grands often perform with the lid up.', facts:[{l:'Position',v:'Full / Half / Closed'},{l:'Effect',v:'Controls projection'},{l:'Material',v:'Lacquered wood'}] },
+      { id:'frame',        name:'Cast Iron Frame',  sub:'Supports 20 tons tension', color:'#606060', emoji:'🏗️', category:'Structure', desc:'The cast iron plate (frame or harp) bears the enormous string tension — approximately 20 tons in a concert grand. It is the heaviest single component of a piano. The combination of the iron frame with the wooden soundboard is the "composite string-plate" design unique to modern pianos.', facts:[{l:'String tension',v:'~20 tons total'},{l:'Material',v:'Cast iron'},{l:'Weight',v:'Most of piano\'s weight'}] },
+    ]
+  },
+  trumpet: {
+    name: 'Trumpet',
+    emoji: '🎺',
+    funfact: 'The total tubing length of a Bb trumpet is approximately 134cm (4.4 feet) when fully extended — all coiled into a compact instrument that fits in one hand.',
+    parts: [
+      { id:'bell',         name:'Bell',             sub:'Sound projection flare', color:'#c8a000', emoji:'🔔', category:'Bell', desc:'The bell is the flared end of the trumpet through which sound exits. Its size, taper angle, and material affect tone color (timbre). A larger bell produces a darker, broader sound; a smaller bell creates a brighter, more focused tone.', facts:[{l:'Material',v:'Brass (Yellow or Rose)'},{l:'Bell diameter',v:'~125mm for Bb trumpet'},{l:'Plating',v:'Lacquer, Silver, or Gold'}] },
+      { id:'leadpipe',     name:'Lead Pipe',        sub:'First section of tubing', color:'#c8a000', emoji:'📡', category:'Body', desc:'The lead pipe is the initial section of tubing that the player blows into. It tapers from the mouthpiece receiver to the first valve. The lead pipe\'s taper significantly influences the trumpet\'s overall resistance and playability.', facts:[{l:'Taper',v:'Cylindrical to slightly conical'},{l:'Position',v:'Connects mouthpiece to 1st valve'},{l:'Effect',v:'Affects resistance & tone'}] },
+      { id:'valves',       name:'Valves',           sub:'3 rotary/piston valves', color:'#a08000', emoji:'⚗️', category:'Valves', desc:'The three valves redirect airflow through additional tubing sections to change pitch. Pressing valve 1 lowers pitch by 2 semitones; valve 2 by 1 semitone; valve 3 by 3 semitones. Combinations produce all 12 chromatic pitches.', facts:[{l:'Number',v:'3 valves'},{l:'Type',v:'Piston (rotary on some models)'},{l:'Combinations',v:'7 positions (1-2-3)'}] },
+      { id:'valve-slides', name:'Valve Slides',     sub:'Intonation tubing',      color:'#b09000', emoji:'📐', category:'Valves', desc:'Each valve has an associated slide (a U-shaped tube) that can be pulled out to adjust intonation. The first and third valve slides typically have rings for quick adjustment during playing. The third valve slide is often used for A and low D intonation.', facts:[{l:'Number',v:'3 valve slides'},{l:'Rings',v:'1st and 3rd typically'},{l:'Use',v:'Intonation adjustment'}] },
+      { id:'main-tuning-slide', name:'Main Tuning Slide', sub:'Overall pitch adjustment', color:'#c0a000', emoji:'🎚️', category:'Body', desc:'The main tuning slide is the large U-shaped slide near the mouthpiece end. Pulling it out (extending it) lowers overall pitch; pushing in raises it. Players tune to A=440Hz (or concert pitch) using this slide.', facts:[{l:'Function',v:'Overall pitch tuning'},{l:'Direction',v:'Pull out = lower pitch'},{l:'Reference',v:'Tune to A=440Hz'}] },
+      { id:'mouthpiece',   name:'Mouthpiece',       sub:'Player embouchure cup',  color:'#d0d0d0', emoji:'💬', category:'Mouthpiece', desc:'The mouthpiece is a removable cup-shaped component where the player buzzes their lips to produce sound. Cup depth and diameter significantly affect playing characteristics — deep cups produce darker sound; shallow cups create brightness and ease in high registers.', facts:[{l:'Material',v:'Silver-plated brass'},{l:'Cup depth',v:'Shallow/medium/deep'},{l:'Shank',v:'Bach, Yamaha, Denis Wick systems'}] },
+      { id:'water-key',    name:'Water Key',        sub:'Condensation drain',     color:'#a08000', emoji:'💧', category:'Maintenance', desc:'The water key (spit valve) is a spring-loaded mechanism that opens a small hole in the tubing to drain condensation. Despite being called a "spit valve," the moisture is water vapor from the player\'s breath condensing inside the cold tubing.', facts:[{l:'Also called',v:'Spit valve'},{l:'Content',v:'Condensation, not saliva'},{l:'Location',v:'Lowest point of main slide'}] },
+    ]
+  },
+  drums: {
+    name: 'Drums',
+    emoji: '🥁',
+    funfact: 'The modern drum kit was invented largely out of necessity — before the 1900s, multiple percussionists were needed. The bass drum pedal (invented ~1909) allowed one player to control multiple drums.',
+    parts: [
+      { id:'snare',        name:'Snare Drum',       sub:'Signature crack sound',  color:'#d0d0d0', emoji:'⚪', category:'Drums', desc:'The snare drum is the most characteristic drum in the kit, producing the iconic "crack" sound on beats 2 and 4. Metal snare wires stretched across the bottom head vibrate against it when the top head is struck, creating the distinctive buzzing timbre.', facts:[{l:'Sizes',v:'14"×5" to 14"×8" typical'},{l:'Snares',v:'8–20 wire strands'},{l:'Material',v:'Steel, Aluminum, Wood'}] },
+      { id:'bass-drum',    name:'Bass Drum',        sub:'Kick pedal driven',      color:'#4a2000', emoji:'🔵', category:'Drums', desc:'The bass drum is the largest drum in the kit, played with a foot pedal. It provides the foundational low-frequency pulse, typically on beats 1 and 3 in most popular music. Its beater (mallet on the pedal) strikes the front head.', facts:[{l:'Common sizes',v:'18"–22" diameter'},{l:'Muffling',v:'Pillow or foam inside'},{l:'Depth',v:'14"–18"'}] },
+      { id:'hi-hat',       name:'Hi-Hat',           sub:'Foot-controlled cymbals', color:'#d4b030', emoji:'🟡', category:'Cymbals', desc:'The hi-hat consists of two cymbals mounted on a stand, controlled by a foot pedal. Open hi-hat (pedal up) produces a washy, open sound; closed (pedal down) makes a tight chick. Hand playing with sticks creates the rhythm "pulse" in most styles.', facts:[{l:'Size',v:'13"–15" typical'},{l:'Pedal',v:'Opens/closes cymbals'},{l:'Playing',v:'Stick, foot, or hand'}] },
+      { id:'crash',        name:'Crash Cymbal',     sub:'Accent & transition',    color:'#d09000', emoji:'💫', category:'Cymbals', desc:'Crash cymbals are used for accents, section transitions, and dramatic moments. Thinner and more explosive than ride cymbals, they decay quickly after being struck. Most kits have 1–3 crashes of different sizes (typically 14"–18").', facts:[{l:'Size range',v:'14"–18"'},{l:'Function',v:'Accents & transitions'},{l:'Thickness',v:'Thin (bright) to medium'}] },
+      { id:'ride',         name:'Ride Cymbal',      sub:'Continuous pattern keeper', color:'#c89000', emoji:'🔶', category:'Cymbals', desc:'The ride cymbal is the largest cymbal, typically 20"–22", used for sustained rhythmic patterns. Its bell produces a clear, cutting tone; its bow gives a controlled, defined ping. It is the primary time-keeping cymbal in jazz.', facts:[{l:'Size',v:'20"–22" typical'},{l:'Playing zones',v:'Bell, bow, and edge'},{l:'Use',v:'Jazz, rock, pop patterns'}] },
+      { id:'tom-toms',     name:'Tom-Toms',         sub:'Melodic fills & accents', color:'#5a2000', emoji:'🟤', category:'Drums', desc:'Tom-toms (toms) are cylindrical drums without snares used for fills, accents, and melodic phrases. Most kits include two mounted toms (on the bass drum) and one or two floor toms. Their sizes determine pitch — smaller = higher.', facts:[{l:'Common sizes',v:'8"–16"'},{l:'Mounted',v:'Above bass drum'},{l:'Floor tom',v:'Stands independently'}] },
+      { id:'drum-pedal',   name:'Bass Drum Pedal',  sub:'Foot-operated beater',   color:'#404040', emoji:'🦶', category:'Hardware', desc:'The bass drum pedal converts foot motion into a beater strike on the bass drum head. Spring tension determines rebound speed. Double bass pedals allow two feet to control one or two bass drums, enabling fast continuous patterns.', facts:[{l:'Spring',v:'Adjustable tension'},{l:'Beater',v:'Felt or hard beater'},{l:'Double pedal',v:'Available for fast playing'}] },
+      { id:'drum-sticks',  name:'Drumsticks',       sub:'Player\'s primary tool',  color:'#c8a060', emoji:'🥢', category:'Tools', desc:'Drumsticks are the primary playing tool, typically made from hickory, maple, or oak. The tip shape (acorn, tear-drop, barrel, oval) affects cymbal tone. Sizes range from 7A (lightest, jazz) to 2B (heaviest, rock/marching).', facts:[{l:'Common material',v:'Hickory (most popular)'},{l:'Tip shapes',v:'Acorn, round, barrel, oval'},{l:'Size range',v:'7A (light) to 2B (heavy)'}] },
+    ]
+  },
+  flute: {
+    name: 'Flute',
+    emoji: '🪈',
+    funfact: 'The flute is one of the oldest known musical instruments. Bone flutes found in Europe date back over 40,000 years — predating all other known instruments.',
+    parts: [
+      { id:'head-joint',   name:'Head Joint',       sub:'Embouchure & tone hole', color:'#d0d0e8', emoji:'💨', category:'Head', desc:'The head joint is where the player blows across the embouchure hole to produce sound. It is the most critical component for tone quality — its wall thickness, riser height, and cut shape dramatically affect the instrument\'s voice and response.', facts:[{l:'Material',v:'Silver, Gold, Platinum'},{l:'Embouchure hole',v:'Oval opening'},{l:'Riser',v:'Chimney around hole'}] },
+      { id:'embouchure',   name:'Embouchure Hole',  sub:'Sound generation point', color:'#b0b0c8', emoji:'⭕', category:'Head', desc:'The embouchure hole is the oval opening in the head joint that the player blows across. Sound is produced by splitting the airstream across the edge. Subtle lip shape (embouchure) adjustments control pitch, tone, and dynamics.', facts:[{l:'Shape',v:'Oval'},{l:'Sound production',v:'Split airstream technique'},{l:'Controls',v:'Pitch, tone, dynamics'}] },
+      { id:'flute-body',   name:'Body Joint',       sub:'Main key mechanism',     color:'#d0d0e8', emoji:'🪈', category:'Body', desc:'The body joint contains the majority of the key mechanism — the rods, posts, pads, and springs that open and close tone holes. Precise pad seating is essential for proper intonation. The body is typically made from silver alloy tubing.', facts:[{l:'Material',v:'Silver-plated or solid silver'},{l:'Keys',v:'~15 key mechanism'},{l:'Pads',v:'Leather or synthetic'}] },
+      { id:'tone-holes',   name:'Tone Holes',       sub:'Covered by key pads',    color:'#c0c0d8', emoji:'🔵', category:'Body', desc:'Tone holes are the openings in the tube that control pitch when covered or uncovered. Open-hole (French model) flutes leave some tone holes uncovered for advanced techniques; closed-hole (plateau) models cover all holes with key cups.', facts:[{l:'Number',v:'16 tone holes'},{l:'Models',v:'Open-hole or closed-hole'},{l:'Material',v:'Part of the tube body'}] },
+      { id:'foot-joint',   name:'Foot Joint',       sub:'Low register extension', color:'#d0d0e8', emoji:'🦶', category:'Foot', desc:'The foot joint is the bottom section of the flute, extending its range downward. A C foot joint extends to low C; a B foot joint adds one more note (low B). The additional key on the B foot is called the gizmo key, used for the highest altissimo notes.', facts:[{l:'C foot',v:'Extends to low C4'},{l:'B foot',v:'Extends to low B3'},{l:'Gizmo key',v:'On B foot for high notes'}] },
+      { id:'flute-keys',   name:'Keys & Springs',   sub:'Mechanism for tone holes', color:'#a0a0b8', emoji:'⚙️', category:'Mechanism', desc:'The flute key mechanism uses a complex system of rod-axles, posts, cup keys, and small springs to open and close pads over tone holes. The keys are interconnected so that pressing certain keys automatically closes others, allowing smooth passage through scales.', facts:[{l:'Key system',v:'Boehm system (1847)'},{l:'Springs',v:'Blue steel or gold'},{l:'Adjustment',v:'Regulation (shimming pads)'}] },
+    ]
+  },
+  cello: {
+    name: 'Cello',
+    emoji: '🪗',
+    funfact: 'A full-size cello is tuned C-G-D-A (the same intervals as a violin, but an octave lower). Its endpin was not always used — before the 19th century, cellists held the instrument between their calves.',
+    parts: [
+      { id:'cello-scroll', name:'Scroll',           sub:'Carved decorative head', color:'#c8a96e', emoji:'🌀', category:'Head', desc:'The cello scroll mirrors the violin\'s design but is larger. It is purely decorative, representing the luthier\'s craftsmanship. The scroll transitions into the peg box, which houses the four tuning pegs.', facts:[{l:'Material',v:'Spruce or Maple'},{l:'Function',v:'Decorative'},{l:'Size',v:'Larger than violin scroll'}] },
+      { id:'cello-neck',   name:'Neck',             sub:'Wide playing neck',      color:'#c8a96e', emoji:'📏', category:'Neck', desc:'The cello neck is considerably longer and wider than the violin\'s to accommodate the lower-pitched, thicker strings and larger finger spacing required. It is set at a slight backward angle into the body for correct string height.', facts:[{l:'Length',v:'~290mm (full size)'},{l:'Material',v:'Maple'},{l:'Scale length',v:'~690mm (full size)'}] },
+      { id:'cello-body',   name:'Body',             sub:'Large resonance chamber', color:'#d4a857', emoji:'🎻', category:'Body', desc:'The cello body is significantly larger than the violin — approximately 75cm for a full size. Its deeper, wider resonance chamber produces the warm, rich lower register the cello is famous for. The characteristic waist curves allow bow access.', facts:[{l:'Body length',v:'~755mm (full size)'},{l:'Top plate',v:'Spruce'},{l:'Back & sides',v:'Maple'}] },
+      { id:'cello-bridge', name:'Bridge',           sub:'String height & vibration', color:'#c8a96e', emoji:'🌉', category:'Body', desc:'The cello bridge is larger and more massively carved than the violin bridge, designed to handle the higher string tension and lower frequencies. Like the violin, it stands upright held only by string tension, transmitting vibrations to the body.', facts:[{l:'Material',v:'Maple'},{l:'Height',v:'~90mm'},{l:'Function',v:'Transmits vibrations to top'}] },
+      { id:'endpin',       name:'Endpin',           sub:'Floor support spike',     color:'#404040', emoji:'📌', category:'Lower', desc:'The endpin (spike) is a metal rod that extends from the bottom of the cello body and rests on the floor to support the instrument. Players use rubber tips or endpin stops to prevent slipping. Its use became standard in the mid-19th century.', facts:[{l:'Material',v:'Steel or Titanium'},{l:'Adopted',v:'Mid-19th century'},{l:'Tip options',v:'Rubber, spike, floor anchor'}] },
+      { id:'cello-bow',    name:'Bow',              sub:'Pernambuco or carbon fiber', color:'#c8a060', emoji:'🏹', category:'Tools', desc:'The cello bow is heavier and shorter than the violin bow, weighted for the greater string mass. Made from pernambuco wood or modern carbon fiber, the bow hair (horse hair) is rosined to create friction against the strings and produce sustained tones.', facts:[{l:'Length',v:'~73cm'},{l:'Weight',v:'~80g'},{l:'Hair',v:'Horse hair, ~180 strands'}] },
+      { id:'cello-strings', name:'Strings',         sub:'C-G-D-A tuning',         color:'#888888', emoji:'〰️', category:'Body', desc:'Cello strings are tuned C2-G2-D3-A3. The C string (lowest) is thick gut or steel wound with tungsten; upper strings are gut-core or synthetic. Modern strings use synthetic cores for stability, while gut provides warmth and complexity.', facts:[{l:'Tuning',v:'C – G – D – A'},{l:'C string',v:'Steel wound with tungsten'},{l:'Core options',v:'Gut, Synthetic, Steel'}] },
+    ]
+  }
+};
+
+/* ===== STATE ===== */
+let currentInstrument = 'violin';
+let selectedPart = null;
+let isWireframe = false;
+let labelsVisible = false;
+let isExploded = false;
+let explodeProgress = 0;
+let explodeTarget = 0;
+let scene, camera, renderer, animId;
+let isDragging = false, lastMouse = { x: 0, y: 0 };
+let rotX = 0.3, rotY = 0.0, rotSpeed = 0.005;
+let autoRotate = true;
+let zoom = 1.0;
+let panX = 0, panY = 0;
+let parts3D = []; // { mesh, data, originalPos }
+let raycaster, mouse;
+let ambientLight, dirLight1, dirLight2;
+
+/* ===== INIT THREE.JS ===== */
+function initThree() {
+  const canvas = document.getElementById('anatomy-canvas');
+  const w = canvas.clientWidth, h = canvas.clientHeight || 540;
+  canvas.width = w; canvas.height = h;
+
+  scene = new THREE.Scene();
+  camera = new THREE.PerspectiveCamera(50, w / h, 0.1, 1000);
+  camera.position.set(0, 0, 5);
+
+  renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+  renderer.setSize(w, h);
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  renderer.setClearColor(0x000000, 0);
+
+  // Lights
+  ambientLight = new THREE.AmbientLight(0x334455, 0.8);
+  scene.add(ambientLight);
+  dirLight1 = new THREE.DirectionalLight(0xa78bfa, 1.2);
+  dirLight1.position.set(3, 5, 3);
+  scene.add(dirLight1);
+  dirLight2 = new THREE.DirectionalLight(0x38bdf8, 0.7);
+  dirLight2.position.set(-3, -2, -3);
+  scene.add(dirLight2);
+
+  raycaster = new THREE.Raycaster();
+  mouse = new THREE.Vector2();
+
+  setupInteraction(canvas);
+  loadInstrumentModel(currentInstrument);
+  animate();
+  window.addEventListener('resize', onResize);
+}
+
+function onResize() {
+  const canvas = document.getElementById('anatomy-canvas');
+  const w = canvas.clientWidth, h = canvas.clientHeight || 540;
+  camera.aspect = w / h;
+  camera.updateProjectionMatrix();
+  renderer.setSize(w, h);
+}
+
+/* ===== ANIMATION LOOP ===== */
+function animate() {
+  animId = requestAnimationFrame(animate);
+
+  // Auto rotate when not interacting
+  if (autoRotate && !isDragging) {
+    rotY += rotSpeed;
+  }
+
+  // Explode animation
+  if (explodeProgress !== explodeTarget) {
+    explodeProgress += (explodeTarget - explodeProgress) * 0.06;
+    if (Math.abs(explodeTarget - explodeProgress) < 0.001) explodeProgress = explodeTarget;
+    updateExplodePositions();
+  }
+
+  // Apply rotation to all parts group
+  parts3D.forEach(p => {
+    // rotation applied via group later
+  });
+
+  if (scene.userData.group) {
+    scene.userData.group.rotation.x = rotX;
+    scene.userData.group.rotation.y = rotY;
+    scene.userData.group.position.x = panX;
+    scene.userData.group.position.y = panY;
+    scene.userData.group.scale.setScalar(zoom);
+  }
+
+  renderer.render(scene, camera);
+  updateLabelPositions();
+}
+
+/* ===== INSTRUMENT MODEL GENERATION ===== */
+function loadInstrumentModel(name) {
+  showLoading(true);
+  clearScene();
+  parts3D = [];
+  setTimeout(() => {
+    buildInstrumentGeometry(name);
+    populatePartsList(name);
+    updateFunFact(name);
+    updateCanvasTitle(name);
+    resetCameraSmooth();
+    showLoading(false);
+  }, 500);
+}
+
+function clearScene() {
+  if (scene.userData.group) {
+    scene.remove(scene.userData.group);
+    scene.userData.group = null;
+  }
+}
+
+function buildInstrumentGeometry(name) {
+  const group = new THREE.Group();
+  scene.userData.group = group;
+  scene.add(group);
+  rotX = 0.3; rotY = 0.0;
+
+  const builders = {
+    violin: buildViolin, guitar: buildGuitar,
+    piano: buildPiano, trumpet: buildTrumpet,
+    drums: buildDrums, flute: buildFlute, cello: buildCello
+  };
+  (builders[name] || buildViolin)(group);
+}
+
+/* ── VIOLIN ── */
+function buildViolin(group) {
+  const wood = mat(0xc8a045, 0.6); // warm amber
+  const dark = mat(0x2a1a08, 0.3);
+  const ebony = mat(0x1a1008, 0.1);
+  const metal = mat(0x888888, 0.9, true);
+  const string_ = mat(0x999999, 0.8, true);
+
+  // Body (upper + lower bout + waist)
+  const bodyGeo = new THREE.LatheGeometry([
+    new THREE.Vector2(0, -1.0),
+    new THREE.Vector2(0.55, -0.85),
+    new THREE.Vector2(0.65, -0.6),
+    new THREE.Vector2(0.55, -0.4),
+    new THREE.Vector2(0.40, -0.25), // waist
+    new THREE.Vector2(0.38, -0.1),
+    new THREE.Vector2(0.55, 0.15),
+    new THREE.Vector2(0.65, 0.4),
+    new THREE.Vector2(0.58, 0.65),
+    new THREE.Vector2(0.40, 0.85),
+    new THREE.Vector2(0.15, 0.95),
+    new THREE.Vector2(0, 1.0)
+  ], 32);
+  const body = new THREE.Mesh(bodyGeo, wood);
+  body.scale.z = 0.22;
+  addPart(group, body, 'body', [0,0,0]);
+
+  // Neck
+  const neckGeo = new THREE.CylinderGeometry(0.09, 0.13, 1.2, 12);
+  const neck = new THREE.Mesh(neckGeo, wood);
+  addPart(group, neck, 'neck', [0, 1.55, 0]);
+
+  // Fingerboard
+  const fbGeo = new THREE.BoxGeometry(0.15, 1.1, 0.05);
+  const fb = new THREE.Mesh(fbGeo, ebony);
+  addPart(group, fb, 'fingerboard', [0, 1.55, 0.07]);
+
+  // Peg box
+  const pbGeo = new THREE.BoxGeometry(0.13, 0.5, 0.11);
+  const pb = new THREE.Mesh(pbGeo, wood);
+  addPart(group, pb, 'pegbox', [0, 2.35, 0]);
+
+  // Scroll
+  const scrollGeo = new THREE.TorusGeometry(0.12, 0.04, 8, 16, Math.PI * 1.5);
+  const scroll = new THREE.Mesh(scrollGeo, wood);
+  scroll.rotation.z = Math.PI / 4;
+  addPart(group, scroll, 'scroll', [0.04, 2.7, 0]);
+
+  // Tuning pegs (4)
+  [[-0.09, 2.5], [-0.09, 2.35], [0.09, 2.5], [0.09, 2.35]].forEach(([x, y], i) => {
+    const pegGeo = new THREE.CylinderGeometry(0.02, 0.02, 0.18, 8);
+    const peg = new THREE.Mesh(pegGeo, ebony);
+    peg.rotation.z = Math.PI / 2;
+    addPart(group, peg, 'pegs', [x, y, 0]);
+  });
+
+  // Bridge
+  const bridgeGeo = new THREE.BoxGeometry(0.32, 0.25, 0.02);
+  const bridge = new THREE.Mesh(bridgeGeo, wood);
+  addPart(group, bridge, 'bridge', [0, 0.1, 0.14]);
+
+  // Strings (4)
+  for (let i = 0; i < 4; i++) {
+    const x = -0.06 + i * 0.04;
+    const strGeo = new THREE.CylinderGeometry(0.005, 0.005, 3.0, 4);
+    const str = new THREE.Mesh(strGeo, string_);
+    addPart(group, str, 'nut', [x, 0.95, 0.1]);
+  }
+
+  // Tailpiece
+  const tpGeo = new THREE.BoxGeometry(0.25, 0.3, 0.04);
+  const tp = new THREE.Mesh(tpGeo, ebony);
+  addPart(group, tp, 'tailpiece', [0, -0.55, 0.1]);
+
+  // Chinrest
+  const crGeo = new THREE.BoxGeometry(0.28, 0.18, 0.05);
+  const cr = new THREE.Mesh(crGeo, ebony);
+  cr.rotation.x = 0.2;
+  addPart(group, cr, 'chinrest', [0.1, -0.8, 0.12]);
+
+  // F-holes (flat)
+  [[-0.25, 0.05], [0.25, 0.05]].forEach(([x, y]) => {
+    const fhGeo = new THREE.PlaneGeometry(0.04, 0.28);
+    const fh = new THREE.Mesh(fhGeo, dark);
+    addPart(group, fh, 'fholes', [x, y, 0.22]);
+  });
+
+  // Sound post (tiny cylinder inside)
+  const spGeo = new THREE.CylinderGeometry(0.02, 0.02, 0.2, 8);
+  const sp = new THREE.Mesh(spGeo, mat(0xc0a060, 0.4));
+  addPart(group, sp, 'soundpost', [0.1, 0.1, 0]);
+
+  group.position.y = -0.2;
+}
+
+/* ── GUITAR ── */
+function buildGuitar(group) {
+  const wood = mat(0xc88030, 0.5);
+  const dark = mat(0x3d1f00, 0.3);
+  const ebony = mat(0x1a0a00, 0.1);
+  const metal = mat(0xcccccc, 0.9, true);
+  const string_ = mat(0xaaaaaa, 0.8, true);
+
+  // Body
+  const bodyGeo = new THREE.LatheGeometry([
+    new THREE.Vector2(0, -1.2),
+    new THREE.Vector2(0.7, -1.0),
+    new THREE.Vector2(0.85, -0.6),
+    new THREE.Vector2(0.78, -0.2),
+    new THREE.Vector2(0.62, 0.0),
+    new THREE.Vector2(0.6, 0.15), // waist
+    new THREE.Vector2(0.7, 0.4),
+    new THREE.Vector2(0.8, 0.7),
+    new THREE.Vector2(0.72, 0.95),
+    new THREE.Vector2(0.5, 1.1),
+    new THREE.Vector2(0.2, 1.2),
+    new THREE.Vector2(0, 1.25)
+  ], 40);
+  const body = new THREE.Mesh(bodyGeo, wood);
+  body.scale.z = 0.2;
+  addPart(group, body, 'guitar-body', [0, 0, 0]);
+
+  // Sound hole
+  const shGeo = new THREE.TorusGeometry(0.22, 0.03, 8, 32);
+  const sh = new THREE.Mesh(shGeo, dark);
+  addPart(group, sh, 'soundhole', [0, 0.3, 0.22]);
+
+  // Neck
+  const neckGeo = new THREE.CylinderGeometry(0.1, 0.12, 1.8, 12);
+  const neck = new THREE.Mesh(neckGeo, mat(0xc8a96e, 0.4));
+  addPart(group, neck, 'guitar-neck', [0, 2.0, 0]);
+
+  // Fingerboard
+  const fbGeo = new THREE.BoxGeometry(0.22, 1.7, 0.04);
+  const fb = new THREE.Mesh(fbGeo, ebony);
+  addPart(group, fb, 'frets', [0, 2.0, 0.06]);
+
+  // Fret wires (6)
+  for (let i = 0; i < 6; i++) {
+    const y = 1.2 + i * 0.18;
+    const fretGeo = new THREE.BoxGeometry(0.24, 0.01, 0.045);
+    const fret = new THREE.Mesh(fretGeo, metal);
+    addPart(group, fret, 'frets', [0, y, 0.07]);
+  }
+
+  // Headstock
+  const hgGeo = new THREE.BoxGeometry(0.26, 0.6, 0.1);
+  const hg = new THREE.Mesh(hgGeo, mat(0xc8a96e, 0.4));
+  addPart(group, hg, 'headstock', [0, 3.1, 0.0]);
+
+  // Tuners (6)
+  [[-0.1,2.95],[-0.1,3.1],[-0.1,3.25],[0.1,2.95],[0.1,3.1],[0.1,3.25]].forEach(([x,y]) => {
+    const tGeo = new THREE.CylinderGeometry(0.025, 0.025, 0.15, 8);
+    const t = new THREE.Mesh(tGeo, metal);
+    t.rotation.z = Math.PI/2;
+    addPart(group, t, 'tuning-machines', [x, y, 0]);
+  });
+
+  // Nut
+  const nutGeo = new THREE.BoxGeometry(0.25, 0.04, 0.05);
+  const nut = new THREE.Mesh(nutGeo, mat(0xf0e8d0, 0.3));
+  addPart(group, nut, 'guitar-nut', [0, 2.82, 0.05]);
+
+  // Bridge
+  const bgGeo = new THREE.BoxGeometry(0.45, 0.1, 0.06);
+  const bg = new THREE.Mesh(bgGeo, dark);
+  addPart(group, bg, 'guitar-bridge', [0, -0.55, 0.22]);
+
+  // Saddle
+  const sagGeo = new THREE.BoxGeometry(0.35, 0.04, 0.035);
+  const sag = new THREE.Mesh(sagGeo, mat(0xf5f0e0, 0.3));
+  addPart(group, sag, 'saddle', [0, -0.5, 0.25]);
+
+  // Strings
+  for (let i = 0; i < 6; i++) {
+    const x = -0.1 + i * 0.04;
+    const sGeo = new THREE.CylinderGeometry(0.005, 0.005, 4.2, 4);
+    const s = new THREE.Mesh(sGeo, string_);
+    addPart(group, s, 'guitar-neck', [x, 1.1, 0.09]);
+  }
+
+  // Strap button
+  const sbGeo = new THREE.CylinderGeometry(0.04, 0.04, 0.06, 12);
+  const sb = new THREE.Mesh(sbGeo, metal);
+  sb.rotation.x = Math.PI/2;
+  addPart(group, sb, 'strap-button', [0, -1.22, 0]);
+
+  group.position.y = -0.3;
+}
+
+/* ── PIANO ── */
+function buildPiano(group) {
+  const black = mat(0x1a1008, 0.2);
+  const white = mat(0xf5f5f0, 0.3);
+  const ivory = mat(0xf0e8d0, 0.3);
+  const goldMat = mat(0xc8a020, 0.9, true);
+  const felt = mat(0x8080a0, 0.8);
+
+  // Main case
+  const caseGeo = new THREE.BoxGeometry(3.6, 0.8, 1.2);
+  const caseM = new THREE.Mesh(caseGeo, black);
+  addPart(group, caseM, 'frame', [0, 0, 0]);
+
+  // Lid (angled)
+  const lidGeo = new THREE.BoxGeometry(3.6, 0.06, 1.2);
+  const lid = new THREE.Mesh(lidGeo, black);
+  lid.rotation.x = -0.3;
+  addPart(group, lid, 'lid', [0, 0.5, -0.18]);
+
+  // Keyboard area
+  const kbGeo = new THREE.BoxGeometry(3.2, 0.12, 0.5);
+  const kb = new THREE.Mesh(kbGeo, mat(0xe0e0e0, 0.2));
+  addPart(group, kb, 'keys', [0, 0.46, 0.4]);
+
+  // White keys (14 visible)
+  for (let i = 0; i < 14; i++) {
+    const kGeo = new THREE.BoxGeometry(0.19, 0.1, 0.45);
+    const k = new THREE.Mesh(kGeo, ivory);
+    addPart(group, k, 'keys', [-1.2 + i * 0.21, 0.52, 0.4]);
+  }
+
+  // Black keys (10 visible)
+  [0.1, 0.31, 0.73, 0.94, 1.15, 1.56, 1.77, 2.19, 2.4, 2.61].forEach(xOff => {
+    const bkGeo = new THREE.BoxGeometry(0.12, 0.12, 0.28);
+    const bk = new THREE.Mesh(bkGeo, black);
+    addPart(group, bk, 'keys', [-1.2 + xOff, 0.58, 0.27]);
+  });
+
+  // Strings representation
+  for (let i = 0; i < 8; i++) {
+    const sGeo = new THREE.CylinderGeometry(0.008, 0.008, 2.0, 4);
+    const s = new THREE.Mesh(sGeo, goldMat);
+    s.rotation.z = Math.PI/2;
+    s.rotation.x = 0.2;
+    addPart(group, s, 'strings', [-0.6 + i * 0.18, 0.15, -0.2]);
+  }
+
+  // Soundboard
+  const sbGeo = new THREE.BoxGeometry(3.3, 0.04, 0.9);
+  const sb = new THREE.Mesh(sbGeo, mat(0xe0c878, 0.4));
+  addPart(group, sb, 'soundboard', [0, 0.3, -0.1]);
+
+  // Pedals (3)
+  [-0.25, 0, 0.25].forEach(x => {
+    const pGeo = new THREE.CylinderGeometry(0.04, 0.035, 0.5, 12);
+    const p = new THREE.Mesh(pGeo, goldMat);
+    addPart(group, p, 'pedals', [x, -0.65, 0.4]);
+  });
+
+  // Legs (3)
+  [[-1.5, 0.3],  [1.5, 0.3], [0, -0.6]].forEach(([x, z]) => {
+    const lGeo = new THREE.CylinderGeometry(0.06, 0.06, 1.2, 12);
+    const l = new THREE.Mesh(lGeo, black);
+    addPart(group, l, 'frame', [x, -1.0, z]);
+  });
+
+  // Hammers row
+  for (let i = 0; i < 6; i++) {
+    const hGeo = new THREE.BoxGeometry(0.12, 0.08, 0.3);
+    const h = new THREE.Mesh(hGeo, mat(0xf0e0c0, 0.5));
+    addPart(group, h, 'hammers', [-0.5 + i * 0.2, 0.28, 0.15]);
+  }
+
+  // Dampers
+  for (let i = 0; i < 5; i++) {
+    const dGeo = new THREE.BoxGeometry(0.14, 0.06, 0.1);
+    const d = new THREE.Mesh(dGeo, felt);
+    addPart(group, d, 'dampers', [-0.4 + i * 0.2, 0.33, 0.1]);
+  }
+
+  group.position.y = 0.5;
+  group.scale.setScalar(0.55);
+}
+
+/* ── TRUMPET ── */
+function buildTrumpet(group) {
+  const brass = mat(0xc8a000, 0.7, true);
+  const darkBrass = mat(0xa08000, 0.6, true);
+  const silver = mat(0xd0d0d0, 0.9, true);
+
+  // Main tubing (simplified as curved tubes)
+  const curve1 = new THREE.CatmullRomCurve3([
+    new THREE.Vector3(-2, 0, 0),
+    new THREE.Vector3(-1.5, 0.5, 0),
+    new THREE.Vector3(-0.5, 0.8, 0),
+    new THREE.Vector3(0.5, 0.5, 0),
+    new THREE.Vector3(1.0, 0, 0),
+    new THREE.Vector3(0.5, -0.5, 0),
+    new THREE.Vector3(-0.5, -0.8, 0),
+    new THREE.Vector3(-1.5, -0.3, 0),
+    new THREE.Vector3(-1.8, 0.3, 0)
+  ]);
+  const tubeGeo1 = new THREE.TubeGeometry(curve1, 64, 0.065, 10, false);
+  const tube1 = new THREE.Mesh(tubeGeo1, brass);
+  addPart(group, tube1, 'leadpipe', [0, 0, 0]);
+
+  // Bell
+  const bellPoints = [
+    new THREE.Vector2(0.07, 0),
+    new THREE.Vector2(0.08, 0.2),
+    new THREE.Vector2(0.1, 0.4),
+    new THREE.Vector2(0.15, 0.6),
+    new THREE.Vector2(0.25, 0.75),
+    new THREE.Vector2(0.4, 0.85),
+    new THREE.Vector2(0.6, 0.88)
+  ];
+  const bellGeo = new THREE.LatheGeometry(bellPoints, 32);
+  const bell = new THREE.Mesh(bellGeo, brass);
+  bell.rotation.z = -Math.PI / 2;
+  addPart(group, bell, 'bell', [-2.2, 0, 0]);
+
+  // Valves (3)
+  [-0.3, 0.2, 0.7].forEach((x, i) => {
+    const vGeo = new THREE.CylinderGeometry(0.13, 0.13, 0.5, 16);
+    const v = new THREE.Mesh(vGeo, darkBrass);
+    addPart(group, v, 'valves', [x, 0.6, 0]);
+    // Button
+    const bGeo = new THREE.CylinderGeometry(0.07, 0.07, 0.15, 12);
+    const b = new THREE.Mesh(bGeo, silver);
+    addPart(group, b, 'valves', [x, 1.1, 0]);
+  });
+
+  // Valve slides
+  [-0.5, 0.0, 0.5].forEach((x, i) => {
+    const s1 = new THREE.CylinderGeometry(0.05, 0.05, 0.6, 8);
+    const s = new THREE.Mesh(s1, darkBrass);
+    s.rotation.z = Math.PI / 2;
+    addPart(group, s, 'valve-slides', [x, 0.1, 0.3]);
+  });
+
+  // Main tuning slide
+  const tsCurve = new THREE.CatmullRomCurve3([
+    new THREE.Vector3(1.2, 0, 0), new THREE.Vector3(1.5, 0.3, 0), new THREE.Vector3(1.5, 0.5, 0), new THREE.Vector3(1.2, 0.5, 0)
+  ]);
+  const tsGeo = new THREE.TubeGeometry(tsCurve, 20, 0.055, 8, false);
+  const ts = new THREE.Mesh(tsGeo, darkBrass);
+  addPart(group, ts, 'main-tuning-slide', [0, 0, 0]);
+
+  // Mouthpiece
+  const mpPoints = [
+    new THREE.Vector2(0.09, 0),
+    new THREE.Vector2(0.12, 0.15),
+    new THREE.Vector2(0.1, 0.25),
+    new THREE.Vector2(0.07, 0.35),
+    new THREE.Vector2(0.06, 0.5)
+  ];
+  const mpGeo = new THREE.LatheGeometry(mpPoints, 20);
+  const mp = new THREE.Mesh(mpGeo, silver);
+  mp.rotation.z = -Math.PI / 2;
+  addPart(group, mp, 'mouthpiece', [2.1, 0, 0]);
+
+  // Water key
+  const wkGeo = new THREE.SphereGeometry(0.06, 8, 8);
+  const wk = new THREE.Mesh(wkGeo, darkBrass);
+  addPart(group, wk, 'water-key', [-1.0, -0.5, 0]);
+
+  group.scale.setScalar(0.55);
+}
+
+/* ── DRUMS ── */
+function buildDrums(group) {
+  const chrome = mat(0xcccccc, 0.9, true);
+  const metalBrass = mat(0xc8a000, 0.8, true);
+  const drumHead = mat(0xf0f0e8, 0.2);
+  const woodRed = mat(0x8B2000, 0.4);
+  const woodBrown = mat(0x5a2000, 0.5);
+  const darkGray = mat(0x404040, 0.5);
+
+  // Bass drum (large horizontal cylinder)
+  const bdGeo = new THREE.CylinderGeometry(0.9, 0.9, 0.9, 32);
+  const bd = new THREE.Mesh(bdGeo, woodRed);
+  bd.rotation.z = Math.PI/2;
+  addPart(group, bd, 'bass-drum', [-1.0, -0.7, 0]);
+  // Bass drum head
+  const bdhGeo = new THREE.CircleGeometry(0.9, 32);
+  const bdh = new THREE.Mesh(bdhGeo, drumHead);
+  addPart(group, bdh, 'bass-drum', [-0.55, -0.7, 0]);
+
+  // Snare drum
+  const sgGeo = new THREE.CylinderGeometry(0.45, 0.45, 0.22, 32);
+  const sg = new THREE.Mesh(sgGeo, chrome);
+  addPart(group, sg, 'snare', [0.3, -0.5, 0.5]);
+  const sHd = new THREE.Mesh(new THREE.CircleGeometry(0.45, 32), drumHead);
+  sHd.rotation.x = -Math.PI/2;
+  addPart(group, sHd, 'snare', [0.3, -0.39, 0.5]);
+
+  // Hi-hat stand & cymbals
+  const hiHatLower = new THREE.Mesh(new THREE.CylinderGeometry(0.4, 0.38, 0.025, 32), metalBrass);
+  addPart(group, hiHatLower, 'hi-hat', [0.7, 0.1, -0.3]);
+  const hiHatUpper = new THREE.Mesh(new THREE.CylinderGeometry(0.38, 0.36, 0.02, 32), metalBrass);
+  addPart(group, hiHatUpper, 'hi-hat', [0.7, 0.18, -0.3]);
+  // Stand rod
+  const hhRodGeo = new THREE.CylinderGeometry(0.02, 0.02, 1.2, 8);
+  const hhRod = new THREE.Mesh(hhRodGeo, chrome);
+  addPart(group, hhRod, 'hi-hat', [0.7, -0.4, -0.3]);
+
+  // Tom 1 (small, mounted)
+  const t1Geo = new THREE.CylinderGeometry(0.3, 0.3, 0.26, 32);
+  const t1 = new THREE.Mesh(t1Geo, woodRed);
+  addPart(group, t1, 'tom-toms', [-0.4, 0.3, 0]);
+  addPart(group, new THREE.Mesh(new THREE.CircleGeometry(0.3, 32), drumHead), 'tom-toms', [-0.4, 0.43, 0]);
+
+  // Tom 2
+  const t2Geo = new THREE.CylinderGeometry(0.34, 0.34, 0.28, 32);
+  const t2 = new THREE.Mesh(t2Geo, woodRed);
+  addPart(group, t2, 'tom-toms', [0.2, 0.25, 0]);
+  addPart(group, new THREE.Mesh(new THREE.CircleGeometry(0.34, 32), drumHead), 'tom-toms', [0.2, 0.39, 0]);
+
+  // Floor tom
+  const ftGeo = new THREE.CylinderGeometry(0.45, 0.45, 0.4, 32);
+  const ft = new THREE.Mesh(ftGeo, woodBrown);
+  addPart(group, ft, 'tom-toms', [1.2, -0.3, 0.2]);
+  addPart(group, new THREE.Mesh(new THREE.CircleGeometry(0.45, 32), drumHead), 'tom-toms', [1.2, -0.1, 0.2]);
+
+  // Crash cymbal
+  const crashGeo = new THREE.CylinderGeometry(0.55, 0.53, 0.025, 32);
+  const crash = new THREE.Mesh(crashGeo, metalBrass);
+  crash.rotation.x = 0.2;
+  addPart(group, crash, 'crash', [-0.8, 0.7, 0.2]);
+
+  // Ride cymbal
+  const rideGeo = new THREE.CylinderGeometry(0.65, 0.62, 0.025, 32);
+  const ride = new THREE.Mesh(rideGeo, metalBrass);
+  ride.rotation.x = 0.15;
+  addPart(group, ride, 'ride', [1.0, 0.4, -0.4]);
+
+  // Bass drum pedal
+  const bpGeo = new THREE.BoxGeometry(0.15, 0.6, 0.08);
+  const bp = new THREE.Mesh(bpGeo, darkGray);
+  addPart(group, bp, 'drum-pedal', [-1.0, -1.1, 0.6]);
+
+  // Drumsticks
+  const ds1Geo = new THREE.CylinderGeometry(0.018, 0.012, 1.0, 8);
+  const ds1 = new THREE.Mesh(ds1Geo, mat(0xc8a060, 0.3));
+  ds1.rotation.z = 0.5;
+  addPart(group, ds1, 'drum-sticks', [0.5, 0.2, 0.8]);
+  const ds2Geo = new THREE.CylinderGeometry(0.018, 0.012, 1.0, 8);
+  const ds2 = new THREE.Mesh(ds2Geo, mat(0xc8a060, 0.3));
+  ds2.rotation.z = -0.5;
+  addPart(group, ds2, 'drum-sticks', [0.7, 0.2, 0.8]);
+
+  group.scale.setScalar(0.65);
+  group.position.y = 0.3;
+}
+
+/* ── FLUTE ── */
+function buildFlute(group) {
+  const silver = mat(0xd0d0e8, 0.8, true);
+  const key = mat(0xa0a0b8, 0.7, true);
+  const pad = mat(0xc0a060, 0.5);
+
+  // Head joint
+  const hjGeo = new THREE.CylinderGeometry(0.055, 0.055, 0.9, 24);
+  const hj = new THREE.Mesh(hjGeo, silver);
+  hj.rotation.z = Math.PI/2;
+  addPart(group, hj, 'head-joint', [1.8, 0, 0]);
+
+  // Embouchure hole plate
+  const ePlate = new THREE.Mesh(new THREE.BoxGeometry(0.15, 0.1, 0.03), key);
+  addPart(group, ePlate, 'embouchure', [2.1, 0.055, 0]);
+
+  // Body joint (longer)
+  const bjGeo = new THREE.CylinderGeometry(0.055, 0.055, 2.2, 24);
+  const bj = new THREE.Mesh(bjGeo, silver);
+  bj.rotation.z = Math.PI/2;
+  addPart(group, bj, 'flute-body', [-0.2, 0, 0]);
+
+  // Foot joint
+  const fjGeo = new THREE.CylinderGeometry(0.052, 0.058, 0.55, 24);
+  const fj = new THREE.Mesh(fjGeo, silver);
+  fj.rotation.z = Math.PI/2;
+  addPart(group, fj, 'foot-joint', [-1.6, 0, 0]);
+
+  // Keys (several key cups on body)
+  const keyPositions = [-0.8, -0.5, -0.2, 0.1, 0.4, 0.7, 0.9, 1.1, 1.3, 1.5];
+  keyPositions.forEach(x => {
+    const cupGeo = new THREE.CylinderGeometry(0.055, 0.055, 0.02, 16);
+    const cup = new THREE.Mesh(cupGeo, key);
+    cup.rotation.z = Math.PI/2;
+    addPart(group, cup, 'flute-keys', [x, 0.065, 0]);
+    // Pad
+    const padGeo = new THREE.CylinderGeometry(0.04, 0.04, 0.01, 12);
+    const padM = new THREE.Mesh(padGeo, pad);
+    padM.rotation.z = Math.PI/2;
+    addPart(group, padM, 'tone-holes', [x, 0.08, 0]);
+    // Key arm
+    const armGeo = new THREE.CylinderGeometry(0.008, 0.008, 0.12, 6);
+    const arm = new THREE.Mesh(armGeo, key);
+    addPart(group, arm, 'flute-keys', [x, 0.13, 0]);
+  });
+
+  // Tone holes
+  [0.0, 0.3, 0.6, 0.9, 1.2, 1.5].forEach(x => {
+    const thGeo = new THREE.TorusGeometry(0.028, 0.007, 6, 16);
+    const th = new THREE.Mesh(thGeo, silver);
+    th.rotation.x = Math.PI/2;
+    addPart(group, th, 'tone-holes', [x - 0.6, -0.056, 0]);
+  });
+
+  group.scale.setScalar(0.75);
+  group.rotation.x = 0.3;
+}
+
+/* ── CELLO ── */
+function buildCello(group) {
+  const wood = mat(0xd4a857, 0.55);
+  const dark = mat(0x1a1008, 0.2);
+  const ebony = mat(0x1a1008, 0.1);
+  const metal = mat(0x888888, 0.9, true);
+  const string_ = mat(0x888888, 0.8, true);
+
+  // Body (larger than violin)
+  const bodyGeo = new THREE.LatheGeometry([
+    new THREE.Vector2(0, -1.4),
+    new THREE.Vector2(0.7, -1.2),
+    new THREE.Vector2(0.88, -0.85),
+    new THREE.Vector2(0.78, -0.45),
+    new THREE.Vector2(0.55, -0.22),
+    new THREE.Vector2(0.52, 0.0),
+    new THREE.Vector2(0.72, 0.3),
+    new THREE.Vector2(0.85, 0.6),
+    new THREE.Vector2(0.75, 0.9),
+    new THREE.Vector2(0.55, 1.1),
+    new THREE.Vector2(0.2, 1.25),
+    new THREE.Vector2(0, 1.3)
+  ], 36);
+  const body = new THREE.Mesh(bodyGeo, wood);
+  body.scale.z = 0.25;
+  addPart(group, body, 'cello-body', [0, 0, 0]);
+
+  // Neck
+  const neckGeo = new THREE.CylinderGeometry(0.11, 0.16, 1.5, 14);
+  const neck = new THREE.Mesh(neckGeo, wood);
+  addPart(group, neck, 'cello-neck', [0, 2.0, 0]);
+
+  // Fingerboard
+  const fbGeo = new THREE.BoxGeometry(0.2, 1.4, 0.06);
+  const fb = new THREE.Mesh(fbGeo, ebony);
+  addPart(group, fb, 'cello-neck', [0, 2.0, 0.08]);
+
+  // Peg box
+  const pbGeo = new THREE.BoxGeometry(0.17, 0.6, 0.13);
+  const pb = new THREE.Mesh(pbGeo, wood);
+  addPart(group, pb, 'cello-scroll', [0, 3.0, 0]);
+
+  // Scroll
+  const scrollGeo = new THREE.TorusGeometry(0.15, 0.05, 8, 16, Math.PI * 1.5);
+  const scroll = new THREE.Mesh(scrollGeo, wood);
+  scroll.rotation.z = Math.PI / 4;
+  addPart(group, scroll, 'cello-scroll', [0.05, 3.45, 0]);
+
+  // Bridge
+  const bridgeGeo = new THREE.BoxGeometry(0.44, 0.32, 0.025);
+  const bridge = new THREE.Mesh(bridgeGeo, wood);
+  addPart(group, bridge, 'cello-bridge', [0, 0.15, 0.18]);
+
+  // Strings (4)
+  for (let i = 0; i < 4; i++) {
+    const x = -0.07 + i * 0.046;
+    const sGeo = new THREE.CylinderGeometry(0.006, 0.006, 3.8, 4);
+    const s = new THREE.Mesh(sGeo, string_);
+    addPart(group, s, 'cello-strings', [x, 1.2, 0.12]);
+  }
+
+  // Tailpiece
+  const tpGeo = new THREE.BoxGeometry(0.32, 0.38, 0.05);
+  const tp = new THREE.Mesh(tpGeo, ebony);
+  addPart(group, tp, 'cello-strings', [0, -0.7, 0.12]);
+
+  // Endpin
+  const epGeo = new THREE.CylinderGeometry(0.03, 0.015, 1.0, 10);
+  const ep = new THREE.Mesh(epGeo, metal);
+  addPart(group, ep, 'endpin', [0, -2.1, 0]);
+
+  // F-holes
+  [[-0.32, 0.1], [0.32, 0.1]].forEach(([x, y]) => {
+    const fhGeo = new THREE.PlaneGeometry(0.055, 0.35);
+    const fh = new THREE.Mesh(fhGeo, dark);
+    addPart(group, fh, 'cello-body', [x, y, 0.26]);
+  });
+
+  // Bow
+  const bowGeo = new THREE.CylinderGeometry(0.012, 0.018, 3.0, 8);
+  const bow = new THREE.Mesh(bowGeo, mat(0xc8a060, 0.4));
+  bow.rotation.z = Math.PI/2;
+  addPart(group, bow, 'cello-bow', [0, 1.8, 0.4]);
+
+  group.position.y = -0.3;
+  group.scale.setScalar(0.85);
+}
+
+/* ===== HELPERS ===== */
+function mat(hexColor, roughness = 0.5, metallic = false) {
+  return new THREE.MeshStandardMaterial({
+    color: hexColor,
+    roughness: roughness,
+    metalness: metallic ? 0.7 : 0.05,
+  });
+}
+
+function addPart(group, mesh, partId, pos) {
+  mesh.position.set(pos[0], pos[1], pos[2]);
+  mesh.userData.partId = partId;
+  group.add(mesh);
+  parts3D.push({ mesh, partId, originalPos: { x: pos[0], y: pos[1], z: pos[2] } });
+}
+
+/* ===== EXPLODE POSITIONS ===== */
+function updateExplodePositions() {
+  const instr = INSTRUMENTS[currentInstrument];
+  if (!instr) return;
+  parts3D.forEach((p, i) => {
+    const explodeDir = new THREE.Vector3(
+      (p.originalPos.x) * 0.8,
+      (p.originalPos.y) * 0.5,
+      (p.originalPos.z + 0.2) * 1.2
+    ).normalize().multiplyScalar(explodeProgress * 1.2);
+    p.mesh.position.set(
+      p.originalPos.x + explodeDir.x,
+      p.originalPos.y + explodeDir.y,
+      p.originalPos.z + explodeDir.z
+    );
+  });
+}
+
+/* ===== INTERACTION ===== */
+function setupInteraction(canvas) {
+  let pinchStartDist = 0;
+
+  canvas.addEventListener('mousedown', e => {
+    isDragging = true; autoRotate = false;
+    lastMouse = { x: e.clientX, y: e.clientY };
+  });
+  canvas.addEventListener('mousemove', e => {
+    if (!isDragging) return;
+    const dx = e.clientX - lastMouse.x;
+    const dy = e.clientY - lastMouse.y;
+    if (e.buttons === 1) {
+      rotY += dx * 0.008;
+      rotX += dy * 0.008;
+      rotX = Math.max(-Math.PI/2, Math.min(Math.PI/2, rotX));
+    } else if (e.buttons === 2) {
+      panX += dx * 0.004;
+      panY -= dy * 0.004;
+    }
+    lastMouse = { x: e.clientX, y: e.clientY };
+  });
+  canvas.addEventListener('mouseup', () => { isDragging = false; });
+  canvas.addEventListener('mouseleave', () => { isDragging = false; });
+  canvas.addEventListener('contextmenu', e => e.preventDefault());
+  canvas.addEventListener('wheel', e => {
+    e.preventDefault();
+    zoom -= e.deltaY * 0.001;
+    zoom = Math.max(0.3, Math.min(3.0, zoom));
+  }, { passive: false });
+
+  // Touch support
+  canvas.addEventListener('touchstart', e => {
+    if (e.touches.length === 1) {
+      isDragging = true; autoRotate = false;
+      lastMouse = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+    } else if (e.touches.length === 2) {
+      pinchStartDist = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
+    }
+  }, { passive: true });
+  canvas.addEventListener('touchmove', e => {
+    if (e.touches.length === 1 && isDragging) {
+      const dx = e.touches[0].clientX - lastMouse.x;
+      const dy = e.touches[0].clientY - lastMouse.y;
+      rotY += dx * 0.008;
+      rotX += dy * 0.008;
+      rotX = Math.max(-Math.PI/2, Math.min(Math.PI/2, rotX));
+      lastMouse = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+    } else if (e.touches.length === 2) {
+      const dist = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
+      zoom *= dist / pinchStartDist;
+      zoom = Math.max(0.3, Math.min(3.0, zoom));
+      pinchStartDist = dist;
+    }
+  }, { passive: true });
+  canvas.addEventListener('touchend', () => { isDragging = false; }, { passive: true });
+
+  // Click to select part
+  canvas.addEventListener('click', e => {
+    if (isDragging) return;
+    const rect = canvas.getBoundingClientRect();
+    mouse.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
+    mouse.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
+    raycaster.setFromCamera(mouse, camera);
+    const objects = parts3D.map(p => p.mesh);
+    const intersects = raycaster.intersectObjects(objects);
+    if (intersects.length > 0) {
+      const partId = intersects[0].object.userData.partId;
+      if (partId) selectPart(partId);
+    }
+  });
+}
+
+/* ===== PART SELECTION ===== */
+function selectPart(partId) {
+  selectedPart = partId;
+  // Highlight in 3D
+  parts3D.forEach(p => {
+    if (p.mesh.material) {
+      p.mesh.material.emissive = p.partId === partId
+        ? new THREE.Color(0x38bdf8) : new THREE.Color(0x000000);
+      p.mesh.material.emissiveIntensity = p.partId === partId ? 0.3 : 0;
+    }
+  });
+  // Update UI
+  const items = document.querySelectorAll('.part-item');
+  items.forEach(item => {
+    item.classList.toggle('selected', item.dataset.partId === partId);
+  });
+  // Scroll to item
+  const selectedEl = document.querySelector(`.part-item[data-part-id="${partId}"]`);
+  if (selectedEl) selectedEl.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+  // Show detail
+  showPartDetail(partId);
+  showToast(`Selected: ${getPartName(partId)}`, 'info');
+}
+
+function getPartName(partId) {
+  const data = INSTRUMENTS[currentInstrument];
+  if (!data) return partId;
+  const part = data.parts.find(p => p.id === partId);
+  return part ? part.name : partId;
+}
+
+function showPartDetail(partId) {
+  const data = INSTRUMENTS[currentInstrument];
+  if (!data) return;
+  const part = data.parts.find(p => p.id === partId);
+  const card = document.getElementById('detailCard');
+  if (!part) return;
+  card.innerHTML = `
+    <div class="detail-card-top">
+      <div class="detail-icon">${part.emoji}</div>
+      <div class="detail-name">${part.name}</div>
+      <div class="detail-category">${part.category}</div>
+    </div>
+    <div class="detail-body">
+      <p class="detail-desc">${part.desc}</p>
+      <div class="detail-facts">
+        ${part.facts.map(f => `<div class="detail-fact"><span class="detail-fact-label">${f.l}</span><span class="detail-fact-value">${f.v}</span></div>`).join('')}
+      </div>
+    </div>
+  `;
+}
+
+/* ===== PARTS LIST ===== */
+function populatePartsList(name) {
+  const data = INSTRUMENTS[name];
+  if (!data) return;
+  const list = document.getElementById('partsList');
+  const title = document.getElementById('partListTitle');
+  const count = document.getElementById('partCount');
+  title.textContent = `${data.name} Parts`;
+  count.textContent = `${data.parts.length} parts`;
+  list.innerHTML = '';
+  data.parts.forEach(part => {
+    const item = document.createElement('div');
+    item.className = 'part-item';
+    item.dataset.partId = part.id;
+    item.onclick = () => selectPart(part.id);
+    item.innerHTML = `
+      <div class="part-color-dot" style="background:${part.color}"></div>
+      <div class="part-item-info">
+        <div class="part-item-name">${part.name}</div>
+        <div class="part-item-sub">${part.sub}</div>
+      </div>
+      <div class="part-item-arrow">›</div>
+    `;
+    list.appendChild(item);
+  });
+  // Reset detail card
+  document.getElementById('detailCard').innerHTML = `
+    <div class="detail-empty">
+      <div class="empty-icon">${data.emoji}</div>
+      <p>Click on a part in the list or 3D model to learn about it.</p>
+    </div>
+  `;
+}
+
+function updateFunFact(name) {
+  const data = INSTRUMENTS[name];
+  if (data) document.getElementById('funfactText').textContent = data.funfact;
+}
+
+function updateCanvasTitle(name) {
+  const data = INSTRUMENTS[name];
+  if (data) document.getElementById('canvasTitle').textContent = `${data.name} — 3D Anatomy`;
+}
+
+/* ===== TOOLBAR CONTROLS ===== */
+function setMode(mode) {
+  autoRotate = mode === 'rotate';
+  document.getElementById('btnRotate').classList.toggle('active', mode === 'rotate');
+  document.getElementById('modeBadge').textContent = mode === 'rotate' ? 'Interactive Mode' : 'Pan Mode';
+}
+
+function toggleWireframe() {
+  isWireframe = !isWireframe;
+  document.getElementById('btnWireframe').classList.toggle('active', isWireframe);
+  parts3D.forEach(p => {
+    if (p.mesh.material) p.mesh.material.wireframe = isWireframe;
+  });
+  showToast(isWireframe ? 'Wireframe mode ON' : 'Wireframe mode OFF', 'info');
+}
+
+function toggleLabels() {
+  labelsVisible = !labelsVisible;
+  document.getElementById('btnLabels').classList.toggle('active', labelsVisible);
+  updatePartLabels();
+  showToast(labelsVisible ? 'Labels visible' : 'Labels hidden', 'info');
+}
+
+function toggleExplode() {
+  isExploded = !isExploded;
+  explodeTarget = isExploded ? 1.0 : 0.0;
+  document.getElementById('btnExplode').classList.toggle('active', isExploded);
+  document.getElementById('canvasSection').classList.toggle('exploded', isExploded);
+  showToast(isExploded ? '💥 Exploded view' : 'Collapsed view', 'info');
+}
+
+function resetView() {
+  rotX = 0.3; rotY = 0.0;
+  zoom = 1.0; panX = 0; panY = 0;
+  autoRotate = true;
+  isWireframe = false; labelsVisible = false; isExploded = false;
+  explodeTarget = 0; explodeProgress = 0;
+  document.getElementById('btnWireframe').classList.remove('active');
+  document.getElementById('btnLabels').classList.remove('active');
+  document.getElementById('btnExplode').classList.remove('active');
+  document.getElementById('btnRotate').classList.add('active');
+  document.getElementById('canvasSection').classList.remove('exploded');
+  parts3D.forEach(p => {
+    if (p.mesh.material) {
+      p.mesh.material.wireframe = false;
+      p.mesh.material.emissive = new THREE.Color(0x000000);
+      p.mesh.material.emissiveIntensity = 0;
+    }
+    p.mesh.position.set(p.originalPos.x, p.originalPos.y, p.originalPos.z);
+  });
+  clearPartLabels();
+  selectedPart = null;
+  document.querySelectorAll('.part-item').forEach(i => i.classList.remove('selected'));
+  showToast('View reset', 'info');
+}
+
+function resetCameraSmooth() {
+  rotX = 0.3; rotY = 0;
+  zoom = 1.0; panX = 0; panY = 0;
+  autoRotate = true;
+}
+
+/* ===== PART LABELS ===== */
+function updatePartLabels() {
+  clearPartLabels();
+  if (!labelsVisible) return;
+  const overlay = document.getElementById('labelsOverlay');
+  const data = INSTRUMENTS[currentInstrument];
+  if (!data) return;
+  // Show labels for unique part IDs
+  const shown = new Set();
+  parts3D.forEach(p => {
+    if (shown.has(p.partId)) return;
+    shown.add(p.partId);
+    const part = data.parts.find(d => d.id === p.partId);
+    if (!part) return;
+    const labelEl = document.createElement('div');
+    labelEl.className = 'part-label visible';
+    labelEl.dataset.partId = p.partId;
+    labelEl.innerHTML = `<div class="part-label-dot"></div><div class="part-label-line"></div><div class="part-label-text">${part.name}</div>`;
+    labelEl.style.left = '20px';
+    labelEl.style.top = '20px';
+    overlay.appendChild(labelEl);
+  });
+}
+
+function updateLabelPositions() {
+  if (!labelsVisible || !scene.userData.group) return;
+  const overlay = document.getElementById('labelsOverlay');
+  const canvas = document.getElementById('anatomy-canvas');
+  const rect = canvas.getBoundingClientRect();
+  const w = canvas.width, h = canvas.height;
+  const shown = new Set();
+  document.querySelectorAll('.part-label').forEach(el => {
+    const pid = el.dataset.partId;
+    if (shown.has(pid)) { el.style.display = 'none'; return; }
+    shown.add(pid);
+    const p3 = parts3D.find(p => p.partId === pid);
+    if (!p3) return;
+    const pos3 = p3.mesh.getWorldPosition(new THREE.Vector3());
+    pos3.project(camera);
+    const x = (pos3.x * 0.5 + 0.5) * w;
+    const y = (-pos3.y * 0.5 + 0.5) * h;
+    if (x < 0 || x > w || y < 0 || y > h || pos3.z > 1) {
+      el.style.display = 'none';
+    } else {
+      el.style.display = 'flex';
+      el.style.left = x + 'px';
+      el.style.top = y + 'px';
+    }
+  });
+}
+
+function clearPartLabels() {
+  document.getElementById('labelsOverlay').innerHTML = '';
+}
+
+/* ===== INSTRUMENT SELECTOR ===== */
+function selectInstrument(btn, name) {
+  document.querySelectorAll('.instr-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  currentInstrument = name;
+  selectedPart = null;
+  isWireframe = false; labelsVisible = false; isExploded = false;
+  explodeTarget = 0; explodeProgress = 0;
+  document.getElementById('btnWireframe').classList.remove('active');
+  document.getElementById('btnLabels').classList.remove('active');
+  document.getElementById('btnExplode').classList.remove('active');
+  document.getElementById('canvasSection').classList.remove('exploded');
+  clearPartLabels();
+  loadInstrumentModel(name);
+}
+
+/* ===== UTILITY ===== */
+function showLoading(show) {
+  const el = document.getElementById('canvasLoading');
+  el.classList.toggle('hidden', !show);
+}
+
+function screenshotView() {
+  const canvas = document.getElementById('anatomy-canvas');
+  renderer.render(scene, camera);
+  const link = document.createElement('a');
+  link.download = `harmonia-${currentInstrument}-anatomy.png`;
+  link.href = canvas.toDataURL('image/png');
+  link.click();
+  showToast('Screenshot saved!', 'success');
+}
+
+function shareModel() {
+  const url = window.location.href + '?instrument=' + currentInstrument;
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(url).then(() => showToast('Link copied to clipboard!', 'success'));
+  } else {
+    showToast('Share: ' + url, 'info');
+  }
+}
+
+function showToast(msg, type = 'info') {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = `toast ${type} show`;
+  clearTimeout(window._toastTimer);
+  window._toastTimer = setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+/* ===== NAVBAR HELPERS ===== */
+const navbar = document.getElementById('navbar');
+window.addEventListener('scroll', () => {
+  navbar.classList.toggle('scrolled', window.scrollY > 20);
+}, { passive: true });
+
+function toggleMobileNav() {
+  const nav = document.getElementById('mobileNav');
+  const overlay = document.getElementById('mobileOverlay');
+  const open = nav.classList.toggle('open');
+  overlay.classList.toggle('open', open);
+  document.body.style.overflow = open ? 'hidden' : '';
+}
+
+function toggleProfile() {
+  document.getElementById('profileMenu').classList.toggle('open');
+}
+
+document.addEventListener('click', e => {
+  const menu = document.getElementById('profileMenu');
+  if (!menu.contains(e.target)) menu.classList.remove('open');
+});
+
+function toggleSearch() {
+  const wrap = document.getElementById('searchWrap');
+  const open = wrap.classList.toggle('open');
+  if (open) setTimeout(() => document.getElementById('searchInput').focus(), 320);
+}
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') {
+    document.getElementById('searchWrap').classList.remove('open');
+    document.getElementById('profileMenu').classList.remove('open');
+  }
+  if ((e.ctrlKey || e.metaKey) && e.key === 'k') { e.preventDefault(); toggleSearch(); }
+  // Keyboard shortcuts for toolbar
+  if (e.key === 'w' || e.key === 'W') toggleWireframe();
+  if (e.key === 'l' || e.key === 'L') toggleLabels();
+  if (e.key === 'e' || e.key === 'E') toggleExplode();
+  if (e.key === 'r' || e.key === 'R') resetView();
+});
+
+let isDarkTheme = true;
+function toggleTheme() {
+  isDarkTheme = !isDarkTheme;
+  document.documentElement.setAttribute('data-theme', isDarkTheme ? 'dark' : 'light');
+  const sun = document.querySelector('.navbar .sun');
+  const moon = document.querySelector('.navbar .moon');
+  if (sun) sun.style.display = isDarkTheme ? 'block' : 'none';
+  if (moon) moon.style.display = isDarkTheme ? 'none' : 'block';
+  const fb = document.getElementById('footerThemeBtn');
+  if (fb) fb.textContent = isDarkTheme ? '🌙 Dark Mode' : '☀️ Light Mode';
+}
+
+let fontScale = 1;
+function adjustFont(delta) {
+  fontScale = Math.max(0.85, Math.min(1.25, fontScale + delta * 0.05));
+  document.documentElement.style.setProperty('--font-base', fontScale + 'rem');
+}
+
+/* ===== URL PARAM SUPPORT ===== */
+(function checkParams() {
+  const params = new URLSearchParams(window.location.search);
+  const instr = params.get('instrument');
+  if (instr && INSTRUMENTS[instr]) {
+    const btn = document.querySelector(`.instr-btn[data-instrument="${instr}"]`);
+    if (btn) selectInstrument(btn, instr);
+  }
+})();
+
+/* ===== BOOT ===== */
+window.addEventListener('DOMContentLoaded', () => {
+  initThree();
+});
+window.addEventListener('beforeunload', () => {
+  if (animId) cancelAnimationFrame(animId);
+  if (renderer) renderer.dispose();
+});
+</script>
+</body>
+</html>
