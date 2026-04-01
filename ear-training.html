@@ -1,0 +1,889 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ear Training – Harmonia</title>
+  <link rel="stylesheet" href="styles/home.css" />
+  <link rel="stylesheet" href="styles/ear-training.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+</head>
+<body>
+
+<!-- ===== NAVBAR ===== -->
+<nav class="navbar" id="navbar">
+  <div class="nav-inner">
+    <a href="home.html" class="nav-logo">
+      <div class="logo-icon">
+        <svg width="28" height="28" viewBox="0 0 36 36" fill="none">
+          <defs>
+            <linearGradient id="navLogoGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" style="stop-color:#a78bfa"/>
+              <stop offset="100%" style="stop-color:#ec4899"/>
+            </linearGradient>
+          </defs>
+          <path d="M13 24V12l12 3v9" stroke="url(#navLogoGrad)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+          <circle cx="11" cy="24" r="3" fill="url(#navLogoGrad)"/>
+          <circle cx="23" cy="22" r="3" fill="url(#navLogoGrad)"/>
+        </svg>
+      </div>
+      <span class="logo-text">Harmonia</span>
+    </a>
+
+    <ul class="nav-links" id="navLinks">
+      <li class="nav-item has-dropdown">
+        <button class="nav-link active-nav">
+          Training
+          <svg class="caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m6 9 6 6 6-6"/></svg>
+        </button>
+        <div class="dropdown">
+          <div class="dropdown-inner">
+            <a href="learning-path.html" class="dd-item">
+              <span class="dd-icon">🛤️</span>
+              <span class="dd-content"><strong>Learning Path</strong><span>Structured curriculum</span></span>
+            </a>
+            <a href="theory-quiz.html" class="dd-item">
+              <span class="dd-icon">🧠</span>
+              <span class="dd-content"><strong>Theory Quiz</strong><span>Test your knowledge</span></span>
+              <span class="dd-tag xp">+XP</span>
+            </a>
+            <a href="ear-training.html" class="dd-item">
+              <span class="dd-icon">👂</span>
+              <span class="dd-content"><strong>Ear Training</strong><span>Sharpen your hearing</span></span>
+            </a>
+            <a href="practice-mode.html" class="dd-item">
+              <span class="dd-icon">🎸</span>
+              <span class="dd-content"><strong>Practice Mode</strong><span>Guided sessions</span></span>
+              <span class="dd-tag new">New</span>
+            </a>
+          </div>
+        </div>
+      </li>
+      <li class="nav-item has-dropdown">
+        <button class="nav-link">AI Generator
+          <svg class="caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m6 9 6 6 6-6"/></svg>
+        </button>
+        <div class="dropdown">
+          <div class="dropdown-inner">
+            <a href="#" class="dd-item"><span class="dd-icon">🤖</span><span class="dd-content"><strong>AI Compose</strong><span>Generate original music</span></span></a>
+            <a href="#" class="dd-item"><span class="dd-icon">🎨</span><span class="dd-content"><strong>Style Transfer</strong><span>Reimagine your tracks</span></span><span class="dd-tag beta">Beta</span></a>
+            <a href="#" class="dd-item"><span class="dd-icon">✍️</span><span class="dd-content"><strong>Lyric Assistant</strong><span>AI-powered songwriting</span></span></a>
+          </div>
+        </div>
+      </li>
+      <li class="nav-item has-dropdown">
+        <button class="nav-link">Music History
+          <svg class="caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m6 9 6 6 6-6"/></svg>
+        </button>
+        <div class="dropdown">
+          <div class="dropdown-inner">
+            <a href="#" class="dd-item"><span class="dd-icon">🌍</span><span class="dd-content"><strong>Genre Explorer</strong><span>From jazz to EDM</span></span></a>
+            <a href="#" class="dd-item"><span class="dd-icon">📅</span><span class="dd-content"><strong>Era Timeline</strong><span>Centuries of music</span></span></a>
+            <a href="#" class="dd-item"><span class="dd-icon">🎼</span><span class="dd-content"><strong>Composer Library</strong><span>Masters &amp; legends</span></span></a>
+          </div>
+        </div>
+      </li>
+      <li class="nav-item has-dropdown">
+        <button class="nav-link">Dashboard
+          <svg class="caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m6 9 6 6 6-6"/></svg>
+        </button>
+        <div class="dropdown">
+          <div class="dropdown-inner">
+            <a href="#" class="dd-item"><span class="dd-icon">🏆</span><span class="dd-content"><strong>Leaderboard</strong><span>Top performers</span></span></a>
+            <a href="#" class="dd-item"><span class="dd-icon">📈</span><span class="dd-content"><strong>My Progress</strong><span>Track your growth</span></span></a>
+            <a href="#" class="dd-item"><span class="dd-icon">🥇</span><span class="dd-content"><strong>Achievements</strong><span>Badges &amp; rewards</span></span></a>
+          </div>
+        </div>
+      </li>
+    </ul>
+
+    <div class="nav-right">
+      <div class="search-wrap" id="searchWrap">
+        <button class="icon-btn search-toggle" id="searchToggle" onclick="toggleSearch()" aria-label="Search">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+        </button>
+        <div class="search-expand" id="searchExpand">
+          <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+          <input type="text" placeholder="Search lessons, instruments…" id="searchInput" />
+          <button class="search-close" onclick="toggleSearch()">✕</button>
+        </div>
+      </div>
+      <button class="icon-btn theme-btn" id="themeBtn" onclick="toggleTheme()" aria-label="Toggle theme">
+        <svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+        <svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+      </button>
+      <div class="profile-menu" id="profileMenu">
+        <button class="profile-btn" onclick="toggleProfile()" aria-label="Profile menu">
+          <div class="avatar">G</div>
+          <span class="profile-name">Guest</span>
+          <svg class="caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m6 9 6 6 6-6"/></svg>
+        </button>
+        <div class="profile-dropdown" id="profileDropdown">
+          <div class="pd-header">
+            <div class="pd-avatar">G</div>
+            <div><div class="pd-name">Guest User</div><div class="pd-email">Not signed in</div></div>
+          </div>
+          <hr class="pd-divider"/>
+          <a href="#" class="pd-item">My Profile</a>
+          <a href="#" class="pd-item">Settings</a>
+          <hr class="pd-divider"/>
+          <a href="index.html" class="pd-item pd-signout">Sign Out</a>
+        </div>
+      </div>
+      <a href="index.html" class="btn-signout">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        Sign Out
+      </a>
+      <button class="hamburger" id="hamburger" onclick="toggleMobileNav()" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </div>
+</nav>
+
+<!-- Mobile Nav -->
+<div class="mobile-overlay" id="mobileOverlay" onclick="toggleMobileNav()"></div>
+<div class="mobile-nav" id="mobileNav">
+  <div class="mobile-nav-header">
+    <span class="logo-text">Harmonia</span>
+    <button onclick="toggleMobileNav()">✕</button>
+  </div>
+  <div class="mobile-nav-links">
+    <details open><summary>Training</summary>
+      <a href="learning-path.html">Learning Path</a>
+      <a href="theory-quiz.html">Theory Quiz <span class="dd-tag xp">+XP</span></a>
+      <a href="ear-training.html">Ear Training</a>
+      <a href="practice-mode.html">Practice Mode <span class="dd-tag new">New</span></a>
+    </details>
+    <a href="index.html" class="mobile-signout">Sign Out</a>
+  </div>
+</div>
+
+<!-- ===== HERO ===== -->
+<section class="et-hero">
+  <div class="et-hero-bg">
+    <div class="et-orb et-orb-1"></div>
+    <div class="et-orb et-orb-2"></div>
+    <div class="et-orb et-orb-3"></div>
+    <div class="et-grid"></div>
+  </div>
+
+  <!-- Animated sound waves -->
+  <div class="et-waves-bg" aria-hidden="true">
+    <div class="et-wave-ring et-wr-1"></div>
+    <div class="et-wave-ring et-wr-2"></div>
+    <div class="et-wave-ring et-wr-3"></div>
+    <div class="et-wave-ring et-wr-4"></div>
+  </div>
+
+  <div class="container et-hero-inner">
+    <nav class="breadcrumb" aria-label="breadcrumb">
+      <a href="home.html">Home</a>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="m9 18 6-6-6-6"/></svg>
+      <a href="training.html">Training</a>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="m9 18 6-6-6-6"/></svg>
+      <span>Ear Training</span>
+    </nav>
+
+    <div class="et-hero-content">
+      <div class="et-hero-text">
+        <div class="et-badge">
+          <span class="badge-dot"></span>
+          6 exercise types · Daily challenges
+        </div>
+        <h1 class="et-title">
+          Train Your<br/><span class="grad-text">Musical Ear</span>
+        </h1>
+        <p class="et-subtitle">
+          Develop perfect pitch recognition, master intervals, identify chords, and transcribe melodies. The most powerful skill any musician can have — built through daily practice.
+        </p>
+
+        <!-- XP Widget -->
+        <div class="xp-widget">
+          <div class="xp-header">
+            <div class="xp-info">
+              <span class="xp-label">Your XP</span>
+              <span class="xp-value" id="heroXP">0 XP</span>
+            </div>
+            <div class="xp-level">
+              <span class="level-badge" id="heroLevel">Level 1 — Newcomer</span>
+            </div>
+          </div>
+          <div class="xp-bar-wrap">
+            <div class="xp-bar-fill" id="heroXPBar" style="width:0%"></div>
+          </div>
+          <div class="xp-next" id="heroXPNext">0 / 500 XP to Level 2</div>
+        </div>
+
+        <!-- Stats -->
+        <div class="et-hero-stats">
+          <div class="et-stat">
+            <strong id="statSessions">0</strong>
+            <span>Sessions</span>
+          </div>
+          <div class="et-stat-div"></div>
+          <div class="et-stat">
+            <strong id="statCorrect">0%</strong>
+            <span>Accuracy</span>
+          </div>
+          <div class="et-stat-div"></div>
+          <div class="et-stat">
+            <strong id="statStreak">0🔥</strong>
+            <span>Streak</span>
+          </div>
+          <div class="et-stat-div"></div>
+          <div class="et-stat">
+            <strong id="statExercises">0</strong>
+            <span>Correct</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Hero Visual: animated ear/soundwave -->
+      <div class="et-hero-visual" aria-hidden="true">
+        <div class="et-visual-rings">
+          <div class="et-vr et-vr-1"></div>
+          <div class="et-vr et-vr-2"></div>
+          <div class="et-vr et-vr-3"></div>
+        </div>
+        <div class="et-visual-icon">
+          <svg viewBox="0 0 80 80" fill="none" width="64" height="64">
+            <defs>
+              <linearGradient id="earIconGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" style="stop-color:#38bdf8"/>
+                <stop offset="100%" style="stop-color:#a78bfa"/>
+              </linearGradient>
+            </defs>
+            <path d="M40 12C28.95 12 20 20.95 20 32c0 7.18 3.84 13.47 9.6 17.04L29 56h6l1.2-7.68A19.91 19.91 0 0 0 40 52c11.05 0 20-8.95 20-20S51.05 12 40 12z" stroke="url(#earIconGrad)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+            <circle cx="40" cy="32" r="6" stroke="url(#earIconGrad)" stroke-width="2.5"/>
+            <circle cx="40" cy="32" r="2" fill="url(#earIconGrad)"/>
+          </svg>
+        </div>
+        <!-- Floating labels -->
+        <div class="et-pill et-pill-1">🎵 Intervals</div>
+        <div class="et-pill et-pill-2">🎹 Chords</div>
+        <div class="et-pill et-pill-3">🎼 Scales</div>
+        <div class="et-pill et-pill-4">🎶 Melody</div>
+        <div class="et-pill et-pill-5">🥁 Rhythm</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== DAILY CHALLENGE BAR ===== -->
+<div class="daily-challenge-bar" id="dailyChallengeBar">
+  <div class="container dcb-inner">
+    <div class="dcb-left">
+      <span class="dcb-icon">⚡</span>
+      <div>
+        <span class="dcb-title">Daily Ear Challenge</span>
+        <span class="dcb-sub">Identify 5 intervals correctly — earn 150 XP bonus!</span>
+      </div>
+    </div>
+    <div class="dcb-right">
+      <div class="dcb-timer">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        <span id="challengeTimer">--:--:--</span>
+      </div>
+      <button class="dcb-btn" id="dailyChallengeBtn" onclick="EarTraining.startDailyChallenge()">Accept Challenge</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== EXERCISE TYPE GRID ===== -->
+<section class="et-exercises">
+  <div class="container">
+    <div class="et-section-header">
+      <div>
+        <span class="section-label">Choose Your Exercise</span>
+        <h2 class="section-title">6 Training Modes</h2>
+      </div>
+      <div class="et-filter">
+        <button class="et-filter-btn active" data-filter="all">All</button>
+        <button class="et-filter-btn" data-filter="beginner">Beginner</button>
+        <button class="et-filter-btn" data-filter="intermediate">Intermediate</button>
+        <button class="et-filter-btn" data-filter="advanced">Advanced</button>
+      </div>
+    </div>
+
+    <div class="et-grid-cards" id="exerciseGrid">
+
+      <!-- Interval Recognition -->
+      <div class="et-card et-card-interval" data-level="beginner" data-type="intervals">
+        <div class="et-card-glow"></div>
+        <div class="et-card-header">
+          <div class="et-card-icon">🎵</div>
+          <div class="et-card-badges">
+            <span class="et-badge-pill et-badge-pop">Most Popular</span>
+            <span class="et-badge-pill et-badge-level">Beginner</span>
+          </div>
+        </div>
+        <div class="et-card-body">
+          <h3>Interval Recognition</h3>
+          <p>Listen to two notes and identify the interval between them — from a minor 2nd to an octave. The foundation of all ear training.</p>
+          <div class="et-card-progress">
+            <div class="et-prog-label">
+              <span>Sessions completed</span>
+              <span class="et-prog-val" id="prog-intervals">0</span>
+            </div>
+            <div class="et-prog-bar"><div class="et-prog-fill et-pf-interval" id="progbar-intervals" style="width:0%"></div></div>
+          </div>
+          <ul class="et-feature-list">
+            <li>✓ 13 interval types</li>
+            <li>✓ Ascending &amp; descending</li>
+            <li>✓ Harmonic &amp; melodic</li>
+          </ul>
+        </div>
+        <div class="et-card-footer">
+          <div class="et-card-meta">
+            <span>🎵 13 intervals</span>
+            <span>⏱ 5–15 min</span>
+            <span>🏆 +50 XP</span>
+          </div>
+          <button class="et-start-btn" onclick="EarTraining.openExercise('intervals')">
+            Start
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="14" height="14"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- Chord Identification -->
+      <div class="et-card et-card-chords" data-level="intermediate" data-type="chords">
+        <div class="et-card-glow"></div>
+        <div class="et-card-header">
+          <div class="et-card-icon">🎹</div>
+          <div class="et-card-badges">
+            <span class="et-badge-pill et-badge-xp">+XP Boost</span>
+            <span class="et-badge-pill et-badge-level">Intermediate</span>
+          </div>
+        </div>
+        <div class="et-card-body">
+          <h3>Chord Identification</h3>
+          <p>Identify major, minor, diminished, augmented, and seventh chords by ear. Critical for musicians who play with others.</p>
+          <div class="et-card-progress">
+            <div class="et-prog-label">
+              <span>Sessions completed</span>
+              <span class="et-prog-val" id="prog-chords">0</span>
+            </div>
+            <div class="et-prog-bar"><div class="et-prog-fill et-pf-chords" id="progbar-chords" style="width:0%"></div></div>
+          </div>
+          <ul class="et-feature-list">
+            <li>✓ 8 chord qualities</li>
+            <li>✓ Root position &amp; inversions</li>
+            <li>✓ Extended chords (7th, 9th)</li>
+          </ul>
+        </div>
+        <div class="et-card-footer">
+          <div class="et-card-meta">
+            <span>🎹 8 chord types</span>
+            <span>⏱ 8–20 min</span>
+            <span>🏆 +80 XP</span>
+          </div>
+          <button class="et-start-btn" onclick="EarTraining.openExercise('chords')">
+            Start
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="14" height="14"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- Scale Recognition -->
+      <div class="et-card et-card-scales" data-level="intermediate" data-type="scales">
+        <div class="et-card-glow"></div>
+        <div class="et-card-header">
+          <div class="et-card-icon">🎼</div>
+          <div class="et-card-badges">
+            <span class="et-badge-pill et-badge-new">Updated</span>
+            <span class="et-badge-pill et-badge-level">Intermediate</span>
+          </div>
+        </div>
+        <div class="et-card-body">
+          <h3>Scale Recognition</h3>
+          <p>Recognize major, minor, pentatonic, blues, and modal scales. Develop the ability to hear the "color" of any scale instantly.</p>
+          <div class="et-card-progress">
+            <div class="et-prog-label">
+              <span>Sessions completed</span>
+              <span class="et-prog-val" id="prog-scales">0</span>
+            </div>
+            <div class="et-prog-bar"><div class="et-prog-fill et-pf-scales" id="progbar-scales" style="width:0%"></div></div>
+          </div>
+          <ul class="et-feature-list">
+            <li>✓ 10 scale types</li>
+            <li>✓ Modes included</li>
+            <li>✓ Pentatonic &amp; blues</li>
+          </ul>
+        </div>
+        <div class="et-card-footer">
+          <div class="et-card-meta">
+            <span>🎼 10 scales</span>
+            <span>⏱ 8–18 min</span>
+            <span>🏆 +70 XP</span>
+          </div>
+          <button class="et-start-btn" onclick="EarTraining.openExercise('scales')">
+            Start
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="14" height="14"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- Melody Dictation -->
+      <div class="et-card et-card-melody" data-level="advanced" data-type="melody">
+        <div class="et-card-glow"></div>
+        <div class="et-card-header">
+          <div class="et-card-icon">🎶</div>
+          <div class="et-card-badges">
+            <span class="et-badge-pill et-badge-hard">Advanced</span>
+            <span class="et-badge-pill et-badge-level">Advanced</span>
+          </div>
+        </div>
+        <div class="et-card-body">
+          <h3>Melody Dictation</h3>
+          <p>Hear a short melodic phrase and identify the correct sequence of notes. The ultimate test of your musical memory and pitch recognition.</p>
+          <div class="et-card-progress">
+            <div class="et-prog-label">
+              <span>Sessions completed</span>
+              <span class="et-prog-val" id="prog-melody">0</span>
+            </div>
+            <div class="et-prog-bar"><div class="et-prog-fill et-pf-melody" id="progbar-melody" style="width:0%"></div></div>
+          </div>
+          <ul class="et-feature-list">
+            <li>✓ 3–6 note phrases</li>
+            <li>✓ Multiple replay chances</li>
+            <li>✓ Solfège &amp; letter names</li>
+          </ul>
+        </div>
+        <div class="et-card-footer">
+          <div class="et-card-meta">
+            <span>🎶 Phrases</span>
+            <span>⏱ 10–25 min</span>
+            <span>🏆 +120 XP</span>
+          </div>
+          <button class="et-start-btn" onclick="EarTraining.openExercise('melody')">
+            Start
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="14" height="14"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- Rhythm Recognition -->
+      <div class="et-card et-card-rhythm" data-level="beginner" data-type="rhythm">
+        <div class="et-card-glow"></div>
+        <div class="et-card-header">
+          <div class="et-card-icon">🥁</div>
+          <div class="et-card-badges">
+            <span class="et-badge-pill et-badge-pop">Fan Favourite</span>
+            <span class="et-badge-pill et-badge-level">Beginner</span>
+          </div>
+        </div>
+        <div class="et-card-body">
+          <h3>Rhythm Recognition</h3>
+          <p>Identify time signatures and rhythmic patterns. From simple 4/4 to complex 7/8 — develop your internal metronome and rhythmic sense.</p>
+          <div class="et-card-progress">
+            <div class="et-prog-label">
+              <span>Sessions completed</span>
+              <span class="et-prog-val" id="prog-rhythm">0</span>
+            </div>
+            <div class="et-prog-bar"><div class="et-prog-fill et-pf-rhythm" id="progbar-rhythm" style="width:0%"></div></div>
+          </div>
+          <ul class="et-feature-list">
+            <li>✓ Time signature ID</li>
+            <li>✓ Rhythmic pattern clap-back</li>
+            <li>✓ Syncopation &amp; triplets</li>
+          </ul>
+        </div>
+        <div class="et-card-footer">
+          <div class="et-card-meta">
+            <span>🥁 6 meters</span>
+            <span>⏱ 5–15 min</span>
+            <span>🏆 +60 XP</span>
+          </div>
+          <button class="et-start-btn" onclick="EarTraining.openExercise('rhythm')">
+            Start
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="14" height="14"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- Pitch Memory (Perfect Pitch) -->
+      <div class="et-card et-card-pitch" data-level="advanced" data-type="pitch">
+        <div class="et-card-glow"></div>
+        <div class="et-card-header">
+          <div class="et-card-icon">🎯</div>
+          <div class="et-card-badges">
+            <span class="et-badge-pill et-badge-hard">Hard</span>
+            <span class="et-badge-pill et-badge-level">Advanced</span>
+          </div>
+        </div>
+        <div class="et-card-body">
+          <h3>Pitch Memory</h3>
+          <p>Identify individual notes by name after hearing them played. Develop relative pitch and — with enough practice — perfect pitch awareness.</p>
+          <div class="et-card-progress">
+            <div class="et-prog-label">
+              <span>Sessions completed</span>
+              <span class="et-prog-val" id="prog-pitch">0</span>
+            </div>
+            <div class="et-prog-bar"><div class="et-prog-fill et-pf-pitch" id="progbar-pitch" style="width:0%"></div></div>
+          </div>
+          <ul class="et-feature-list">
+            <li>✓ All 12 chromatic notes</li>
+            <li>✓ Multiple octaves</li>
+            <li>✓ Piano &amp; sine wave tones</li>
+          </ul>
+        </div>
+        <div class="et-card-footer">
+          <div class="et-card-meta">
+            <span>🎯 12 pitches</span>
+            <span>⏱ 5–20 min</span>
+            <span>🏆 +100 XP</span>
+          </div>
+          <button class="et-start-btn" onclick="EarTraining.openExercise('pitch')">
+            Start
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="14" height="14"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ===== QUICK-PLAY BLITZ + HISTORY ===== -->
+<section class="et-bottom-grid">
+  <div class="container">
+    <div class="et-two-col">
+
+      <!-- Quick-play blitz -->
+      <div class="et-blitz-card">
+        <div class="et-blitz-header">
+          <div>
+            <span class="section-label">Quick Play</span>
+            <h3>Ear Blitz Mix</h3>
+          </div>
+          <span class="et-blitz-badge">🎲 Random</span>
+        </div>
+        <p class="et-blitz-desc">Can't decide? Let us pick for you! The Blitz Mix pulls 2 questions from every category for a 12-question cross-discipline challenge.</p>
+        <div class="et-blitz-stats">
+          <div class="et-bs"><strong id="blitzTotal">0</strong><span>Blitz runs</span></div>
+          <div class="et-bs-div"></div>
+          <div class="et-bs"><strong id="blitzBest">—</strong><span>Best score</span></div>
+          <div class="et-bs-div"></div>
+          <div class="et-bs"><strong id="blitzXP">0</strong><span>XP earned</span></div>
+        </div>
+        <button class="et-blitz-btn" onclick="EarTraining.startBlitz()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="18" height="18"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+          Start Blitz Mix
+        </button>
+      </div>
+
+      <!-- Session History -->
+      <div class="et-history-card">
+        <div class="et-history-header">
+          <h3>Recent Sessions</h3>
+          <span class="ra-badge">Live</span>
+        </div>
+        <div class="et-history-list" id="historyList">
+          <div class="et-history-empty">
+            <span>👂</span>
+            <p>No sessions yet. Pick an exercise above!</p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Progress Overview -->
+    <div class="et-progress-overview">
+      <div class="et-po-header">
+        <span class="section-label">Your Progress</span>
+        <h3>Overall Ear Sharpness</h3>
+      </div>
+      <div class="et-po-grid">
+        <div class="et-po-item" data-type="intervals">
+          <div class="et-po-icon">🎵</div>
+          <div class="et-po-info">
+            <strong>Intervals</strong>
+            <div class="et-po-bar-wrap">
+              <div class="et-po-bar-fill et-pf-interval" id="po-intervals" style="width:0%"></div>
+            </div>
+          </div>
+          <span class="et-po-pct" id="popct-intervals">0%</span>
+        </div>
+        <div class="et-po-item" data-type="chords">
+          <div class="et-po-icon">🎹</div>
+          <div class="et-po-info">
+            <strong>Chords</strong>
+            <div class="et-po-bar-wrap">
+              <div class="et-po-bar-fill et-pf-chords" id="po-chords" style="width:0%"></div>
+            </div>
+          </div>
+          <span class="et-po-pct" id="popct-chords">0%</span>
+        </div>
+        <div class="et-po-item" data-type="scales">
+          <div class="et-po-icon">🎼</div>
+          <div class="et-po-info">
+            <strong>Scales</strong>
+            <div class="et-po-bar-wrap">
+              <div class="et-po-bar-fill et-pf-scales" id="po-scales" style="width:0%"></div>
+            </div>
+          </div>
+          <span class="et-po-pct" id="popct-scales">0%</span>
+        </div>
+        <div class="et-po-item" data-type="melody">
+          <div class="et-po-icon">🎶</div>
+          <div class="et-po-info">
+            <strong>Melody</strong>
+            <div class="et-po-bar-wrap">
+              <div class="et-po-bar-fill et-pf-melody" id="po-melody" style="width:0%"></div>
+            </div>
+          </div>
+          <span class="et-po-pct" id="popct-melody">0%</span>
+        </div>
+        <div class="et-po-item" data-type="rhythm">
+          <div class="et-po-icon">🥁</div>
+          <div class="et-po-info">
+            <strong>Rhythm</strong>
+            <div class="et-po-bar-wrap">
+              <div class="et-po-bar-fill et-pf-rhythm" id="po-rhythm" style="width:0%"></div>
+            </div>
+          </div>
+          <span class="et-po-pct" id="popct-rhythm">0%</span>
+        </div>
+        <div class="et-po-item" data-type="pitch">
+          <div class="et-po-icon">🎯</div>
+          <div class="et-po-info">
+            <strong>Pitch Memory</strong>
+            <div class="et-po-bar-wrap">
+              <div class="et-po-bar-fill et-pf-pitch" id="po-pitch" style="width:0%"></div>
+            </div>
+          </div>
+          <span class="et-po-pct" id="popct-pitch">0%</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== EXERCISE MODAL ===== -->
+<div class="et-modal-overlay" id="exerciseModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+  <div class="et-modal">
+
+    <!-- Modal Header -->
+    <div class="et-modal-header">
+      <div class="et-modal-title-wrap">
+        <span class="et-modal-icon" id="modalIcon">🎵</span>
+        <div>
+          <h2 class="et-modal-title" id="modalTitle">Interval Recognition</h2>
+          <span class="et-modal-sub" id="modalSub">Listen and identify</span>
+        </div>
+      </div>
+      <div class="et-modal-controls">
+        <div class="et-combo-display" id="comboDisplay" style="display:none">
+          <span class="et-combo-label">Combo</span>
+          <span class="et-combo-val" id="comboVal">0</span>
+        </div>
+        <div class="et-modal-score">
+          <span id="modalCorrect">0</span>/<span id="modalTotal">0</span>
+        </div>
+        <button class="et-modal-close" onclick="EarTraining.closeModal()" aria-label="Close">✕</button>
+      </div>
+    </div>
+
+    <!-- Timer bar -->
+    <div class="et-timer-bar-wrap">
+      <div class="et-timer-bar" id="timerBar"></div>
+    </div>
+
+    <!-- Modal Body -->
+    <div class="et-modal-body" id="modalBody">
+
+      <!-- Question Screen -->
+      <div class="et-question-screen" id="questionScreen">
+        <div class="et-question-number" id="questionNumber">Question 1 of 10</div>
+
+        <!-- Play Sound Zone -->
+        <div class="et-play-zone" id="playZone">
+          <button class="et-play-btn" id="playBtn" onclick="EarTraining.playCurrentSound()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="32" height="32"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+          </button>
+          <div class="et-play-label" id="playLabel">Click to play</div>
+          <div class="et-play-hint" id="playHint">You can replay up to 3 times</div>
+          <div class="et-replay-dots" id="replayDots">
+            <span class="et-rd active"></span>
+            <span class="et-rd active"></span>
+            <span class="et-rd active"></span>
+          </div>
+        </div>
+
+        <!-- Question Prompt -->
+        <div class="et-question-prompt" id="questionPrompt">
+          What interval is this?
+        </div>
+
+        <!-- Answer Options -->
+        <div class="et-options" id="optionsGrid">
+          <!-- Populated by JS -->
+        </div>
+
+        <!-- Explanation (shown after answer) -->
+        <div class="et-explanation" id="explanationBlock" style="display:none">
+          <div class="et-explanation-icon" id="explanationIcon">✅</div>
+          <div class="et-explanation-text" id="explanationText"></div>
+          <button class="et-next-btn" id="nextBtn" onclick="EarTraining.nextQuestion()">
+            Next Question
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="16" height="16"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- Results Screen -->
+      <div class="et-results-screen" id="resultsScreen" style="display:none">
+        <div class="et-results-header">
+          <div class="et-score-ring-wrap">
+            <svg class="et-score-ring" viewBox="0 0 120 120" width="120" height="120">
+              <circle class="et-ring-bg" cx="60" cy="60" r="50" />
+              <circle class="et-ring-fill" id="scoreRingFill" cx="60" cy="60" r="50"
+                stroke-dasharray="314"
+                stroke-dashoffset="314" />
+            </svg>
+            <div class="et-score-center">
+              <span class="et-score-pct" id="resultsPct">0%</span>
+              <span class="et-score-label">Score</span>
+            </div>
+          </div>
+          <div class="et-results-info">
+            <h3 id="resultsTitle">Nice Work!</h3>
+            <p id="resultsDesc">You answered <strong id="resultsCorrect">0</strong> out of <strong id="resultsTotal">0</strong> correctly.</p>
+            <div class="et-results-xp">
+              <span class="et-xp-earned">+<span id="resultsXP">0</span> XP earned</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="et-results-breakdown" id="resultsBreakdown">
+          <!-- Populated by JS -->
+        </div>
+
+        <div class="et-results-achievements" id="resultsAchievements" style="display:none">
+          <h4>🎉 Achievements Unlocked!</h4>
+          <div id="achievementsList"></div>
+        </div>
+
+        <div class="et-results-actions">
+          <button class="et-retry-btn" id="retryBtn" onclick="EarTraining.retryExercise()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="16" height="16"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/></svg>
+            Try Again
+          </button>
+          <button class="et-next-exercise-btn" onclick="EarTraining.closeModal()">
+            Choose Exercise
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="16" height="16"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </button>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Modal Footer (combo + keyboard hints) -->
+    <div class="et-modal-footer" id="modalFooter">
+      <div class="et-kbd-hints">
+        <span><kbd>1–4</kbd> Select answer</span>
+        <span><kbd>Space</kbd> Replay sound</span>
+        <span><kbd>Enter</kbd> Next question</span>
+        <span><kbd>Esc</kbd> Close</span>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ===== XP TOAST ===== -->
+<div class="et-xp-toast" id="xpToast" style="display:none">
+  <span class="et-xp-toast-icon">⭐</span>
+  <span id="xpToastText">+50 XP</span>
+</div>
+
+<!-- ===== LEVEL UP OVERLAY ===== -->
+<div class="et-levelup-overlay" id="levelUpOverlay" style="display:none">
+  <div class="et-levelup-card">
+    <div class="et-levelup-icon">🎉</div>
+    <h2>Level Up!</h2>
+    <p id="levelUpText">You reached Level 2 — Student!</p>
+    <button onclick="document.getElementById('levelUpOverlay').style.display='none'">Awesome!</button>
+  </div>
+</div>
+
+<!-- ===== CONFETTI ===== -->
+<div class="et-confetti-container" id="confettiContainer" aria-hidden="true"></div>
+
+<!-- ===== FOOTER ===== -->
+<footer class="footer">
+  <div class="container">
+    <div class="footer-top">
+      <div class="footer-brand">
+        <a href="home.html" class="nav-logo" style="margin-bottom:12px">
+          <div class="logo-icon">
+            <svg width="24" height="24" viewBox="0 0 36 36" fill="none">
+              <path d="M13 24V12l12 3v9" stroke="url(#fLogoGradET)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+              <circle cx="11" cy="24" r="3" fill="url(#fLogoGradET)"/>
+              <circle cx="23" cy="22" r="3" fill="url(#fLogoGradET)"/>
+              <defs>
+                <linearGradient id="fLogoGradET" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" style="stop-color:#a78bfa"/>
+                  <stop offset="100%" style="stop-color:#ec4899"/>
+                </linearGradient>
+              </defs>
+            </svg>
+          </div>
+          <span class="logo-text">Harmonia</span>
+        </a>
+        <p>The modern music learning platform for curious minds and creative souls.</p>
+        <div class="footer-social">
+          <a href="#" aria-label="Twitter">🐦</a>
+          <a href="#" aria-label="Instagram">📸</a>
+          <a href="#" aria-label="YouTube">▶️</a>
+          <a href="#" aria-label="Discord">💬</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h5>Training</h5>
+        <a href="learning-path.html">Learning Path</a>
+        <a href="theory-quiz.html">Theory Quiz</a>
+        <a href="ear-training.html">Ear Training</a>
+        <a href="practice-mode.html">Practice Mode</a>
+      </div>
+      <div class="footer-col">
+        <h5>Create &amp; Explore</h5>
+        <a href="#">AI Compose</a>
+        <a href="#">Music History</a>
+        <a href="#">3D Anatomy</a>
+        <a href="#">Community</a>
+      </div>
+      <div class="footer-col">
+        <h5>Account</h5>
+        <a href="#">Dashboard</a>
+        <a href="#">Achievements</a>
+        <a href="#">Leaderboard</a>
+        <a href="#">Settings</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div class="footer-copy">© 2026 Harmonia. All rights reserved.</div>
+      <div class="accessibility">
+        <span>Accessibility:</span>
+        <button onclick="adjustFont(-1)" aria-label="Decrease font size">A−</button>
+        <button onclick="adjustFont(1)" aria-label="Increase font size">A+</button>
+        <button onclick="toggleTheme()" id="footerThemeBtn">🌙 Dark Mode</button>
+      </div>
+      <div class="footer-legal">
+        <a href="#">Privacy</a>
+        <a href="#">Terms</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script src="scripts/training-db.js"></script>
+<script src="scripts/home.js"></script>
+<script src="scripts/ear-training.js"></script>
+</body>
+</html>
