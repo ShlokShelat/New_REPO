@@ -1,318 +1,1267 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="dark">
+<html lang="en">
 <head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-  <title>Lyric Assistant — Harmonia AI Generator</title>
-  <link rel="stylesheet" href="styles/home.css"/>
-  <link rel="stylesheet" href="styles/lyric-assistant.css"/>
-  <link rel="preconnect" href="https://fonts.googleapis.com"/>
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
-  <style>
-    /* Keep body from scrolling — workspace handles it */
-    body { overflow: hidden; }
-    .la-toast {
-      position: fixed; bottom: 24px; left: 50%;
-      transform: translateX(-50%) translateY(60px);
-      background: var(--surface); border: 1px solid var(--border);
-      border-radius: 12px; padding: 10px 18px;
-      display: flex; align-items: center; gap: 8px;
-      font-size: 0.82rem; font-weight: 500;
-      box-shadow: 0 12px 40px rgba(0,0,0,0.5);
-      z-index: 9999; transition: transform 0.35s cubic-bezier(0.34,1.56,0.64,1);
-      white-space: nowrap;
-    }
-    .la-toast.show { transform: translateX(-50%) translateY(0); }
-  </style>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Lyric Assistant — Harmonia</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+:root{
+  --bg:#05050f;
+  --surface:#0d0d1e;
+  --surface2:#141428;
+  --surface3:#1a1a34;
+  --border:rgba(255,255,255,0.07);
+  --border-hi:rgba(255,255,255,0.13);
+  --text:#ededff;
+  --muted:#7070a0;
+  --muted2:#4a4a70;
+  --accent:#a78bfa;
+  --accent2:#f472b6;
+  --green:#34d399;
+  --cyan:#22d3ee;
+  --amber:#fbbf24;
+  --red:#f87171;
+  --nav-h:60px;
+  --topbar-h:50px;
+  --panel-w:340px;
+  --font-display:'Syne',sans-serif;
+  --font-body:'DM Sans',sans-serif;
+  --font-lyric:'Playfair Display',serif;
+  --font-mono:'DM Mono',monospace;
+}
+
+*{-webkit-tap-highlight-color:transparent}
+html,body{height:100%;overflow:hidden}
+body{font-family:var(--font-body);background:var(--bg);color:var(--text);display:flex;flex-direction:column}
+
+/* Grain overlay */
+body::after{
+  content:'';position:fixed;inset:0;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
+  pointer-events:none;z-index:9998;mix-blend-mode:overlay;
+}
+
+/* ─── NAVBAR ─── */
+.nav{
+  height:var(--nav-h);flex-shrink:0;
+  display:flex;align-items:center;padding:0 24px;gap:0;
+  border-bottom:1px solid var(--border);
+  background:rgba(5,5,15,0.97);backdrop-filter:blur(24px);
+  position:relative;z-index:200;
+}
+.nav-logo{display:flex;align-items:center;gap:10px;text-decoration:none;margin-right:36px}
+.nav-logo-icon{width:32px;height:32px;border-radius:9px;background:linear-gradient(135deg,#7c3aed,#ec4899);display:flex;align-items:center;justify-content:center}
+.nav-logo-text{font-family:var(--font-display);font-size:1.05rem;font-weight:800;background:linear-gradient(135deg,#a78bfa,#ec4899);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.nav-items{display:flex;gap:4px;list-style:none;flex:1}
+.nav-item{font-size:0.8rem;font-weight:500;color:var(--muted);padding:6px 12px;border-radius:8px;cursor:pointer;transition:all 0.2s;border:1px solid transparent}
+.nav-item:hover{color:var(--text);background:rgba(255,255,255,0.04)}
+.nav-item.active{color:var(--accent);background:rgba(167,139,250,0.08);border-color:rgba(167,139,250,0.2)}
+.nav-right{display:flex;align-items:center;gap:8px;margin-left:auto}
+.nav-pill{font-family:var(--font-body);font-size:0.75rem;font-weight:500;color:var(--muted);padding:6px 12px;border-radius:8px;background:rgba(255,255,255,0.04);border:1px solid var(--border);cursor:pointer;transition:all 0.2s;text-decoration:none;display:flex;align-items:center;gap:5px}
+.nav-pill:hover{color:var(--text);background:rgba(255,255,255,0.07)}
+.nav-avatar{width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,#7c3aed,#ec4899);display:flex;align-items:center;justify-content:center;font-size:0.72rem;font-weight:800;color:white;cursor:pointer;margin-left:4px}
+
+/* ─── SONG TOPBAR ─── */
+.topbar{
+  height:var(--topbar-h);flex-shrink:0;
+  display:flex;align-items:center;padding:0 20px;gap:14px;
+  border-bottom:1px solid var(--border);
+  background:rgba(13,13,30,0.95);backdrop-filter:blur(12px);
+  position:relative;z-index:100;
+}
+.tb-icon{color:var(--muted);flex-shrink:0}
+.song-title-input{
+  background:none;border:none;outline:none;
+  font-family:var(--font-display);font-size:0.92rem;font-weight:700;
+  color:var(--text);flex:1;min-width:0;
+}
+.song-title-input::placeholder{color:var(--muted2);font-weight:400}
+.tb-sep{width:1px;height:20px;background:var(--border);flex-shrink:0}
+.tb-stat{
+  font-size:0.7rem;color:var(--muted);white-space:nowrap;flex-shrink:0;
+  display:flex;align-items:center;gap:5px;
+}
+.tb-stat strong{color:var(--text);font-weight:600}
+.tb-actions{display:flex;gap:6px;margin-left:auto;flex-shrink:0}
+.tb-btn{
+  font-family:var(--font-body);font-size:0.72rem;font-weight:600;
+  padding:6px 12px;border-radius:8px;cursor:pointer;
+  border:1px solid var(--border);background:rgba(255,255,255,0.04);
+  color:var(--muted);transition:all 0.18s;display:flex;align-items:center;gap:5px;
+  text-decoration:none;
+}
+.tb-btn:hover{background:rgba(255,255,255,0.07);color:var(--text);border-color:var(--border-hi)}
+.tb-btn.primary{
+  background:linear-gradient(135deg,#7c3aed,#ec4899);
+  border-color:transparent;color:white;font-weight:700;
+}
+.tb-btn.primary:hover{opacity:0.88}
+
+/* ─── WORKSPACE ─── */
+.workspace{
+  flex:1;display:grid;
+  grid-template-columns:1fr var(--panel-w);
+  overflow:hidden;min-height:0;
+}
+
+/* ─── EDITOR SIDE ─── */
+.editor-side{
+  display:flex;flex-direction:column;
+  overflow:hidden;border-right:1px solid var(--border);
+  background:var(--bg);
+}
+
+/* Song meta */
+.song-meta{
+  display:flex;align-items:center;gap:10px;
+  padding:10px 20px;border-bottom:1px solid var(--border);
+  flex-shrink:0;flex-wrap:wrap;background:rgba(255,255,255,0.01);
+}
+.meta-sel{
+  background:rgba(255,255,255,0.04);border:1px solid var(--border);
+  color:var(--text);font-family:var(--font-body);font-size:0.75rem;
+  padding:5px 10px;border-radius:8px;outline:none;cursor:pointer;
+  transition:border-color 0.2s;
+}
+.meta-sel:focus{border-color:rgba(167,139,250,0.35)}
+.meta-badge{
+  font-size:0.65rem;font-weight:700;padding:4px 10px;border-radius:99px;
+  background:rgba(167,139,250,0.1);border:1px solid rgba(167,139,250,0.2);
+  color:var(--accent);display:flex;align-items:center;gap:5px;
+}
+.meta-badge::before{content:'';width:5px;height:5px;border-radius:50%;background:var(--green);box-shadow:0 0 5px var(--green);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.3}}
+.word-count-badge{font-size:0.7rem;color:var(--muted);margin-left:auto}
+
+/* Section tabs */
+.section-tabs{
+  display:flex;align-items:center;gap:4px;
+  padding:8px 20px;border-bottom:1px solid var(--border);
+  overflow-x:auto;flex-shrink:0;
+  scrollbar-width:none;background:rgba(255,255,255,0.01);
+}
+.section-tabs::-webkit-scrollbar{display:none}
+.sec-tab{
+  display:flex;align-items:center;gap:7px;
+  padding:6px 14px;border-radius:9px;cursor:pointer;
+  border:1px solid var(--border);background:none;
+  font-family:var(--font-body);font-size:0.75rem;font-weight:600;
+  color:var(--muted);white-space:nowrap;flex-shrink:0;
+  transition:all 0.2s;
+}
+.sec-tab:hover{color:var(--text);background:rgba(255,255,255,0.04)}
+.sec-tab.active{
+  background:rgba(167,139,250,0.1);border-color:rgba(167,139,250,0.3);color:var(--accent);
+}
+.sec-type-pill{
+  font-size:0.58rem;font-weight:800;letter-spacing:0.5px;
+  padding:2px 6px;border-radius:5px;text-transform:uppercase;
+}
+.add-sec-btn{
+  display:flex;align-items:center;gap:5px;
+  padding:6px 12px;border-radius:9px;cursor:pointer;
+  border:1px dashed rgba(255,255,255,0.12);background:none;
+  font-family:var(--font-body);font-size:0.72rem;font-weight:600;
+  color:var(--muted2);white-space:nowrap;flex-shrink:0;
+  transition:all 0.2s;
+}
+.add-sec-btn:hover{border-color:rgba(167,139,250,0.3);color:var(--accent)}
+
+/* Section content area */
+.section-content{flex:1;overflow-y:auto;padding:28px 36px}
+.section-content::-webkit-scrollbar{width:3px}
+.section-content::-webkit-scrollbar-thumb{background:var(--border);border-radius:99px}
+
+.section-block{margin-bottom:32px}
+.sec-header{display:flex;align-items:center;gap:10px;margin-bottom:14px}
+.sec-type-label{
+  font-size:0.62rem;font-weight:800;letter-spacing:2px;text-transform:uppercase;
+  padding:3px 10px;border-radius:6px;
+}
+.sec-num{font-size:0.72rem;color:var(--muted)}
+.sec-actions{margin-left:auto;display:flex;gap:5px}
+.sec-act{
+  background:none;border:none;color:var(--muted);
+  font-size:0.75rem;cursor:pointer;padding:3px 8px;
+  border-radius:6px;transition:all 0.15s;font-family:var(--font-body);
+}
+.sec-act:hover{background:rgba(255,255,255,0.06);color:var(--text)}
+.sec-act.del:hover{color:var(--red)}
+
+/* The lyric textarea — the STAR */
+.lyric-ta{
+  width:100%;min-height:90px;
+  background:transparent;border:none;outline:none;
+  color:var(--text);caret-color:var(--accent);
+  font-family:var(--font-lyric);
+  font-size:1.08rem;line-height:2;
+  resize:none;padding:0;
+  transition:none;
+}
+.lyric-ta::placeholder{
+  color:rgba(255,255,255,0.12);
+  font-style:italic;
+  font-family:var(--font-lyric);
+}
+
+/* Line tools */
+.line-tools{display:flex;gap:7px;margin-top:10px;flex-wrap:wrap}
+.line-tool{
+  display:flex;align-items:center;gap:5px;
+  font-size:0.68rem;font-weight:600;color:var(--muted);
+  background:rgba(255,255,255,0.03);border:1px solid var(--border);
+  padding:4px 11px;border-radius:8px;cursor:pointer;
+  transition:all 0.15s;font-family:var(--font-body);
+}
+.line-tool:hover{background:rgba(167,139,250,0.08);border-color:rgba(167,139,250,0.2);color:var(--accent)}
+
+/* Quick rhyme chips inline */
+.inline-rhymes{display:flex;gap:5px;flex-wrap:wrap;margin-top:8px;min-height:0}
+.rhyme-chip{
+  font-size:0.72rem;font-weight:600;padding:4px 11px;border-radius:8px;
+  background:rgba(244,114,182,0.08);border:1px solid rgba(244,114,182,0.2);
+  color:var(--accent2);cursor:pointer;transition:all 0.15s;
+}
+.rhyme-chip:hover{background:rgba(244,114,182,0.16);transform:translateY(-1px)}
+
+/* Status bar */
+.status-bar{
+  height:32px;border-top:1px solid var(--border);
+  display:flex;align-items:center;gap:16px;padding:0 20px;
+  font-size:0.68rem;color:var(--muted);flex-shrink:0;
+  background:rgba(255,255,255,0.01);
+}
+.status-live{display:flex;align-items:center;gap:6px}
+.live-dot{width:6px;height:6px;border-radius:50%;background:var(--green);box-shadow:0 0 6px var(--green);flex-shrink:0}
+
+/* ─── AI PANEL ─── */
+.ai-panel{
+  display:flex;flex-direction:column;overflow:hidden;
+  background:var(--surface);border-left:1px solid var(--border);
+}
+
+/* Tab bar */
+.ai-tabs{display:flex;border-bottom:1px solid var(--border);flex-shrink:0}
+.ai-tab{
+  flex:1;padding:13px 6px;
+  font-size:0.68rem;font-weight:700;letter-spacing:0.3px;
+  text-align:center;cursor:pointer;background:none;border:none;
+  color:var(--muted);font-family:var(--font-body);
+  transition:all 0.18s;border-bottom:2px solid transparent;
+  display:flex;align-items:center;justify-content:center;gap:4px;
+}
+.ai-tab:hover{color:var(--text);background:rgba(255,255,255,0.02)}
+.ai-tab.active{color:var(--accent);border-bottom-color:var(--accent);background:rgba(167,139,250,0.04)}
+
+/* Panel content area */
+.ai-body{flex:1;overflow-y:auto}
+.ai-body::-webkit-scrollbar{width:3px}
+.ai-body::-webkit-scrollbar-thumb{background:var(--border);border-radius:99px}
+
+.tab-panel{display:none;padding:18px 16px;flex-direction:column;gap:14px}
+.tab-panel.active{display:flex}
+
+/* Section label inside panel */
+.p-label{font-size:0.62rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted2)}
+
+/* Theme chips */
+.theme-chips{display:flex;gap:5px;flex-wrap:wrap;margin-top:6px}
+.theme-chip{
+  font-size:0.72rem;font-weight:600;padding:5px 11px;border-radius:99px;
+  border:1px solid var(--border);background:none;color:var(--muted);
+  cursor:pointer;font-family:var(--font-body);transition:all 0.18s;
+}
+.theme-chip:hover{border-color:rgba(167,139,250,0.3);color:var(--accent);background:rgba(167,139,250,0.06)}
+.theme-chip.on{background:rgba(167,139,250,0.12);border-color:rgba(167,139,250,0.35);color:var(--accent)}
+
+/* Context textarea in panel */
+.p-textarea{
+  width:100%;background:rgba(255,255,255,0.03);
+  border:1px solid var(--border);border-radius:10px;
+  padding:10px 12px;color:var(--text);
+  font-family:var(--font-body);font-size:0.8rem;line-height:1.6;
+  resize:none;outline:none;min-height:64px;
+  transition:border-color 0.2s;
+}
+.p-textarea:focus{border-color:rgba(167,139,250,0.35)}
+.p-textarea::placeholder{color:rgba(255,255,255,0.18)}
+
+/* AI action buttons */
+.ai-btn{
+  width:100%;padding:12px;
+  font-family:var(--font-display);font-size:0.82rem;font-weight:700;
+  border:none;border-radius:11px;cursor:pointer;color:white;
+  background:linear-gradient(135deg,#7c3aed,#ec4899);
+  display:flex;align-items:center;justify-content:center;gap:7px;
+  transition:opacity 0.2s,transform 0.2s;
+  box-shadow:0 4px 20px rgba(124,58,237,0.2);
+}
+.ai-btn:hover{opacity:0.88;transform:translateY(-1px)}
+.ai-btn:disabled{opacity:0.45;cursor:not-allowed;transform:none;box-shadow:none}
+.ai-btn.cyan{background:linear-gradient(135deg,#0369a1,#22d3ee);box-shadow:0 4px 20px rgba(14,165,233,0.2)}
+
+/* Suggestion cards */
+.sugg-list{display:flex;flex-direction:column;gap:8px}
+.sugg-card{
+  background:rgba(255,255,255,0.03);border:1px solid var(--border);
+  border-radius:11px;padding:13px 14px;cursor:pointer;
+  transition:all 0.2s;
+}
+.sugg-card:hover{border-color:rgba(167,139,250,0.3);background:rgba(167,139,250,0.04)}
+.sugg-text{
+  font-family:var(--font-lyric);font-size:0.9rem;line-height:1.65;
+  color:var(--text);margin-bottom:8px;
+}
+.sugg-meta{display:flex;justify-content:space-between;align-items:center}
+.sugg-note{font-size:0.65rem;color:var(--muted);font-style:italic}
+.sugg-insert{
+  font-size:0.65rem;font-weight:700;
+  background:rgba(167,139,250,0.1);border:1px solid rgba(167,139,250,0.2);
+  color:var(--accent);padding:3px 9px;border-radius:6px;cursor:pointer;
+  transition:background 0.15s;font-family:var(--font-body);
+}
+.sugg-insert:hover{background:rgba(167,139,250,0.2)}
+
+/* Rhyme tab */
+.rhyme-search{display:flex;gap:8px}
+.rhyme-input{
+  flex:1;background:rgba(255,255,255,0.04);border:1px solid var(--border);
+  border-radius:9px;padding:9px 12px;outline:none;
+  color:var(--text);font-family:var(--font-body);font-size:0.84rem;
+  transition:border-color 0.2s;
+}
+.rhyme-input:focus{border-color:rgba(244,114,182,0.4)}
+.rhyme-go-btn{
+  background:rgba(244,114,182,0.1);border:1px solid rgba(244,114,182,0.25);
+  color:var(--accent2);padding:9px 14px;border-radius:9px;
+  font-family:var(--font-body);font-size:0.8rem;font-weight:700;cursor:pointer;
+  transition:all 0.18s;
+}
+.rhyme-go-btn:hover{background:rgba(244,114,182,0.18)}
+.rhyme-section{margin-top:4px}
+.rhyme-section-title{font-size:0.62rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--muted2);margin-bottom:7px}
+.rhyme-words{display:flex;flex-wrap:wrap;gap:5px}
+.rw{
+  font-size:0.78rem;font-weight:600;padding:5px 11px;border-radius:8px;
+  border:1px solid var(--border);background:rgba(255,255,255,0.03);
+  color:var(--text);cursor:pointer;transition:all 0.15s;font-family:var(--font-body);
+}
+.rw:hover{border-color:rgba(244,114,182,0.35);color:var(--accent2);background:rgba(244,114,182,0.06)}
+.rw.perfect{border-color:rgba(244,114,182,0.2);color:var(--accent2)}
+
+/* Analyze tab */
+.analyze-card{
+  background:rgba(255,255,255,0.03);border:1px solid var(--border);
+  border-radius:11px;padding:14px;
+}
+.ac-title{font-size:0.62rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--muted2);margin-bottom:10px}
+.meter-rows{display:flex;flex-direction:column;gap:7px}
+.meter-row{display:flex;align-items:center;gap:8px}
+.meter-num{font-size:0.68rem;color:var(--muted2);width:14px;flex-shrink:0;font-family:var(--font-mono)}
+.syl-dots{display:flex;gap:3px;flex-wrap:wrap;flex:1}
+.sd{width:7px;height:7px;border-radius:50%;background:rgba(167,139,250,0.25);flex-shrink:0}
+.sd.s{background:var(--accent);box-shadow:0 0 4px rgba(167,139,250,0.4)}
+.meter-count{font-size:0.65rem;color:var(--muted2);font-family:var(--font-mono);flex-shrink:0}
+
+.rhyme-scheme{display:flex;gap:5px;flex-wrap:wrap}
+.rs-letter{
+  width:26px;height:26px;border-radius:7px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:0.75rem;font-weight:800;
+  border:1px solid rgba(255,255,255,0.1);
+}
+
+.mood-bars{display:flex;flex-direction:column;gap:8px}
+.mb-row{display:flex;align-items:center;gap:8px}
+.mb-label{font-size:0.68rem;color:var(--muted);width:70px;flex-shrink:0}
+.mb-track{flex:1;height:5px;background:rgba(255,255,255,0.05);border-radius:99px;overflow:hidden}
+.mb-fill{height:100%;border-radius:99px;transition:width 0.9s cubic-bezier(0.4,0,0.2,1)}
+.mb-val{font-size:0.65rem;color:var(--muted2);width:28px;text-align:right;flex-family:var(--font-mono)}
+
+/* Rewrite modes */
+.rw-modes{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.rw-mode{
+  border:1px solid var(--border);border-radius:10px;padding:10px;
+  cursor:pointer;background:none;text-align:left;font-family:var(--font-body);
+  transition:all 0.18s;
+}
+.rw-mode:hover{border-color:rgba(167,139,250,0.25);background:rgba(167,139,250,0.04)}
+.rw-mode.on{border-color:rgba(167,139,250,0.4);background:rgba(167,139,250,0.08)}
+.rw-mode-icon{font-size:1.05rem;margin-bottom:4px}
+.rw-mode-name{font-size:0.73rem;font-weight:700;color:var(--text)}
+.rw-mode-desc{font-size:0.63rem;color:var(--muted);margin-top:2px;line-height:1.4}
+
+.rewrite-result{
+  background:rgba(255,255,255,0.03);border:1px solid rgba(0,212,255,0.2);
+  border-radius:11px;padding:14px;
+  font-family:var(--font-lyric);font-size:0.9rem;line-height:1.7;
+  color:var(--text);display:none;white-space:pre-wrap;
+}
+.rewrite-result.show{display:block}
+.rewrite-acts{display:flex;gap:7px;flex-wrap:wrap}
+.ra-btn{
+  font-size:0.7rem;font-weight:600;padding:6px 12px;
+  border-radius:8px;cursor:pointer;border:1px solid var(--border);
+  background:rgba(255,255,255,0.04);color:var(--muted);
+  font-family:var(--font-body);transition:all 0.15s;
+}
+.ra-btn:hover{background:rgba(255,255,255,0.08);color:var(--text)}
+
+/* Streaming */
+.la-stream::after{content:'▋';color:var(--accent);animation:blink 0.7s step-end infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
+
+/* Spinner */
+.spin{width:16px;height:16px;border-radius:50%;border:2px solid rgba(255,255,255,0.2);border-top-color:white;animation:sp 0.75s linear infinite;flex-shrink:0}
+@keyframes sp{to{transform:rotate(360deg)}}
+
+/* Toast */
+.la-toast{
+  position:fixed;bottom:22px;left:50%;
+  transform:translateX(-50%) translateY(65px);
+  background:var(--surface2);border:1px solid var(--border-hi);
+  border-radius:11px;padding:10px 18px;
+  display:flex;align-items:center;gap:7px;
+  font-size:0.8rem;font-weight:500;
+  box-shadow:0 14px 40px rgba(0,0,0,0.6);
+  z-index:9999;transition:transform 0.35s cubic-bezier(0.34,1.56,0.64,1);
+  white-space:nowrap;pointer-events:none;
+}
+.la-toast.show{transform:translateX(-50%) translateY(0)}
+
+::-webkit-scrollbar{width:3px;height:3px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.1);border-radius:99px}
+
+@media(max-width:860px){
+  html,body{overflow:auto;height:auto}
+  .workspace{grid-template-columns:1fr;height:auto;overflow:visible}
+  .ai-panel{height:600px;border-top:1px solid var(--border)}
+  .editor-side{min-height:500px}
+}
+</style>
 </head>
 <body>
 
-<!-- ===== NAVBAR ===== -->
-<nav class="navbar" id="navbar">
-  <div class="nav-inner">
-    <a href="home.html" class="nav-logo">
-      <div class="logo-icon">
-        <svg width="28" height="28" viewBox="0 0 36 36" fill="none">
-          <defs><linearGradient id="ng" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#a78bfa"/><stop offset="100%" style="stop-color:#ec4899"/></linearGradient></defs>
-          <path d="M13 24V12l12 3v9" stroke="url(#ng)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
-          <circle cx="11" cy="24" r="3" fill="url(#ng)"/><circle cx="23" cy="22" r="3" fill="url(#ng)"/>
-        </svg>
-      </div>
-      <span class="logo-text">Harmonia</span>
-    </a>
-    <ul class="nav-links" id="navLinks">
-      <li class="nav-item has-dropdown">
-        <button class="nav-link">Training<svg class="caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m6 9 6 6 6-6"/></svg></button>
-        <div class="dropdown"><div class="dropdown-inner">
-          <a href="training.html" class="dd-item"><span class="dd-icon">🛤️</span><span class="dd-content"><strong>Learning Path</strong><span>Structured curriculum</span></span></a>
-          <a href="theory-quiz.html" class="dd-item"><span class="dd-icon">🧠</span><span class="dd-content"><strong>Theory Quiz</strong><span>Test your knowledge</span></span><span class="dd-tag xp">+XP</span></a>
-        </div></div>
-      </li>
-      <li class="nav-item has-dropdown">
-        <button class="nav-link active-nav">AI Generator<svg class="caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m6 9 6 6 6-6"/></svg></button>
-        <div class="dropdown"><div class="dropdown-inner">
-          <a href="ai-composer.html" class="dd-item"><span class="dd-icon">🤖</span><span class="dd-content"><strong>AI Compose</strong><span>Generate original music</span></span></a>
-          <a href="style-transfer.html" class="dd-item"><span class="dd-icon">🎨</span><span class="dd-content"><strong>Style Transfer</strong><span>Reimagine your tracks</span></span><span class="dd-tag beta">Beta</span></a>
-          <a href="lyric-assistant.html" class="dd-item"><span class="dd-icon">✍️</span><span class="dd-content"><strong>Lyric Assistant</strong><span>AI-powered songwriting</span></span></a>
-        </div></div>
-      </li>
-      <li class="nav-item has-dropdown">
-        <button class="nav-link">Music History<svg class="caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m6 9 6 6 6-6"/></svg></button>
-        <div class="dropdown"><div class="dropdown-inner">
-          <a href="genre-explorer.html" class="dd-item"><span class="dd-icon">🌍</span><span class="dd-content"><strong>Genre Explorer</strong><span>From jazz to EDM</span></span></a>
-          <a href="era-timeline.html" class="dd-item"><span class="dd-icon">📅</span><span class="dd-content"><strong>Era Timeline</strong><span>Centuries of music</span></span></a>
-          <a href="composer-library.html" class="dd-item"><span class="dd-icon">🎼</span><span class="dd-content"><strong>Composer Library</strong><span>Masters & legends</span></span></a>
-        </div></div>
-      </li>
-    </ul>
-    <div class="nav-right">
-      <button class="icon-btn theme-btn" id="themeBtn" onclick="toggleTheme()">
-        <svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/></svg>
-        <svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
-      </button>
-      <div class="profile-menu" id="profileMenu">
-        <button class="profile-btn" onclick="toggleProfile()">
-          <div class="avatar">G</div><span class="profile-name">Guest</span>
-          <svg class="caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m6 9 6 6 6-6"/></svg>
-        </button>
-        <div class="profile-dropdown" id="profileDropdown">
-          <div class="pd-header"><div class="pd-avatar">G</div><div><div class="pd-name">Guest User</div><div class="pd-email">Not signed in</div></div></div>
-          <hr class="pd-divider"/>
-          <a href="#" class="pd-item">My Profile</a>
-          <hr class="pd-divider"/>
-          <a href="index.html" class="pd-item pd-signout">Sign Out</a>
-        </div>
-      </div>
-      <a href="index.html" class="btn-signout"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>Sign Out</a>
-      <button class="hamburger" id="hamburger" onclick="toggleMobileNav()"><span></span><span></span><span></span></button>
+<!-- NAVBAR -->
+<nav class="nav">
+  <a href="home.html" class="nav-logo">
+    <div class="nav-logo-icon">
+      <svg width="16" height="16" viewBox="0 0 36 36" fill="none">
+        <path d="M13 24V12l12 3v9" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+        <circle cx="11" cy="24" r="3" fill="white"/><circle cx="23" cy="22" r="3" fill="white"/>
+      </svg>
     </div>
+    <span class="nav-logo-text">Harmonia</span>
+  </a>
+  <ul class="nav-items">
+    <li class="nav-item" onclick="location.href='training.html'">Training</li>
+    <li class="nav-item active">AI Generator</li>
+    <li class="nav-item" onclick="location.href='genre-explorer.html'">Music History</li>
+  </ul>
+  <div class="nav-right">
+    <a href="style-transfer.html" class="nav-pill">🎨 Style Transfer</a>
+    <div class="nav-avatar">S</div>
   </div>
 </nav>
 
-<div class="mobile-overlay" id="mobileOverlay" onclick="toggleMobileNav()"></div>
-<div class="mobile-nav" id="mobileNav">
-  <div class="mobile-nav-header"><span class="logo-text">Harmonia</span><button onclick="toggleMobileNav()">✕</button></div>
-  <div class="mobile-nav-links">
-    <details open><summary>AI Generator</summary>
-      <a href="ai-composer.html">AI Compose</a>
-      <a href="style-transfer.html">Style Transfer</a>
-      <a href="lyric-assistant.html">Lyric Assistant</a>
-    </details>
-    <a href="index.html" class="mobile-signout">Sign Out</a>
+<!-- SONG TOPBAR -->
+<div class="topbar">
+  <svg class="tb-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5z"/></svg>
+  <input class="song-title-input" id="songTitle" placeholder="Untitled Song" maxlength="60"/>
+  <div class="tb-sep"></div>
+  <div class="tb-stat" id="tbStats"><strong>0</strong> words · <strong>0</strong> lines · <strong>4</strong> sections</div>
+  <div class="tb-actions">
+    <button class="tb-btn" onclick="copyAll()">📋 Copy All</button>
+    <button class="tb-btn" onclick="exportTxt()">💾 Export</button>
+    <button class="tb-btn primary" onclick="getSuggestions()">✨ AI Suggest</button>
   </div>
 </div>
 
-<!-- ===== LA PAGE ===== -->
-<div class="la-page">
+<!-- WORKSPACE -->
+<div class="workspace">
 
-  <!-- ── Top bar ── -->
-  <div class="la-topbar">
-    <svg viewBox="0 0 24 24" fill="none" stroke="var(--accent1)" stroke-width="2" width="16" height="16" style="flex-shrink:0"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
-    <input class="la-song-title-input" id="songTitle" placeholder="Untitled Song" maxlength="60"/>
-    <div class="la-topbar-divider"></div>
-    <div class="la-topbar-meta">
-      <strong id="statusWords">0</strong> words ·
-      <strong id="statusLines">0</strong> lines ·
-      <strong id="statusSections">4</strong> sections ·
-      <strong id="statusChars">0</strong> chars
+  <!-- ══ EDITOR ══ -->
+  <div class="editor-side">
+    <div class="song-meta">
+      <select class="meta-sel" id="genreSel">
+        <option value="">Genre</option>
+        <option>Pop</option><option>Indie / Folk</option>
+        <option>Hip-Hop</option><option>R&B / Soul</option>
+        <option>Rock</option><option>Country</option>
+        <option>Electronic</option><option>Jazz</option>
+      </select>
+      <select class="meta-sel" id="moodSel">
+        <option value="">Mood</option>
+        <option>Melancholy</option><option>Uplifting</option>
+        <option>Romantic</option><option>Angry</option>
+        <option>Nostalgic</option><option>Dreamy</option><option>Dark</option>
+      </select>
+      <select class="meta-sel" id="tempoSel">
+        <option value="">Tempo</option>
+        <option>Slow / Ballad</option><option>Mid-tempo</option><option>Fast</option>
+      </select>
+      <div class="meta-badge">AI-Assisted</div>
+      <div class="word-count-badge" id="wordBadge">0 words</div>
     </div>
-    <div class="la-topbar-actions">
-      <button class="la-topbar-btn" onclick="copyAllLyrics()">📋 Copy All</button>
-      <button class="la-topbar-btn" onclick="exportLyrics()">💾 Export .txt</button>
-      <a href="style-transfer.html" class="la-topbar-btn" style="text-decoration:none">🎨 Style Transfer</a>
+    <div class="section-tabs" id="secTabs"></div>
+    <div class="section-content" id="secContent"></div>
+    <div class="status-bar">
+      <div class="status-live"><div class="live-dot"></div>Live · AI Ready</div>
+      <span>·</span><span>Lyrics are auto-saved locally</span>
+      <span>·</span><span>✨ Use the AI panel → for suggestions</span>
     </div>
   </div>
 
-  <!-- ── Workspace ── -->
-  <div class="la-workspace">
+  <!-- ══ AI PANEL ══ -->
+  <div class="ai-panel">
+    <div class="ai-tabs">
+      <button class="ai-tab active" data-tab="suggest" onclick="switchTab('suggest')">✨ Suggest</button>
+      <button class="ai-tab" data-tab="rhyme" onclick="switchTab('rhyme')">🔤 Rhyme</button>
+      <button class="ai-tab" data-tab="analyze" onclick="switchTab('analyze')">📊 Analyze</button>
+      <button class="ai-tab" data-tab="rewrite" onclick="switchTab('rewrite')">✏️ Rewrite</button>
+    </div>
+    <div class="ai-body">
 
-    <!-- ══ LEFT: SONG EDITOR ══ -->
-    <div class="la-editor">
-
-      <!-- Song meta -->
-      <div class="la-song-meta">
-        <select class="la-meta-select" id="songGenre">
-          <option value="">Genre: Any</option>
-          <option value="pop">Pop</option>
-          <option value="indie">Indie / Folk</option>
-          <option value="hip-hop">Hip-Hop / Rap</option>
-          <option value="rnb">R&B / Soul</option>
-          <option value="rock">Rock</option>
-          <option value="country">Country</option>
-          <option value="electronic">Electronic</option>
-          <option value="jazz">Jazz</option>
-        </select>
-        <select class="la-meta-select" id="songMood">
-          <option value="">Mood: Any</option>
-          <option value="melancholy">Melancholy</option>
-          <option value="uplifting">Uplifting</option>
-          <option value="romantic">Romantic</option>
-          <option value="angry">Angry / Defiant</option>
-          <option value="nostalgic">Nostalgic</option>
-          <option value="dreamy">Dreamy</option>
-          <option value="dark">Dark / Brooding</option>
-        </select>
-        <select class="la-meta-select" id="songTempo">
-          <option value="">Tempo: Any</option>
-          <option value="slow">Slow / Ballad</option>
-          <option value="mid">Mid-tempo</option>
-          <option value="fast">Fast / Uptempo</option>
-        </select>
-        <div class="la-meta-badge">✨ AI-Assisted</div>
-        <div class="la-word-count" id="wordCountDisplay">0 words</div>
-      </div>
-
-      <!-- Section tabs -->
-      <div class="la-section-tabs" id="sectionTabs">
-        <!-- Rendered by JS -->
-      </div>
-
-      <!-- Editor area -->
-      <div class="la-editor-area" id="editorArea">
-        <!-- Rendered by JS -->
-      </div>
-
-      <!-- Status bar -->
-      <div class="la-status-bar">
-        <div class="la-status-dot"></div>
-        <div class="la-status-item">Live · AI Ready</div>
-        <div class="la-status-item">·</div>
-        <div class="la-status-item">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="12" height="12"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
-          Click any section to edit
+      <!-- SUGGEST -->
+      <div class="tab-panel active" id="panel-suggest">
+        <div>
+          <div class="p-label">Themes to weave in</div>
+          <div class="theme-chips" id="themeChips"></div>
         </div>
-        <div class="la-status-item">·</div>
-        <div class="la-status-item">✨ Use the panel → for AI help</div>
+        <div>
+          <div class="p-label" style="margin-bottom:6px">Extra context <span style="color:var(--muted2);font-size:0.6rem;font-weight:400;text-transform:none;letter-spacing:0">(optional)</span></div>
+          <textarea class="p-textarea" id="ctxInput" rows="3"
+            placeholder="e.g. 'sung at the end of a road trip' or 'from the perspective of someone leaving home'…"></textarea>
+        </div>
+        <button class="ai-btn" id="suggestBtn" onclick="getSuggestions()">✨ Generate Suggestions</button>
+        <div id="suggList"><div style="text-align:center;padding:20px 0;color:var(--muted2)">
+          <div style="font-size:1.4rem;margin-bottom:8px">✨</div>
+          <div style="font-size:0.82rem;font-weight:600;color:var(--muted);margin-bottom:4px">AI Co-Writer</div>
+          <div style="font-size:0.73rem;line-height:1.55">Pick themes, add context,<br>click Generate.</div>
+        </div></div>
+      </div>
+
+      <!-- RHYME -->
+      <div class="tab-panel" id="panel-rhyme">
+        <div>
+          <div class="p-label" style="margin-bottom:8px">Find rhymes for a word</div>
+          <div class="rhyme-search">
+            <input class="rhyme-input" id="rhymeWord" placeholder="e.g. night, fire, away…"
+              onkeydown="if(event.key==='Enter')findRhymes()"/>
+            <button class="rhyme-go-btn" onclick="findRhymes()">Find</button>
+          </div>
+        </div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap">
+          <span style="font-size:0.65rem;color:var(--muted2);align-self:center">Quick:</span>
+          <span class="rw perfect" onclick="preRhyme('night')" style="font-size:0.7rem;padding:3px 9px">night</span>
+          <span class="rw perfect" onclick="preRhyme('love')" style="font-size:0.7rem;padding:3px 9px">love</span>
+          <span class="rw perfect" onclick="preRhyme('heart')" style="font-size:0.7rem;padding:3px 9px">heart</span>
+          <span class="rw perfect" onclick="preRhyme('fire')" style="font-size:0.7rem;padding:3px 9px">fire</span>
+          <span class="rw perfect" onclick="preRhyme('rain')" style="font-size:0.7rem;padding:3px 9px">rain</span>
+          <span class="rw perfect" onclick="preRhyme('time')" style="font-size:0.7rem;padding:3px 9px">time</span>
+          <span class="rw perfect" onclick="preRhyme('home')" style="font-size:0.7rem;padding:3px 9px">home</span>
+        </div>
+        <div id="rhymeResults"><div style="color:var(--muted2);font-size:0.78rem;text-align:center;padding:12px 0">Enter a word above</div></div>
+      </div>
+
+      <!-- ANALYZE -->
+      <div class="tab-panel" id="panel-analyze">
+        <div class="analyze-card">
+          <div class="ac-title">Syllable Meter</div>
+          <div class="meter-rows" id="meterRows"><div style="color:var(--muted2);font-size:0.76rem">Write lyrics to see meter</div></div>
+        </div>
+        <div class="analyze-card">
+          <div class="ac-title">Rhyme Scheme</div>
+          <div class="rhyme-scheme" id="rhymeScheme"><div style="color:var(--muted2);font-size:0.76rem">Needs 2+ lines</div></div>
+        </div>
+        <div class="analyze-card">
+          <div class="ac-title">Mood Profile</div>
+          <div class="mood-bars" id="moodBars"><div style="color:var(--muted2);font-size:0.76rem">Write to see mood</div></div>
+        </div>
+        <button onclick="runAnalyze()" style="background:rgba(167,139,250,0.08);border:1px solid rgba(167,139,250,0.2);color:var(--accent);font-family:var(--font-body);font-size:0.76rem;font-weight:600;padding:9px;border-radius:10px;cursor:pointer;width:100%;transition:background 0.2s" onmouseover="this.style.background='rgba(167,139,250,0.14)'" onmouseout="this.style.background='rgba(167,139,250,0.08)'">↺ Refresh Analysis</button>
+      </div>
+
+      <!-- REWRITE -->
+      <div class="tab-panel" id="panel-rewrite">
+        <div>
+          <div class="p-label" style="margin-bottom:8px">Rewrite mode</div>
+          <div class="rw-modes" id="rwModes"></div>
+        </div>
+        <button class="ai-btn cyan" id="rwBtn" onclick="doRewrite()">↺ Rewrite Active Section</button>
+        <div class="rewrite-result" id="rwResult"></div>
+        <div class="rewrite-acts" id="rwActs"></div>
+        <div style="background:rgba(255,255,255,0.02);border:1px solid var(--border);border-radius:10px;padding:12px">
+          <div style="font-size:0.62rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--muted2);margin-bottom:6px">ℹ️ How it works</div>
+          <div style="font-size:0.73rem;color:var(--muted);line-height:1.55">The currently active section tab gets rewritten. Accept the result or regenerate.</div>
+        </div>
       </div>
     </div>
-
-    <!-- ══ RIGHT: AI PANEL ══ -->
-    <div class="la-ai-panel">
-
-      <!-- Panel tabs -->
-      <div class="la-ai-tabs">
-        <button class="la-ai-tab active" data-tab="suggest" onclick="setActiveTab('suggest')">✨ Suggest</button>
-        <button class="la-ai-tab" data-tab="rhyme" onclick="setActiveTab('rhyme')">🔤 Rhyme</button>
-        <button class="la-ai-tab" data-tab="analyze" onclick="setActiveTab('analyze')">📊 Analyze</button>
-        <button class="la-ai-tab" data-tab="rewrite" onclick="setActiveTab('rewrite')">✏️ Rewrite</button>
-      </div>
-
-      <!-- ── SUGGEST tab ── -->
-      <div class="la-ai-content">
-
-        <div class="la-tab-panel active" id="panel-suggest">
-          <div class="la-suggest-controls">
-            <div>
-              <div class="la-suggest-label">Themes to weave in</div>
-              <div class="la-theme-chips" id="themeChips"><!-- JS --></div>
-            </div>
-            <div>
-              <div class="la-suggest-label">Any extra context?</div>
-              <textarea class="la-suggest-context" id="suggestContext"
-                placeholder="e.g. 'This is about leaving a city I loved' or 'sung from the perspective of the sea'…"
-                rows="3"></textarea>
-            </div>
-            <button class="la-suggest-btn" id="suggestBtn" onclick="getSuggestions()">
-              ✨ Generate Suggestions
-            </button>
-          </div>
-          <div class="la-suggestions-list" id="suggestionsList">
-            <div style="text-align:center;padding:24px 0;color:var(--muted)">
-              <div style="font-size:1.5rem;margin-bottom:10px">✨</div>
-              <div style="font-size:0.84rem;font-weight:600;margin-bottom:4px">AI Co-Writer</div>
-              <div style="font-size:0.76rem;opacity:0.6;line-height:1.5">Pick your themes, add context, and<br/>let Claude suggest your next lines.</div>
-            </div>
-          </div>
-        </div>
-
-        <!-- ── RHYME tab ── -->
-        <div class="la-tab-panel" id="panel-rhyme">
-          <div class="la-rhyme-finder">
-            <div>
-              <div class="la-suggest-label">Find rhymes for…</div>
-              <div class="la-rhyme-input-wrap">
-                <input class="la-rhyme-input" id="rhymeInput" placeholder="e.g. night, fire, love…"
-                  onkeydown="if(event.key==='Enter') findRhymes()"/>
-                <button class="la-rhyme-search-btn" onclick="findRhymes()">Find</button>
-              </div>
-            </div>
-            <div style="font-size:0.72rem;color:var(--muted)">
-              <strong style="color:var(--text)">Quick words:</strong>
-              <span style="display:flex;flex-wrap:wrap;gap:5px;margin-top:5px">
-                <button onclick="document.getElementById('rhymeInput').value='night';findRhymes()" class="la-rhyme-word" style="font-size:0.72rem">night</button>
-                <button onclick="document.getElementById('rhymeInput').value='love';findRhymes()" class="la-rhyme-word" style="font-size:0.72rem">love</button>
-                <button onclick="document.getElementById('rhymeInput').value='heart';findRhymes()" class="la-rhyme-word" style="font-size:0.72rem">heart</button>
-                <button onclick="document.getElementById('rhymeInput').value='fire';findRhymes()" class="la-rhyme-word" style="font-size:0.72rem">fire</button>
-                <button onclick="document.getElementById('rhymeInput').value='time';findRhymes()" class="la-rhyme-word" style="font-size:0.72rem">time</button>
-                <button onclick="document.getElementById('rhymeInput').value='rain';findRhymes()" class="la-rhyme-word" style="font-size:0.72rem">rain</button>
-              </span>
-            </div>
-            <div class="la-rhyme-results" id="rhymeResults">
-              <div style="color:var(--muted);font-size:0.8rem;text-align:center;padding:16px 0">Type a word and hit Find</div>
-            </div>
-          </div>
-        </div>
-
-        <!-- ── ANALYZE tab ── -->
-        <div class="la-tab-panel" id="panel-analyze">
-          <div class="la-analysis">
-            <div class="la-analysis-card">
-              <div class="la-analysis-card-title">Syllable Meter</div>
-              <div class="la-meter-grid" id="meterGrid">
-                <div style="color:var(--muted);font-size:0.78rem">Write some lines to see meter analysis</div>
-              </div>
-            </div>
-            <div class="la-analysis-card">
-              <div class="la-analysis-card-title">Rhyme Scheme</div>
-              <div class="la-scheme-display" id="rhymeScheme">
-                <div style="color:var(--muted);font-size:0.78rem">Needs 2+ lines</div>
-              </div>
-            </div>
-            <div class="la-analysis-card">
-              <div class="la-analysis-card-title">Mood Analysis</div>
-              <div class="la-mood-bar-wrap" id="moodBars">
-                <div style="color:var(--muted);font-size:0.78rem">Write to see mood breakdown</div>
-              </div>
-            </div>
-            <button onclick="updateAnalysisTab()" style="background:rgba(167,139,250,0.08);border:1px solid rgba(167,139,250,0.2);color:var(--accent1);font-family:inherit;font-size:0.78rem;font-weight:600;padding:9px;border-radius:10px;cursor:pointer;width:100%;transition:background 0.2s" onmouseover="this.style.background='rgba(167,139,250,0.14)'" onmouseout="this.style.background='rgba(167,139,250,0.08)'">
-              ↺ Refresh Analysis
-            </button>
-          </div>
-        </div>
-
-        <!-- ── REWRITE tab ── -->
-        <div class="la-tab-panel" id="panel-rewrite">
-          <div class="la-rewrite">
-            <div>
-              <div class="la-suggest-label">How to rewrite the active section</div>
-              <div class="la-rewrite-modes" id="rewriteModes"><!-- JS --></div>
-            </div>
-            <button class="la-rewrite-btn" id="rewriteBtn" onclick="doRewrite()">
-              ✨ Elevate
-            </button>
-            <div class="la-rewrite-result" id="rewriteResult"></div>
-            <div class="la-rewrite-actions" id="rewriteActions"></div>
-            <div style="padding:12px;background:rgba(255,255,255,0.02);border:1px solid var(--border);border-radius:10px">
-              <div style="font-size:0.68rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--muted);margin-bottom:6px">💡 How it works</div>
-              <div style="font-size:0.75rem;color:var(--muted);line-height:1.6">The active section (highlighted tab) will be rewritten in the chosen mode. You can then accept or try again.</div>
-            </div>
-          </div>
-        </div>
-
-      </div>
-    </div>
-
   </div>
 </div>
 
-<!-- Toast -->
-<div class="la-toast" id="laToast">
-  <span class="la-toast-msg"></span>
-</div>
+<div class="la-toast" id="laToast"><span id="toastText"></span></div>
 
-<script src="scripts/training-db.js"></script>
-<script src="scripts/home.js"></script>
-<script src="scripts/lyric-assistant.js"></script>
+<script>
+/* ═══════════════════════════════════
+   xAI / Grok config
+   ═══════════════════════════════════ */
+const XAI_KEY = 'YOUR_XAI_API_KEY_HERE'; // ← paste your key
+const XAI_URL = 'https://api.x.ai/v1/chat/completions';
+const XAI_MDL = 'grok-3-latest';
+
+async function callGrok(system, user, maxTokens = 900, temp = 0.85) {
+  if (!XAI_KEY || XAI_KEY === 'YOUR_XAI_API_KEY_HERE') return null; // demo mode
+  const resp = await fetch(XAI_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${XAI_KEY}` },
+    body: JSON.stringify({
+      model: XAI_MDL,
+      messages: [{ role: 'system', content: system }, { role: 'user', content: user }],
+      max_tokens: maxTokens,
+      temperature: temp,
+    }),
+  });
+  if (!resp.ok) throw new Error(`API ${resp.status}: ${resp.statusText}`);
+  const d = await resp.json();
+  return d.choices?.[0]?.message?.content || '';
+}
+
+/* ═══════════════════════════════════
+   STATE
+   ═══════════════════════════════════ */
+const SEC_COLORS = {
+  verse:'#7c3aed',chorus:'#ec4899',bridge:'#0ea5e9',
+  outro:'#10b981',intro:'#d97706',prechorus:'#f97316',
+};
+
+let sections = [
+  { id:'v1', type:'verse', num:1, label:'Verse 1',   content:'',
+    placeholder:'Write your first verse here…\nTell your story. Set the scene. Introduce the world of the song.' },
+  { id:'ch1', type:'chorus', num:1, label:'Chorus',  content:'',
+    placeholder:'Your chorus — the emotional peak.\nThe hook that sticks. The line they remember.' },
+  { id:'v2', type:'verse', num:2, label:'Verse 2',   content:'',
+    placeholder:'Deepen the story. New detail, same world.\nPush the narrative forward…' },
+  { id:'br1', type:'bridge', num:1, label:'Bridge',  content:'',
+    placeholder:'The bridge — a shift in perspective.\nContrast. Revelation. The emotional turn.' },
+];
+let activeId = 'v1';
+let activeAITab = 'suggest';
+let selectedThemes = new Set(['longing','night']);
+let rwMode = 'elevate';
+let pendingRewrite = '';
+
+const THEMES = ['longing','night','freedom','heartbreak','hope','city','nature',
+                'nostalgia','rebellion','love','loss','journey','memory','distance'];
+
+const RW_MODES = [
+  {id:'elevate',  icon:'✨', name:'Elevate',    desc:'Upgrade imagery & word choice'},
+  {id:'simplify', icon:'◽', name:'Simplify',   desc:'Strip to essential truth'},
+  {id:'rhyme',    icon:'🔤', name:'Add Rhyme',  desc:'Introduce rhyme scheme'},
+  {id:'rhythm',   icon:'🥁', name:'Fix Rhythm', desc:'Balance syllable stress'},
+  {id:'darker',   icon:'🌑', name:'Darker',     desc:'Shift tone toward shadow'},
+  {id:'hopeful',  icon:'🌅', name:'Hopeful',    desc:'Find the light in the words'},
+];
+
+const RHYME_DB = {
+  night:{perfect:['light','might','right','sight','white','bright','fight','flight','write','tight','quite','delight'],near:['mine','wine','line','fine','shine','kind','mind','find','time','vine'],family:['midnight','moonlight','starlight','twilight','daylight','tonight','overnight']},
+  love:{perfect:['above','dove','of','shove'],near:['move','groove','prove','you\'ve','enough','tough','rough'],family:['beloved','lovely','loveless','heartfelt','devoted','darling']},
+  heart:{perfect:['art','part','start','apart','smart','dart'],near:['hurt','burn','turn','learn','yearn','earn','return'],family:['heartache','heartbreak','heartbeat','sweetheart','wholehearted']},
+  rain:{perfect:['pain','gain','plain','train','brain','main','vain','chain','remain','again','explain','refrain'],near:['name','same','fame','game','flame','shame','claim','aim'],family:['rainfall','raindrops','rainstorm','rainbow','hurricane']},
+  fire:{perfect:['desire','higher','wire','tire','hire','entire','inspire','admire','expire'],near:['feel','real','steal','heal','reveal','appeal','deal'],family:['firelight','wildfire','campfire','hellfire','backfire']},
+  time:{perfect:['rhyme','climb','lime','chime','crime','prime','mime'],near:['mind','find','kind','blind','behind','remind'],family:['lifetime','sometime','overtime','bedtime','daytime','pastime','nighttime']},
+  home:{perfect:['foam','roam','dome','comb','gnome','chrome','poem','Rome'],near:['alone','stone','bone','phone','tone','zone','grown','known','shown'],family:['hometown','homeward','homesick','homemade','homeland']},
+  away:{perfect:['day','stay','say','play','way','lay','pay','sway','stray','grey','fray','pray'],near:['came','name','same','game','flame','claim'],family:['faraway','getaway','runaway','anyway','yesterday','someday']},
+};
+
+/* ═══════════════════════════════════
+   INIT
+   ═══════════════════════════════════ */
+document.addEventListener('DOMContentLoaded', () => {
+  const seed = localStorage.getItem('harmonia_lyric_seed');
+  if (seed) { sections[0].content = seed; localStorage.removeItem('harmonia_lyric_seed'); }
+  renderTabs();
+  renderContent();
+  renderThemeChips();
+  renderRwModes();
+  updateStats();
+});
+
+/* ═══════════════════════════════════
+   TABS
+   ═══════════════════════════════════ */
+function renderTabs() {
+  const el = document.getElementById('secTabs');
+  el.innerHTML = sections.map(s => {
+    const c = SEC_COLORS[s.type] || '#7c3aed';
+    return `<button class="sec-tab${s.id===activeId?' active':''}" onclick="switchSection('${s.id}')">
+      ${s.label}
+      <span class="sec-type-pill" style="background:rgba(${hex2rgb(c)},0.15);color:${c}">${s.type}</span>
+    </button>`;
+  }).join('') + `<button class="add-sec-btn" onclick="addSectionMenu()">+ Add</button>`;
+}
+
+function switchSection(id) {
+  saveCurrentContent();
+  activeId = id;
+  renderTabs();
+  renderContent();
+}
+
+function saveCurrentContent() {
+  const ta = document.getElementById(`ta-${activeId}`);
+  if (ta) { const s = sections.find(x=>x.id===activeId); if(s) s.content = ta.value; }
+}
+
+/* ═══════════════════════════════════
+   CONTENT RENDER
+   ═══════════════════════════════════ */
+function renderContent() {
+  const sec = sections.find(s => s.id === activeId);
+  if (!sec) return;
+  const c = SEC_COLORS[sec.type] || '#7c3aed';
+  document.getElementById('secContent').innerHTML = `
+    <div class="section-block">
+      <div class="sec-header">
+        <div class="sec-type-label" style="background:rgba(${hex2rgb(c)},0.12);color:${c};border:1px solid rgba(${hex2rgb(c)},0.2)">${sec.type.toUpperCase()}</div>
+        <div class="sec-num">${sec.label}</div>
+        <div class="sec-actions">
+          <button class="sec-act" onclick="duplicateSec('${sec.id}')" title="Duplicate">⧉ Duplicate</button>
+          ${sections.length>1?`<button class="sec-act del" onclick="deleteSec('${sec.id}')">✕ Delete</button>`:''}
+        </div>
+      </div>
+      <textarea class="lyric-ta" id="ta-${sec.id}"
+        placeholder="${sec.placeholder}"
+        oninput="onTAInput(this)">${sec.content}</textarea>
+      <div class="line-tools">
+        <button class="line-tool" onclick="quickRhyme()">🔤 Rhyme last word</button>
+        <button class="line-tool" onclick="runAnalyze()">📊 Analyze</button>
+        <button class="line-tool" onclick="continueLine()">✨ Continue line</button>
+      </div>
+      <div class="inline-rhymes" id="inlineRhymes"></div>
+    </div>`;
+  autoH(document.getElementById(`ta-${sec.id}`));
+}
+
+function onTAInput(ta) {
+  saveCurrentContent();
+  autoH(ta);
+  updateStats();
+}
+
+function autoH(ta) {
+  if (!ta) return;
+  ta.style.height = 'auto';
+  ta.style.height = Math.max(90, ta.scrollHeight) + 'px';
+}
+
+/* ═══════════════════════════════════
+   STATS
+   ═══════════════════════════════════ */
+function updateStats() {
+  const all = sections.map(s => {
+    const ta = document.getElementById(`ta-${s.id}`);
+    return ta ? ta.value : s.content;
+  }).join(' ');
+  const words = all.trim() ? all.trim().split(/\s+/).length : 0;
+  const lines = all.split('\n').filter(l=>l.trim()).length;
+  document.getElementById('tbStats').innerHTML = `<strong>${words}</strong> words · <strong>${lines}</strong> lines · <strong>${sections.length}</strong> sections`;
+  document.getElementById('wordBadge').textContent = `${words} words`;
+}
+
+/* ═══════════════════════════════════
+   ADD SECTION MENU
+   ═══════════════════════════════════ */
+function addSectionMenu() {
+  const types = ['verse','chorus','bridge','outro','intro','prechorus'];
+  const existing = document.getElementById('_addMenu');
+  if (existing) { existing.remove(); return; }
+
+  const menu = document.createElement('div');
+  menu.id = '_addMenu';
+  menu.style.cssText = 'position:fixed;background:var(--surface2);border:1px solid var(--border-hi);border-radius:12px;padding:8px;z-index:500;box-shadow:0 20px 50px rgba(0,0,0,0.6);min-width:150px;';
+
+  types.forEach(type => {
+    const c = SEC_COLORS[type]||'#7c3aed';
+    const count = sections.filter(s=>s.type===type).length + 1;
+    const label = type==='chorus'||type==='bridge'||type==='outro'||type==='intro'
+      ? type.charAt(0).toUpperCase()+type.slice(1)
+      : `${type.charAt(0).toUpperCase()+type.slice(1)} ${count}`;
+    const b = document.createElement('button');
+    b.style.cssText = 'display:flex;align-items:center;gap:8px;width:100%;background:none;border:none;color:var(--text);font-family:var(--font-body);font-size:0.8rem;padding:8px 12px;border-radius:8px;cursor:pointer;text-align:left;transition:background 0.15s;';
+    b.innerHTML = `<span style="width:9px;height:9px;border-radius:3px;background:${c};display:inline-block;flex-shrink:0"></span>${label}`;
+    b.onmouseenter=()=>b.style.background='rgba(255,255,255,0.06)';
+    b.onmouseleave=()=>b.style.background='none';
+    b.onclick=()=>{ addSection(type,label,count); menu.remove(); };
+    menu.appendChild(b);
+  });
+
+  const btn = document.querySelector('.add-sec-btn');
+  const r = btn.getBoundingClientRect();
+  menu.style.top=(r.bottom+6)+'px';
+  menu.style.left=r.left+'px';
+  document.body.appendChild(menu);
+  setTimeout(()=>document.addEventListener('click',()=>menu.remove(),{once:true}),10);
+}
+
+function addSection(type,label,count) {
+  const id = `${type.slice(0,2)}${count}_${Date.now()}`;
+  const placeholders = {
+    verse:'Continue the story…',chorus:'The hook that rings…',
+    bridge:'A shift, a revelation…',outro:'Fade out — resolution or mystery…',
+    intro:'Set the scene before the first word…',prechorus:'Build the tension…',
+  };
+  sections.push({id,type,num:count,label:label||`${type} ${count}`,content:'',placeholder:placeholders[type]||'Write here…'});
+  switchSection(id);
+}
+
+function duplicateSec(id) {
+  const s = sections.find(x=>x.id===id);
+  if (!s) return;
+  const ta = document.getElementById(`ta-${id}`);
+  const content = ta ? ta.value : s.content;
+  const newId = `${s.type.slice(0,2)}_d${Date.now()}`;
+  const idx = sections.findIndex(x=>x.id===id);
+  sections.splice(idx+1,0,{...s,id:newId,content});
+  switchSection(newId);
+}
+
+function deleteSec(id) {
+  const idx = sections.findIndex(s=>s.id===id);
+  sections.splice(idx,1);
+  switchSection(sections[Math.max(0,idx-1)].id);
+}
+
+/* ═══════════════════════════════════
+   AI TABS
+   ═══════════════════════════════════ */
+function switchTab(tab) {
+  activeAITab = tab;
+  document.querySelectorAll('.ai-tab').forEach(t=>t.classList.toggle('active',t.dataset.tab===tab));
+  document.querySelectorAll('.tab-panel').forEach(p=>p.classList.toggle('active',p.id===`panel-${tab}`));
+  if (tab==='analyze') runAnalyze();
+}
+
+/* ═══════════════════════════════════
+   THEME CHIPS
+   ═══════════════════════════════════ */
+function renderThemeChips() {
+  document.getElementById('themeChips').innerHTML = THEMES.map(t=>
+    `<button class="theme-chip${selectedThemes.has(t)?' on':''}" onclick="toggleTheme('${t}')">${t}</button>`
+  ).join('');
+}
+function toggleTheme(t) {
+  if(selectedThemes.has(t)) selectedThemes.delete(t); else selectedThemes.add(t);
+  renderThemeChips();
+}
+
+/* ═══════════════════════════════════
+   REWRITE MODES
+   ═══════════════════════════════════ */
+function renderRwModes() {
+  document.getElementById('rwModes').innerHTML = RW_MODES.map(m=>
+    `<button class="rw-mode${m.id===rwMode?' on':''}" onclick="selectRwMode('${m.id}')">
+      <div class="rw-mode-icon">${m.icon}</div>
+      <div class="rw-mode-name">${m.name}</div>
+      <div class="rw-mode-desc">${m.desc}</div>
+    </button>`
+  ).join('');
+}
+function selectRwMode(id) { rwMode=id; renderRwModes(); }
+
+/* ═══════════════════════════════════
+   SUGGEST — Grok API
+   ═══════════════════════════════════ */
+async function getSuggestions() {
+  const btn = document.getElementById('suggestBtn');
+  const list = document.getElementById('suggList');
+  const ctx  = document.getElementById('ctxInput')?.value || '';
+  saveCurrentContent();
+  const sec = sections.find(s=>s.id===activeId);
+  const current = sec?.content || '';
+  const themes = [...selectedThemes].join(', ');
+  const allLyrics = sections.map(s=>{const ta=document.getElementById(`ta-${s.id}`);const c=ta?ta.value:s.content;return c?`[${s.label}]\n${c}`:null}).filter(Boolean).join('\n\n');
+
+  btn.disabled=true;
+  btn.innerHTML='<div class="spin"></div> Writing…';
+  list.innerHTML='<div style="color:var(--muted);font-size:0.8rem;padding:8px 0">Generating ideas…</div>';
+
+  const systemPrompt = `You are an empathetic, skilled lyricist. Suggest 3 distinct lyric options for a "${sec?.type||'verse'}" section.
+
+Rules:
+- Each suggestion: 1-4 lines max
+- Authentic, specific — avoid clichés and generic phrases  
+- Themes to incorporate: ${themes||'any'}
+- Vary the approaches: try concrete imagery, abstract emotion, narrative, etc.
+- ${ctx ? `Writer's context: "${ctx}"` : ''}
+- Return ONLY valid JSON (no markdown, no backticks):
+[{"text":"line1\\nline2","note":"brief stylistic description"},{"text":"...","note":"..."},{"text":"...","note":"..."}]`;
+
+  const userMsg = `Existing song:\n${allLyrics||'(blank canvas)'}\n\nSection to write: [${sec?.label}]\n${current||'(empty — suggest opening lines)'}`;
+
+  try {
+    let raw = '';
+    const result = await callGrok(systemPrompt, userMsg, 900, 0.88);
+
+    if (result) {
+      raw = result.replace(/```json|```/g,'').trim();
+    } else {
+      // Demo fallback
+      raw = getDemoSuggestions(sec?.type, themes);
+    }
+
+    const suggestions = JSON.parse(raw);
+    list.innerHTML = `<div class="sugg-list">${suggestions.map((s,i)=>`
+      <div class="sugg-card">
+        <div class="sugg-text">${s.text.replace(/\n/g,'<br>')}</div>
+        <div class="sugg-meta">
+          <span class="sugg-note">${s.note}</span>
+          <button class="sugg-insert" onclick="insertSugg(\`${esc(s.text)}\`)">Insert →</button>
+        </div>
+      </div>`).join('')}</div>`;
+  } catch(e) {
+    list.innerHTML = `<div style="color:var(--red);font-size:0.78rem;padding:8px 0">⚠️ ${e.message}</div>`;
+  } finally {
+    btn.disabled=false; btn.innerHTML='✨ Generate Suggestions';
+  }
+}
+
+function getDemoSuggestions(type, themes) {
+  const demos = {
+    verse: [
+      {text:"The city light turns amber then gold,\neverything we said dissolving into cold.\nI kept the window open just in case,\nbut winter moved into your empty space.",note:"Concrete imagery with emotional subtext"},
+      {text:"I learned your name from a song I can't recall,\nsome late-night station on the FM dial.\nNow every frequency sounds like you.",note:"Indirect, atmospheric approach"},
+      {text:"The keys were on the counter when I woke,\nno note, no noise — just everything we broke.",note:"Sparse, direct — let the image carry the weight"},
+    ],
+    chorus: [
+      {text:"Tell me where the light goes when it's gone,\ntell me how a song forgets its words.\nI'm still standing in the space you left —\na door left open for a world that never comes.",note:"Rhetorical questions building to a confession"},
+      {text:"This is the part where I should let you go.\nThis is the part I never learned.",note:"Minimal, devastating — the unresolved admission"},
+      {text:"We were fire once, we were smoke,\nnow just ash and open road.",note:"Compressed narrative arc — rise and fall in 8 words"},
+    ],
+    bridge: [
+      {text:"Maybe I'm the one who kept the door unlocked,\nleft the porch light burning past the time we'd talked.",note:"Self-implicating turn — shifts perspective"},
+      {text:"Strange how the ordinary holds the weight —\nan unwashed mug, a half-read book, your handwriting on a date.",note:"Domestic detail as emotional devastation"},
+    ],
+  };
+  const arr = demos[type] || demos.verse;
+  return JSON.stringify(arr);
+}
+
+function insertSugg(text) {
+  const ta = document.getElementById(`ta-${activeId}`);
+  if (!ta) return;
+  const cur = ta.value;
+  ta.value = cur ? cur+'\n'+text : text;
+  ta.dispatchEvent(new Event('input'));
+  onTAInput(ta);
+  toast('✓ Lines inserted');
+}
+
+/* ═══════════════════════════════════
+   RHYME FINDER
+   ═══════════════════════════════════ */
+async function findRhymes() {
+  const word = (document.getElementById('rhymeWord')?.value||'').trim().toLowerCase().replace(/[^a-z]/g,'');
+  if (!word) return;
+  const res = document.getElementById('rhymeResults');
+  res.innerHTML = '<div style="color:var(--muted);font-size:0.76rem">Finding…</div>';
+
+  const local = RHYME_DB[word];
+  if (local) { renderRhymeResults(word, local, res); return; }
+
+  try {
+    const result = await callGrok(
+      'You are a rhyme dictionary. Return ONLY valid JSON (no markdown): {"perfect":["w1","w2"],"near":["w1","w2"],"family":["compound1"]}. Each array 6-10 words. Perfect=identical ending. Near=slant rhymes. Family=compounds with the word.',
+      `Rhymes for: "${word}"`
+    );
+    if (result) {
+      const data = JSON.parse(result.replace(/```json|```/g,'').trim());
+      renderRhymeResults(word, data, res);
+    } else {
+      res.innerHTML = '<div style="color:var(--muted);font-size:0.76rem">No results — try another word</div>';
+    }
+  } catch(e) {
+    res.innerHTML = '<div style="color:var(--red);font-size:0.76rem">⚠️ Could not find rhymes</div>';
+  }
+}
+
+function preRhyme(word) {
+  document.getElementById('rhymeWord').value = word;
+  findRhymes();
+}
+
+function renderRhymeResults(word, data, container) {
+  container.innerHTML = `
+    ${data.perfect?.length ? `<div class="rhyme-section"><div class="rhyme-section-title">Perfect rhymes for "${word}"</div><div class="rhyme-words">${data.perfect.map(w=>`<span class="rw perfect" onclick="useRhyme('${w}')">${w}</span>`).join('')}</div></div>` : ''}
+    ${data.near?.length ? `<div class="rhyme-section" style="margin-top:10px"><div class="rhyme-section-title">Near / slant rhymes</div><div class="rhyme-words">${data.near.map(w=>`<span class="rw" onclick="useRhyme('${w}')">${w}</span>`).join('')}</div></div>` : ''}
+    ${data.family?.length ? `<div class="rhyme-section" style="margin-top:10px"><div class="rhyme-section-title">Word family</div><div class="rhyme-words">${data.family.map(w=>`<span class="rw" style="font-size:0.72rem;padding:3px 8px" onclick="useRhyme('${w}')">${w}</span>`).join('')}</div></div>` : ''}
+  `;
+}
+
+function useRhyme(word) {
+  const ta = document.getElementById(`ta-${activeId}`);
+  if (!ta) return;
+  const pos = ta.selectionStart;
+  ta.value = ta.value.slice(0,pos)+word+ta.value.slice(pos);
+  ta.selectionStart = ta.selectionEnd = pos+word.length;
+  ta.focus();
+  onTAInput(ta);
+  toast(`✓ "${word}" inserted`);
+}
+
+/* ═══════════════════════════════════
+   QUICK RHYME (inline)
+   ═══════════════════════════════════ */
+async function quickRhyme() {
+  const ta = document.getElementById(`ta-${activeId}`);
+  if (!ta || !ta.value.trim()) return;
+  const lines = ta.value.split('\n').filter(l=>l.trim());
+  if (!lines.length) return;
+  const lastWord = lines[lines.length-1].trim().split(/\s+/).pop().toLowerCase().replace(/[^a-z]/g,'');
+  const el = document.getElementById('inlineRhymes');
+  el.innerHTML = '<span style="font-size:0.68rem;color:var(--muted2)">Finding…</span>';
+
+  const local = RHYME_DB[lastWord];
+  let words = [];
+  if (local) {
+    words = [...(local.perfect||[]).slice(0,6), ...(local.near||[]).slice(0,3)];
+  } else {
+    try {
+      const r = await callGrok(
+        'Return ONLY valid JSON array of 8 rhyme words: ["word1","word2",...]. Mix perfect and slant rhymes.',
+        `8 rhymes for: "${lastWord}"`
+      );
+      words = r ? JSON.parse(r.replace(/```json|```/g,'').trim()) : [];
+    } catch(e) { words = []; }
+  }
+
+  if (words.length) {
+    el.innerHTML = `<span style="font-size:0.65rem;color:var(--muted2);align-self:center">"${lastWord}" →</span>` +
+      words.map(w=>`<span class="rhyme-chip" onclick="useRhyme('${w}')">${w}</span>`).join('');
+  } else {
+    el.innerHTML = `<span style="font-size:0.72rem;color:var(--muted2)">No rhymes found — try the Rhyme tab</span>`;
+  }
+}
+
+/* ═══════════════════════════════════
+   CONTINUE LINE
+   ═══════════════════════════════════ */
+async function continueLine() {
+  const ta = document.getElementById(`ta-${activeId}`);
+  if (!ta||!ta.value.trim()) { toast('⚠️ Write something first'); return; }
+  const el = document.getElementById('inlineRhymes');
+  el.innerHTML = '<span style="font-size:0.68rem;color:var(--muted2)">✨ Getting ideas…</span>';
+
+  try {
+    const result = await callGrok(
+      'Suggest 2 natural next lines for these lyrics. Return ONLY JSON: [{"line":"..."},{"line":"..."}]',
+      `Continue these lyrics:\n${ta.value}`
+    );
+    if (result) {
+      const lines = JSON.parse(result.replace(/```json|```/g,'').trim());
+      el.innerHTML = `<span style="font-size:0.65rem;color:var(--muted2);align-self:center">Next line:</span>` +
+        lines.map(l=>`<span class="rhyme-chip" onclick="insertSugg('${esc(l.line)}')" style="background:rgba(167,139,250,0.1);border-color:rgba(167,139,250,0.25);color:var(--accent)">${l.line}</span>`).join('');
+    } else {
+      el.innerHTML = '<span style="font-size:0.72rem;color:var(--muted2)">Add your API key for AI continuations</span>';
+    }
+  } catch(e) {
+    el.innerHTML = `<span style="font-size:0.72rem;color:var(--red)">⚠️ Error: ${e.message}</span>`;
+  }
+}
+
+/* ═══════════════════════════════════
+   ANALYZE
+   ═══════════════════════════════════ */
+function runAnalyze() {
+  switchTab('analyze');
+  const ta = document.getElementById(`ta-${activeId}`);
+  const text = ta ? ta.value : '';
+  const lines = text.split('\n').filter(l=>l.trim());
+
+  // Meter
+  const meterEl = document.getElementById('meterRows');
+  if (lines.length) {
+    meterEl.innerHTML = lines.slice(0,5).map((line,idx)=>{
+      const syls = countSyl(line);
+      const dots = Array.from({length:Math.min(syls,18)},(_,i)=>
+        `<div class="sd${i%2===0?' s':''}"></div>`).join('');
+      return `<div class="meter-row"><div class="meter-num">${idx+1}</div><div class="syl-dots">${dots}</div><div class="meter-count">${syls}</div></div>`;
+    }).join('');
+  } else meterEl.innerHTML='<div style="color:var(--muted2);font-size:0.76rem">Write lyrics to see meter</div>';
+
+  // Rhyme scheme
+  const schemeEl = document.getElementById('rhymeScheme');
+  if (lines.length >= 2) {
+    const scheme = detectScheme(lines);
+    const colors = ['#7c3aed','#ec4899','#0ea5e9','#10b981','#d97706','#dc2626'];
+    const map = {};let idx=0;
+    schemeEl.innerHTML = scheme.map(letter=>{
+      if(!map[letter]){map[letter]={c:colors[idx%colors.length]};idx++;}
+      const c=map[letter].c;
+      return `<div class="rs-letter" style="background:rgba(${hex2rgb(c)},0.15);color:${c};border-color:rgba(${hex2rgb(c)},0.25)">${letter}</div>`;
+    }).join('');
+  } else schemeEl.innerHTML='<div style="color:var(--muted2);font-size:0.76rem">Needs 2+ lines</div>';
+
+  // Mood
+  const moodEl = document.getElementById('moodBars');
+  if (text.trim()) {
+    const moods = analyzeMood(text);
+    const moodColors = {dark:'#818cf8',uplifting:'#34d399',romantic:'#f472b6',melancholy:'#22d3ee',energetic:'#f59e0b'};
+    moodEl.innerHTML = Object.entries(moods).map(([m,v])=>`
+      <div class="mb-row">
+        <div class="mb-label">${m}</div>
+        <div class="mb-track"><div class="mb-fill" style="width:${v}%;background:${moodColors[m]||'#a78bfa'}"></div></div>
+        <div class="mb-val">${v}%</div>
+      </div>`).join('');
+  } else moodEl.innerHTML='<div style="color:var(--muted2);font-size:0.76rem">Write to see mood</div>';
+}
+
+function countSyl(line) {
+  return Math.max(1, (line.toLowerCase().replace(/[^a-z]/g,'').match(/[aeiouy]+/g)||[]).length);
+}
+function detectScheme(lines) {
+  const endings=lines.map(l=>{const ws=l.trim().split(/\s+/);return ws[ws.length-1].toLowerCase().replace(/[^a-z]/g,'').slice(-3)});
+  const map={};let next=65;
+  return endings.map(e=>{if(!e)return'X';for(const[k,v] of Object.entries(map)){if(k.slice(-2)===e.slice(-2))return v;}const l=String.fromCharCode(next++);map[e]=l;return l;});
+}
+function analyzeMood(t) {
+  const l=t.toLowerCase();
+  const scores={
+    dark:(l.match(/dark|shadow|alone|cold|empty|lost|dead|pain|cry|tear|bleed|hollow|void|night|black/g)||[]).length,
+    uplifting:(l.match(/light|sun|hope|rise|free|dream|bright|joy|dance|smile|fly|soar|open|golden/g)||[]).length,
+    romantic:(l.match(/love|heart|kiss|hold|touch|warm|close|tender|beautiful|you|arms|eyes|skin|lips/g)||[]).length,
+    melancholy:(l.match(/gone|miss|remember|past|fade|away|leave|never|rain|grey|ghost|echo|memory|once/g)||[]).length,
+    energetic:(l.match(/run|fire|burn|fight|move|shake|power|strong|now|alive|rage|loud|break|crash/g)||[]).length,
+  };
+  const total=Math.max(Object.values(scores).reduce((a,b)=>a+b,0),1);
+  return Object.fromEntries(Object.entries(scores).map(([k,v])=>[k,Math.min(99,Math.round(v/total*100*2.5+(v>0?18:5)))]));
+}
+
+/* ═══════════════════════════════════
+   REWRITE — Grok API
+   ═══════════════════════════════════ */
+async function doRewrite() {
+  saveCurrentContent();
+  const sec = sections.find(s=>s.id===activeId);
+  const ta = document.getElementById(`ta-${activeId}`);
+  if (!ta||!ta.value.trim()) { toast('⚠️ Write some lyrics first'); return; }
+
+  const btn=document.getElementById('rwBtn');
+  const resultEl=document.getElementById('rwResult');
+  const mode=RW_MODES.find(m=>m.id===rwMode);
+
+  btn.disabled=true; btn.innerHTML='<div class="spin"></div> Rewriting…';
+  resultEl.className='rewrite-result';
+  document.getElementById('rwActs').innerHTML='';
+
+  const modeInstructions={
+    elevate:'Improve word choice, imagery, metaphors. Make every word earn its place. Elevate poetic quality without losing meaning.',
+    simplify:'Strip to essential truth. Remove all excess. What is the bare, honest core of this?',
+    rhyme:'Introduce a clear rhyme scheme (ABAB or AABB or ABCB) while preserving meaning. Keep rhymes natural.',
+    rhythm:'Fix the rhythmic flow so lines have natural stress patterns for singing. Consistent syllable counts.',
+    darker:'Shift the emotional tone darker — more shadow, more weight, more difficult truth.',
+    hopeful:'Find hope or light in these words. Shift the emotional register toward something more healing and forward-looking.',
+  };
+
+  try {
+    const result = await callGrok(
+      `You are a collaborative lyricist. Rewrite these lyrics: ${modeInstructions[rwMode]}\n\nReturn ONLY the rewritten lyrics — no preamble, no explanation. Just the lines.`,
+      `Rewrite:\n${ta.value}`
+    );
+
+    const output = result || getDemoRewrite(rwMode, ta.value);
+    pendingRewrite = output;
+
+    resultEl.className='rewrite-result show la-stream';
+    resultEl.textContent='';
+    const chars=output.split('');
+    let i=0;
+    const spd=Math.max(8,Math.round(1800/chars.length));
+    const type=()=>{if(i<chars.length){resultEl.textContent+=chars[i++];setTimeout(type,spd);}else resultEl.classList.remove('la-stream');};
+    type();
+
+    document.getElementById('rwActs').innerHTML=`
+      <button class="ra-btn" style="background:rgba(52,211,153,0.1);border-color:rgba(52,211,153,0.25);color:var(--green)" onclick="acceptRewrite()">✓ Use this</button>
+      <button class="ra-btn" onclick="doRewrite()">↺ Try again</button>`;
+  } catch(e) {
+    resultEl.className='rewrite-result show';
+    resultEl.style.color='var(--red)';
+    resultEl.textContent='⚠️ '+e.message;
+  } finally {
+    btn.disabled=false; btn.innerHTML=`${mode.icon} Rewrite: ${mode.name}`;
+    renderRwModes();
+  }
+}
+
+function getDemoRewrite(mode, original) {
+  const starters={
+    elevate:'Every syllable is deliberate now, carved from the weight of what wasn\'t said.',
+    simplify:'You left. I stayed. The silence filled the space.',
+    rhyme:'The room remembers every word we spoke,\neach photograph a wound that won\'t unhook.\nI keep returning to the moment broke,\nbut can\'t unwrite the lines inside this book.',
+    rhythm:'The walls still hold the shape of everything,\nevery silence has a melody to sing.',
+    darker:'Something died here slowly, in the in-between — not with thunder but with rooms going cold one degree at a time.',
+    hopeful:'Even in this the light is somewhere finding its way back, the way morning always manages to return.',
+  };
+  return starters[mode] || 'The rewrite would appear here with your API key connected.';
+}
+
+function acceptRewrite() {
+  const ta=document.getElementById(`ta-${activeId}`);
+  if(ta&&pendingRewrite){
+    ta.value=pendingRewrite;
+    onTAInput(ta);
+    toast('✓ Rewrite applied');
+    document.getElementById('rwResult').className='rewrite-result';
+    document.getElementById('rwActs').innerHTML='';
+    pendingRewrite='';
+  }
+}
+
+/* ═══════════════════════════════════
+   EXPORT / COPY
+   ═══════════════════════════════════ */
+function getAllLyrics() {
+  saveCurrentContent();
+  const title=document.getElementById('songTitle')?.value||'Untitled Song';
+  let out=`${title}\n${'─'.repeat(Math.min(title.length,40))}\n\n`;
+  sections.forEach(s=>{
+    const ta=document.getElementById(`ta-${s.id}`);
+    const c=ta?ta.value:s.content;
+    if(c.trim()) out+=`[${s.label}]\n${c}\n\n`;
+  });
+  return out.trim();
+}
+function copyAll() {
+  navigator.clipboard.writeText(getAllLyrics()).then(()=>toast('✓ All lyrics copied'));
+}
+function exportTxt() {
+  const title=document.getElementById('songTitle')?.value||'Untitled Song';
+  const blob=new Blob([getAllLyrics()],{type:'text/plain'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download=title.replace(/\s+/g,'-').toLowerCase()+'.txt';
+  a.click();
+  toast('✓ Exported');
+}
+
+/* ═══════════════════════════════════
+   UTILITY
+   ═══════════════════════════════════ */
+function hex2rgb(hex){
+  if(!hex||hex.length<7) return '167,139,250';
+  return `${parseInt(hex.slice(1,3),16)},${parseInt(hex.slice(3,5),16)},${parseInt(hex.slice(5,7),16)}`;
+}
+function esc(s){return s.replace(/\\/g,'\\\\').replace(/`/g,'\\`').replace(/\$/g,'\\$')}
+function toast(msg){
+  const t=document.getElementById('laToast');
+  document.getElementById('toastText').textContent=msg;
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2400);
+}
+</script>
 </body>
 </html>
