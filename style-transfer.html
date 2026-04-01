@@ -154,6 +154,12 @@ input[type=range]::-webkit-slider-thumb:active{transform:scale(1.3)}
 .obt.prim:hover{background:rgba(0,212,255,0.14)}
 .obt.ok{color:#10b981;border-color:rgba(16,185,129,0.3)}
 
+/* Error card */
+.err-card{background:rgba(239,68,68,0.06);border:1px solid rgba(239,68,68,0.25);border-radius:12px;padding:14px 16px}
+.err-title{font-size:0.75rem;font-weight:700;color:#f87171;margin-bottom:6px;display:flex;align-items:center;gap:6px}
+.err-msg{font-size:0.73rem;color:var(--muted);line-height:1.55;font-family:var(--font-mono)}
+.err-hint{font-size:0.7rem;color:var(--muted2);margin-top:8px;padding-top:8px;border-top:1px solid rgba(239,68,68,0.15)}
+
 /* History */
 .hist-bar{border-top:1px solid var(--border);padding:12px 22px;flex-shrink:0;background:rgba(255,255,255,0.01)}
 .hist-label{font-size:0.61rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted2);margin-bottom:9px}
@@ -172,6 +178,13 @@ input[type=range]::-webkit-slider-thumb:active{transform:scale(1.3)}
 /* Spinner */
 .spin{width:15px;height:15px;border-radius:50%;border:2px solid rgba(255,255,255,0.25);border-top-color:white;animation:sp 0.75s linear infinite;flex-shrink:0;display:inline-block}
 @keyframes sp{to{transform:rotate(360deg)}}
+
+/* Proxy status badge */
+.proxy-status{display:flex;align-items:center;gap:5px;font-size:0.62rem;color:var(--muted2);padding:4px 10px;border-radius:99px;border:1px solid var(--border);background:rgba(255,255,255,0.02)}
+.ps-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+.ps-dot.ok{background:#10b981;box-shadow:0 0 5px #10b981}
+.ps-dot.err{background:#ef4444;box-shadow:0 0 5px #ef4444}
+.ps-dot.chk{background:var(--amber);box-shadow:0 0 5px var(--amber)}
 
 ::-webkit-scrollbar{width:4px;height:4px}
 ::-webkit-scrollbar-track{background:transparent}
@@ -204,6 +217,10 @@ input[type=range]::-webkit-slider-thumb:active{transform:scale(1.3)}
     <li class="nav-link-item" onclick="location.href='#'">Dashboard</li>
   </ul>
   <div class="nav-right">
+    <div class="proxy-status" id="proxyStatus">
+      <div class="ps-dot chk" id="psDot"></div>
+      <span id="psText">Checking proxy…</span>
+    </div>
     <a href="lyric-assistant.html" class="nav-pill">✍️ Lyric Assistant</a>
     <div class="nav-avatar">S</div>
   </div>
@@ -303,12 +320,10 @@ input[type=range]::-webkit-slider-thumb:active{transform:scale(1.3)}
 
 <script>
 // ═══════════════════════════════════════════════════════
-// xAI PROXY CONFIG
-// Calls local proxy.js which forwards to api.x.ai
-// Run: node proxy.js   (in the harmonia folder)
+// CONFIG
 // ═══════════════════════════════════════════════════════
-const PROXY_URL  = 'http://localhost:3579/chat';
-const XAI_MODEL  = 'grok-3-latest';
+const PROXY_URL = 'http://localhost:3579/chat';
+const XAI_MODEL = 'grok-3-latest';
 
 // ═══════════════════════════════════
 // STYLE PRESETS
@@ -387,24 +402,73 @@ const EXAMPLES = [
   {label:'🏙️ 3am',    text:'The city at three in the morning belongs to different people — the last shift workers, the restless, the ones with nowhere particular to be. The neon puddles in the rain.'},
 ];
 
-// Demo outputs — all safe ASCII apostrophes
-const DEMO_OUT = {
-  baroque:      "In the hour wherein silence doth hold dominion and the golden light doth pour forth upon the city, there existeth a stillness most divine — as though Providence doth hold its breath before the contrapuntal chorus of the day doth commence. Such morning hours are borrowed grace, a prelude written in a mode of tenderness, suspended between the night's last chord and the day's first fugal entry.",
-  jazz:         "Light comes in slow — yeah, slow like the last measure of a ballad nobody asked for but everybody needed. City holds its breath, baby, like the pause before the piano drops back in. Something borrowed about morning, something blue — these quiet bars between the sets that don't belong to the club or the street or anyone playing a role.",
-  romantic:     "The light arrives not gently but in great golden torrents, as if the sun itself cannot contain the enormity of what morning means — and the city, that vast Romantic organism of ten thousand souls, holds its collective breath in an agony of anticipation before the great orchestral tumult of the day unfolds its chromatic, inevitable drama.",
-  minimalist:   "Light. Then more light. The city breathes. The city breathes. The city breathes. Something about morning. Morning. Morning feels borrowed. A few minutes. A few quiet minutes. That don't belong. Don't belong to anyone yet.",
-  impressionist:"The light shimmers in — first the grey suggestion of it, then something like gold but not quite, dissolving at its own edges — and somewhere beneath the surface of things the city holds what might be breath, what might be the memory of breath, before the noise arrives like colour bleeding into water.",
-  hiphop:       "Light slides in slow — yeah the city catching them golden rays before the rush, hold your breath cause the day's about to press play on all its noise and chaos. Mornings feel like borrowed time, fr — a few bars of peace before the world clocks in and starts demanding answers, like who does this stillness belong to anyway.",
-  folk:         "The light comes the way it always has — grey first, then gold, slow as a river finding its way. And the city holds still for just a moment, the way a town holds still before the mill starts up or the market opens, that borrowed quiet before the day takes what it needs from everyone.",
-  ambient:      "Light... expands into the space between things. The city... exists at the edge of awareness. Something breathes or something like breathing. Morning is a texture — grey dissolving into gold dissolving into the beginning of noise. These moments do not belong to time. They exist... between.",
-};
-
 // ═══════════════════════════════════
 // STATE
 // ═══════════════════════════════════
 let active = STYLES[1];
 let busy   = false;
 let hist   = [];
+let proxyOk = false;
+
+// ═══════════════════════════════════
+// PROXY HEALTH CHECK
+// ═══════════════════════════════════
+async function checkProxy() {
+  try {
+    const r = await fetch('http://localhost:3579/health', { signal: AbortSignal.timeout(3000) });
+    if (r.ok) {
+      proxyOk = true;
+      document.getElementById('psDot').className = 'ps-dot ok';
+      document.getElementById('psText').textContent = 'Proxy connected';
+    } else {
+      throw new Error('Status ' + r.status);
+    }
+  } catch(e) {
+    proxyOk = false;
+    document.getElementById('psDot').className = 'ps-dot err';
+    document.getElementById('psText').textContent = 'Proxy offline';
+  }
+}
+
+// ═══════════════════════════════════
+// CORE API CALL — no silent fallback
+// ═══════════════════════════════════
+async function callProxy(systemPrompt, userMessage, maxTokens, temperature) {
+  const resp = await fetch(PROXY_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      model:       XAI_MODEL,
+      messages:    [
+        { role: 'system', content: systemPrompt },
+        { role: 'user',   content: userMessage  },
+      ],
+      max_tokens:  maxTokens  || 900,
+      temperature: temperature !== undefined ? temperature : 0.85,
+    }),
+  });
+
+  // Parse the response body regardless of status
+  let data;
+  try {
+    data = await resp.json();
+  } catch(e) {
+    throw new Error('Proxy returned non-JSON response (status ' + resp.status + ')');
+  }
+
+  // Surface real errors from xAI / proxy
+  if (!resp.ok) {
+    const errMsg = data?.error?.message || data?.error || JSON.stringify(data);
+    throw new Error('API error ' + resp.status + ': ' + errMsg);
+  }
+
+  const content = data?.choices?.[0]?.message?.content;
+  if (!content) {
+    throw new Error('Empty response from model — choices[0].message.content is missing');
+  }
+
+  return content;
+}
 
 // ═══════════════════════════════════
 // INIT
@@ -414,6 +478,9 @@ document.addEventListener('DOMContentLoaded', () => {
   renderExamples();
   document.getElementById('inputText').addEventListener('input', updateCounter);
   selectStyle('jazz');
+  checkProxy();
+  // Re-check proxy every 30s
+  setInterval(checkProxy, 30000);
 });
 
 function renderStyles() {
@@ -457,7 +524,7 @@ function selectStyle(id) {
 }
 
 // ═══════════════════════════════════
-// TRANSFORM  (xAI Grok API)
+// TRANSFORM
 // ═══════════════════════════════════
 async function doTransfer() {
   const ta = document.getElementById('inputText');
@@ -465,9 +532,10 @@ async function doTransfer() {
   if (busy) return;
   busy = true;
 
-  const i = document.getElementById('si').value;
-  const c = document.getElementById('sc_').value;
-  const p = document.getElementById('sp').value;
+  const intensity    = document.getElementById('si').value;
+  const creativity   = document.getElementById('sc_').value;
+  const preserveMeaning = document.getElementById('sp').value;
+  const temperature  = Math.round(creativity / 100 * 1.4 * 10) / 10;
 
   const btn = document.getElementById('tfBtn');
   btn.disabled = true;
@@ -475,39 +543,30 @@ async function doTransfer() {
 
   showProcessing();
 
-  const sysProm = active.prompt
-    .replace('{i}', i).replace('{c}', c).replace('{p}', p)
+  const systemPrompt = active.prompt
+    .replace('{i}', intensity)
+    .replace('{c}', creativity)
+    .replace('{p}', preserveMeaning)
     + '\n\nOutput ONLY the transformed text — no preamble, no meta-commentary. 3-8 sentences or equivalent in verse. Make it feel authentically of that style.';
 
-  let output = '';
+  const userMessage = 'Transform this text:\n\n"' + ta.value.trim() + '"';
+
   try {
-    try {
-      const resp = await fetch(PROXY_URL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          model:       XAI_MODEL,
-          messages:    [
-            { role: 'system', content: sysProm },
-            { role: 'user',   content: 'Transform this text:\n\n"' + ta.value.trim() + '"' },
-          ],
-          max_tokens:  900,
-          temperature: Math.round(c / 100 * 1.4 * 10) / 10,
-        }),
-      });
-      if (!resp.ok) throw new Error('Proxy error ' + resp.status);
-      const d = await resp.json();
-      output = d.choices?.[0]?.message?.content || '';
-      if (!output) throw new Error('Empty response');
-    } catch(proxyErr) {
-      console.warn('Proxy unavailable, using demo:', proxyErr.message);
-      await new Promise(r => setTimeout(r, 900));
-      output = DEMO_OUT[active.id] || DEMO_OUT.jazz;
-    }
+    const output = await callProxy(systemPrompt, userMessage, 900, temperature);
     showResult(output);
     addHist(ta.value, output, active);
+    // Update proxy status to OK since it worked
+    proxyOk = true;
+    document.getElementById('psDot').className = 'ps-dot ok';
+    document.getElementById('psText').textContent = 'Proxy connected';
   } catch(e) {
     showError(e.message);
+    // Update proxy status
+    if (e.message.includes('fetch') || e.message.includes('NetworkError') || e.message.includes('Failed to fetch')) {
+      proxyOk = false;
+      document.getElementById('psDot').className = 'ps-dot err';
+      document.getElementById('psText').textContent = 'Proxy offline';
+    }
   } finally {
     busy = false;
     btn.disabled = false;
@@ -527,10 +586,10 @@ function showProcessing() {
 }
 
 function showResult(text) {
-  const words     = text.trim().split(/\s+/).length;
-  const complexity= Math.min(99, 40 + ((text.match(/[,;:—–]/g)||[]).length * 7));
-  const styleMatch= Math.round(72 + Math.random() * 26);
-  const intensity = parseInt(document.getElementById('si').value);
+  const words      = text.trim().split(/\s+/).length;
+  const complexity = Math.min(99, 40 + ((text.match(/[,;:—–]/g)||[]).length * 7));
+  const styleMatch = Math.round(72 + Math.random() * 26);
+  const intensity  = parseInt(document.getElementById('si').value);
 
   document.getElementById('outBody').innerHTML = `
     <div class="out-badge" style="--b-rgb:${active.rgb}">
@@ -564,12 +623,35 @@ function showResult(text) {
 }
 
 function showError(msg) {
+  // Categorise the error for a helpful hint
+  let hint = '';
+  if (msg.includes('Failed to fetch') || msg.includes('NetworkError') || msg.includes('ERR_CONNECTION_REFUSED')) {
+    hint = 'The proxy server is not running. Open a terminal in your Harmonia folder and run: <strong>node proxy.js</strong>';
+  } else if (msg.includes('401') || msg.includes('Unauthorized') || msg.includes('invalid_api_key')) {
+    hint = 'Your xAI API key looks invalid. Check the <strong>XAI_API_KEY</strong> value in proxy.js.';
+  } else if (msg.includes('402') || msg.includes('insufficient')) {
+    hint = 'Your xAI account may have insufficient credits.';
+  } else if (msg.includes('429') || msg.includes('rate')) {
+    hint = 'Rate limit hit. Wait a few seconds and try again.';
+  } else if (msg.includes('Empty response')) {
+    hint = 'The model returned an empty response. Try again or reduce input length.';
+  } else {
+    hint = 'Check that <strong>node proxy.js</strong> is running and your API key is valid.';
+  }
+
   document.getElementById('outBody').innerHTML = `
-    <div class="out-empty">
-      <div class="out-empty-ring" style="border-color:rgba(239,68,68,0.4);animation:none">⚠️</div>
-      <div class="out-empty-title" style="color:#ef4444">Transform failed</div>
-      <div class="out-empty-sub">${msg}<br><br>Check your xAI API key or network connection.</div>
+    <div class="err-card">
+      <div class="err-title">⚠️ Transform failed</div>
+      <div class="err-msg">${escHtml(msg)}</div>
+      ${hint ? '<div class="err-hint">💡 ' + hint + '</div>' : ''}
+    </div>
+    <div class="out-actions">
+      <button class="obt prim" onclick="doTransfer()">↺ Try again</button>
     </div>`;
+}
+
+function escHtml(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 
 // ═══════════════════════════════════
@@ -612,7 +694,7 @@ function addHist(inp, out, style) {
   el.innerHTML = hist.map((h,i) => `
     <div class="hist-item" onclick="loadHist(${i})">
       <div class="h-style">${h.style.emoji} ${h.style.name}</div>
-      <div class="h-prev">${h.out}</div>
+      <div class="h-prev">${escHtml(h.out.slice(0,100))}</div>
     </div>`).join('');
 }
 
