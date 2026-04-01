@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Harmonia – Learn, Create & Explore Music</title>
+  <link rel="stylesheet" href="styles/home.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+</head>
+<body>
+
+<!-- ===== NAVBAR ===== -->
+<nav class="navbar" id="navbar">
+  <div class="nav-inner">
+
+    <!-- Logo -->
+    <a href="home.html" class="nav-logo">
+      <div class="logo-icon">
+        <svg width="28" height="28" viewBox="0 0 36 36" fill="none">
+          <defs>
+            <linearGradient id="navLogoGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" style="stop-color:#a78bfa"/>
+              <stop offset="100%" style="stop-color:#ec4899"/>
+            </linearGradient>
+          </defs>
+          <path d="M13 24V12l12 3v9" stroke="url(#navLogoGrad)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+          <circle cx="11" cy="24" r="3" fill="url(#navLogoGrad)"/>
+          <circle cx="23" cy="22" r="3" fill="url(#navLogoGrad)"/>
+        </svg>
+      </div>
+      <span class="logo-text">Harmonia</span>
+    </a>
+
+    <!-- Desktop Nav Links -->
+    <ul class="nav-links" id="navLinks">
+
+      <!-- Training -->
+      <li class="nav-item has-dropdown">
+        <button class="nav-link">
+          Training
+          <svg class="caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m6 9 6 6 6-6"/></svg>
+        </button>
+        <div class="dropdown">
+          <div class="dropdown-inner">
+            <a href="training.html" class="dd-item">
+              <span class="dd-icon">🛤️</span>
+              <span class="dd-content"><strong>Learning Path</strong><span>Structured curriculum</span></span>
+            </a>
+            <a href="theory-quiz.html" class="dd-item">
+              <span class="dd-icon">🧠</span>
+              <span class="dd-content"><strong>Theory Quiz</strong><span>Test your knowledge</span></span>
+              <span class="dd-tag xp">+XP</span>
+            </a>
+            <a href="ear-training.html" class="dd-item">
+              <span class="dd-icon">👂</span>
+              <span class="dd-content"><strong>Ear Training</strong><span>Sharpen your hearing</span></span>
+            </a>
+            <a href="practice-mode.html" class="dd-item">
+              <span class="dd-icon">🎸</span>
+              <span class="dd-content"><strong>Practice Mode</strong><span>Guided sessions</span></span>
+              <span class="dd-tag new">New</span>
+            </a>
+          </div>
+        </div>
+      </li>
+
+      <!-- AI Generator -->
+      <li class="nav-item has-dropdown">
+        <button class="nav-link">
+          AI Generator
+          <svg class="caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m6 9 6 6 6-6"/></svg>
+        </button>
+        <div class="dropdown">
+          <div class="dropdown-inner">
+            <a href="ai-composer.html" class="dd-item">
+              <span class="dd-icon">🤖</span>
+              <span class="dd-content"><strong>AI Compose</strong><span>Generate original music</span></span>
+            </a>
+            <a href="#" class="dd-item">
+              <span class="dd-icon">🎨</span>
+              <span class="dd-content"><strong>Style Transfer</strong><span>Reimagine your tracks</span></span>
+              <span class="dd-tag beta">Beta</span>
+            </a>
+            <a href="#" class="dd-item">
+              <span class="dd-icon">✍️</span>
+              <span class="dd-content"><strong>Lyric Assistant</strong><span>AI-powered songwriting</span></span>
+            </a>
+          </div>
+        </div>
+      </li>
+
+      <!-- Music History -->
+      <li class="nav-item has-dropdown">
+        <button class="nav-link">
+          Music History
+          <svg class="caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m6 9 6 6 6-6"/></svg>
+        </button>
+        <div class="dropdown">
+          <div class="dropdown-inner">
+            <a href="#" class="dd-item">
+              <span class="dd-icon">🌍</span>
+              <span class="dd-content"><strong>Genre Explorer</strong><span>From jazz to EDM</span></span>
+            </a>
+            <a href="#" class="dd-item">
+              <span class="dd-icon">📅</span>
+              <span class="dd-content"><strong>Era Timeline</strong><span>Centuries of music</span></span>
+            </a>
+            <a href="#" class="dd-item">
+              <span class="dd-icon">🎼</span>
+              <span class="dd-content"><strong>Composer Library</strong><span>Masters & legends</span></span>
+            </a>
+          </div>
+        </div>
+      </li>
+
+      <!-- 3D Anatomy -->
+      <li class="nav-item has-dropdown">
+        <button class="nav-link">
+          3D Anatomy
+          <svg class="caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m6 9 6 6 6-6"/></svg>
+        </button>
+        <div class="dropdown">
+          <div class="dropdown-inner">
+            <a href="#" class="dd-item">
+              <span class="dd-icon">🎹</span>
+              <span class="dd-content"><strong>Instrument Parts</strong><span>Interactive 3D models</span></span>
+            </a>
+            <a href="#" class="dd-item">
+              <span class="dd-icon">🔊</span>
+              <span class="dd-content"><strong>Sound Physics</strong><span>How acoustics work</span></span>
+            </a>
+          </div>
+        </div>
+      </li>
+
+      <!-- Dashboard -->
+      <li class="nav-item has-dropdown">
+        <button class="nav-link">
+          Dashboard
+          <svg class="caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m6 9 6 6 6-6"/></svg>
+        </button>
+        <div class="dropdown">
+          <div class="dropdown-inner">
+            <a href="#" class="dd-item">
+              <span class="dd-icon">🏆</span>
+              <span class="dd-content"><strong>Leaderboard</strong><span>Top performers</span></span>
+            </a>
+            <a href="#" class="dd-item">
+              <span class="dd-icon">📈</span>
+              <span class="dd-content"><strong>My Progress</strong><span>Track your growth</span></span>
+            </a>
+            <a href="#" class="dd-item">
+              <span class="dd-icon">🥇</span>
+              <span class="dd-content"><strong>Achievements</strong><span>Badges & rewards</span></span>
+            </a>
+          </div>
+        </div>
+      </li>
+
+      <!-- Community -->
+      <li class="nav-item has-dropdown">
+        <button class="nav-link">
+          Community
+          <svg class="caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m6 9 6 6 6-6"/></svg>
+        </button>
+        <div class="dropdown">
+          <div class="dropdown-inner">
+            <a href="#" class="dd-item">
+              <span class="dd-icon">💬</span>
+              <span class="dd-content"><strong>Social Feed</strong><span>Share your journey</span></span>
+            </a>
+            <a href="#" class="dd-item">
+              <span class="dd-icon">🎵</span>
+              <span class="dd-content"><strong>Playlists</strong><span>Community curations</span></span>
+            </a>
+            <a href="#" class="dd-item">
+              <span class="dd-icon">🎤</span>
+              <span class="dd-content"><strong>Concerts</strong><span>Live events & shows</span></span>
+            </a>
+          </div>
+        </div>
+      </li>
+
+    </ul>
+
+    <!-- Right Controls -->
+    <div class="nav-right">
+      <!-- Search -->
+      <div class="search-wrap" id="searchWrap">
+        <button class="icon-btn search-toggle" id="searchToggle" onclick="toggleSearch()" aria-label="Search">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+        </button>
+        <div class="search-expand" id="searchExpand">
+          <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+          <input type="text" placeholder="Search lessons, instruments…" id="searchInput" />
+          <button class="search-close" onclick="toggleSearch()">✕</button>
+        </div>
+      </div>
+
+      <!-- Theme Toggle -->
+      <button class="icon-btn theme-btn" id="themeBtn" onclick="toggleTheme()" aria-label="Toggle theme">
+        <svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+        <svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+      </button>
+
+      <!-- Profile -->
+      <div class="profile-menu" id="profileMenu">
+        <button class="profile-btn" onclick="toggleProfile()" aria-label="Profile menu">
+          <div class="avatar">G</div>
+          <span class="profile-name">Guest</span>
+          <svg class="caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m6 9 6 6 6-6"/></svg>
+        </button>
+        <div class="profile-dropdown" id="profileDropdown">
+          <div class="pd-header">
+            <div class="pd-avatar">G</div>
+            <div>
+              <div class="pd-name">Guest User</div>
+              <div class="pd-email">Not signed in</div>
+            </div>
+          </div>
+          <hr class="pd-divider"/>
+          <a href="#" class="pd-item">My Profile</a>
+          <a href="#" class="pd-item">Settings</a>
+          <a href="#" class="pd-item">Help & Support</a>
+          <hr class="pd-divider"/>
+          <a href="index.html" class="pd-item pd-signout">Sign Out</a>
+        </div>
+      </div>
+
+      <!-- Sign Out btn -->
+      <a href="index.html" class="btn-signout">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        Sign Out
+      </a>
+
+      <!-- Hamburger -->
+      <button class="hamburger" id="hamburger" onclick="toggleMobileNav()" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </div>
+</nav>
+
+<!-- Mobile Nav Overlay -->
+<div class="mobile-overlay" id="mobileOverlay" onclick="toggleMobileNav()"></div>
+<div class="mobile-nav" id="mobileNav">
+  <div class="mobile-nav-header">
+    <span class="logo-text">Harmonia</span>
+    <button onclick="toggleMobileNav()">✕</button>
+  </div>
+  <div class="mobile-nav-links">
+    <details><summary>Training</summary>
+      <a href="training.html">Learning Path</a>
+      <a href="theory-quiz.html">Theory Quiz <span class="dd-tag xp">+XP</span></a>
+      <a href="ear-training.html">Ear Training</a>
+      <a href="practice-mode.html">Practice Mode <span class="dd-tag new">New</span></a>
+    </details>
+    <details><summary>AI Generator</summary>
+      <a href="ai-composer.html">AI Compose</a>
+      <a href="#">Style Transfer <span class="dd-tag beta">Beta</span></a>
+      <a href="#">Lyric Assistant</a>
+    </details>
+    <details><summary>Music History</summary>
+      <a href="#">Genre Explorer</a><a href="#">Era Timeline</a><a href="#">Composer Library</a>
+    </details>
+    <details><summary>3D Anatomy</summary>
+      <a href="#">Instrument Parts</a><a href="#">Sound Physics</a>
+    </details>
+    <details><summary>Dashboard</summary>
+      <a href="#">Leaderboard</a><a href="#">My Progress</a><a href="#">Achievements</a>
+    </details>
+    <details><summary>Community</summary>
+      <a href="#">Social Feed</a><a href="#">Playlists</a><a href="#">Concerts</a>
+    </details>
+    <a href="index.html" class="mobile-signout">Sign Out</a>
+  </div>
+</div>
+
+<!-- ===== HERO ===== -->
+<section class="hero" id="hero">
+  <div class="hero-bg">
+    <div class="hero-orb hero-orb-1"></div>
+    <div class="hero-orb hero-orb-2"></div>
+    <div class="hero-grid"></div>
+  </div>
+
+  <div class="hero-floating" aria-hidden="true">
+    <div class="float-note fn-1">♪</div>
+    <div class="float-note fn-2">♫</div>
+    <div class="float-note fn-3">♬</div>
+    <div class="float-note fn-4">𝄞</div>
+    <div class="float-note fn-5">♩</div>
+    <div class="float-note fn-6">🎵</div>
+  </div>
+
+  <div class="container hero-inner">
+    <div class="hero-badge">
+      <span class="badge-dot"></span>
+      New: AI Composer v2.0 is live!
+    </div>
+    <h1 class="hero-title">
+      Learn, Create<br/>& <span class="grad-text">Explore Music</span>
+    </h1>
+    <p class="hero-subtitle">
+      Master any instrument, compose with AI, and dive deep into music history — all in one beautifully crafted platform.
+    </p>
+    <div class="hero-ctas">
+      <a href="training.html" class="btn-hero-primary">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="18" height="18"><path d="M3 12h18M12 3l9 9-9 9"/></svg>
+        Start Learning
+      </a>
+      <a href="ai-composer.html" class="btn-hero-secondary">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+        Try AI Generator
+      </a>
+    </div>
+    <div class="hero-stats">
+      <div class="hs"><strong>50K+</strong><span>Students</span></div>
+      <div class="hs-div"></div>
+      <div class="hs"><strong>200+</strong><span>Lessons</span></div>
+      <div class="hs-div"></div>
+      <div class="hs"><strong>15+</strong><span>Instruments</span></div>
+      <div class="hs-div"></div>
+      <div class="hs"><strong>4.9★</strong><span>Rating</span></div>
+    </div>
+  </div>
+
+  <!-- Waveform visual -->
+  <div class="hero-wave" aria-hidden="true">
+    <div class="wv-bar" style="--d:0"></div>
+    <div class="wv-bar" style="--d:1"></div>
+    <div class="wv-bar" style="--d:2"></div>
+    <div class="wv-bar" style="--d:3"></div>
+    <div class="wv-bar" style="--d:4"></div>
+    <div class="wv-bar" style="--d:5"></div>
+    <div class="wv-bar" style="--d:6"></div>
+    <div class="wv-bar" style="--d:7"></div>
+    <div class="wv-bar" style="--d:8"></div>
+    <div class="wv-bar" style="--d:9"></div>
+    <div class="wv-bar" style="--d:10"></div>
+    <div class="wv-bar" style="--d:11"></div>
+    <div class="wv-bar" style="--d:12"></div>
+    <div class="wv-bar" style="--d:13"></div>
+    <div class="wv-bar" style="--d:14"></div>
+    <div class="wv-bar" style="--d:15"></div>
+    <div class="wv-bar" style="--d:16"></div>
+    <div class="wv-bar" style="--d:17"></div>
+    <div class="wv-bar" style="--d:18"></div>
+    <div class="wv-bar" style="--d:19"></div>
+  </div>
+</section>
+
+<!-- ===== FEATURES ===== -->
+<section class="features" id="features">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-label">Everything you need</span>
+      <h2 class="section-title">Your Complete Music Platform</h2>
+      <p class="section-sub">From beginner to virtuoso — every tool you need to master music is here.</p>
+    </div>
+
+    <div class="features-grid">
+
+      <!-- Card 1 -->
+      <div class="feat-card" style="--card-color:#7c3aed">
+        <div class="feat-glow"></div>
+        <div class="feat-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+        </div>
+        <div class="feat-badge">Most Popular</div>
+        <h3>Instrument Training</h3>
+        <p>Step-by-step lessons for guitar, piano, violin, drums and more. Interactive exercises with real-time feedback powered by AI.</p>
+        <ul class="feat-list">
+          <li>✓ 15+ instruments covered</li>
+          <li>✓ Adaptive difficulty AI</li>
+          <li>✓ Video + interactive tabs</li>
+        </ul>
+        <a href="training.html" class="feat-cta">
+          Explore Training
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="14" height="14"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </a>
+      </div>
+
+      <!-- Card 2 -->
+      <div class="feat-card feat-card-accent" style="--card-color:#db2777">
+        <div class="feat-glow"></div>
+        <div class="feat-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+        </div>
+        <div class="feat-badge">AI Powered</div>
+        <h3>AI Music Generator</h3>
+        <p>Compose original tracks, transfer musical styles, and get lyrical inspiration — all with cutting-edge generative AI at your fingertips.</p>
+        <ul class="feat-list">
+          <li>✓ GPT-powered composition</li>
+          <li>✓ Style transfer engine</li>
+          <li>✓ Lyric assistant</li>
+        </ul>
+        <a href="ai-composer.html" class="feat-cta">
+          Try Generator
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="14" height="14"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </a>
+      </div>
+
+      <!-- Card 3 -->
+      <div class="feat-card" style="--card-color:#0ea5e9">
+        <div class="feat-glow"></div>
+        <div class="feat-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+        </div>
+        <h3>Music History & Theory</h3>
+        <p>Journey through centuries of music. Explore genres, eras, and legendary composers with rich interactive timelines and deep-dive articles.</p>
+        <ul class="feat-list">
+          <li>✓ Interactive era timeline</li>
+          <li>✓ 500+ composer profiles</li>
+          <li>✓ Genre deep dives</li>
+        </ul>
+        <a href="#" class="feat-cta">
+          Explore History
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="14" height="14"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </a>
+      </div>
+
+      <!-- Card 4 -->
+      <div class="feat-card" style="--card-color:#10b981">
+        <div class="feat-glow"></div>
+        <div class="feat-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+        </div>
+        <h3>Personal Dashboard</h3>
+        <p>Track your progress, unlock achievements, compete on leaderboards, and get personalized practice recommendations every day.</p>
+        <ul class="feat-list">
+          <li>✓ XP & achievement system</li>
+          <li>✓ Smart practice planner</li>
+          <li>✓ Progress analytics</li>
+        </ul>
+        <a href="#" class="feat-cta">
+          View Dashboard
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="14" height="14"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </a>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ===== HOW IT WORKS ===== -->
+<section class="how-it-works">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-label">Simple & Effective</span>
+      <h2 class="section-title">Start Your Journey in Minutes</h2>
+    </div>
+    <div class="steps-grid">
+      <div class="step-card">
+        <div class="step-num">01</div>
+        <h4>Create Your Account</h4>
+        <p>Sign up free and tell us your skill level and musical interests.</p>
+      </div>
+      <div class="step-arrow">→</div>
+      <div class="step-card">
+        <div class="step-num">02</div>
+        <h4>Choose Your Path</h4>
+        <p>Pick an instrument, explore AI tools, or dive into music history.</p>
+      </div>
+      <div class="step-arrow">→</div>
+      <div class="step-card">
+        <div class="step-num">03</div>
+        <h4>Learn & Create</h4>
+        <p>Follow adaptive lessons, generate music, and track your progress.</p>
+      </div>
+      <div class="step-arrow">→</div>
+      <div class="step-card">
+        <div class="step-num">04</div>
+        <h4>Share & Connect</h4>
+        <p>Join the community, share your creations, and grow together.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== TESTIMONIALS ===== -->
+<section class="testimonials">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-label">Student Stories</span>
+      <h2 class="section-title">Loved by Musicians Worldwide</h2>
+    </div>
+    <div class="testimonials-grid">
+      <div class="testi-card">
+        <div class="testi-stars">★★★★★</div>
+        <p>"The AI composition tools blew my mind. I went from zero to producing full tracks in just 3 months. Harmonia is unlike anything else."</p>
+        <div class="testi-author">
+          <div class="testi-avatar" style="background:linear-gradient(135deg,#7c3aed,#db2777)">S</div>
+          <div><strong>Sofia Martinez</strong><span>Guitar & Composition</span></div>
+        </div>
+      </div>
+      <div class="testi-card testi-featured">
+        <div class="testi-stars">★★★★★</div>
+        <p>"I've tried every music learning app out there. Harmonia's interactive lessons, combined with the 3D instrument anatomy, gave me insights I couldn't find anywhere else."</p>
+        <div class="testi-author">
+          <div class="testi-avatar" style="background:linear-gradient(135deg,#0ea5e9,#7c3aed)">J</div>
+          <div><strong>James Okonkwo</strong><span>Piano & Theory</span></div>
+        </div>
+      </div>
+      <div class="testi-card">
+        <div class="testi-stars">★★★★★</div>
+        <p>"The music history section is incredibly deep. The era timeline and composer profiles make learning about classical music genuinely exciting."</p>
+        <div class="testi-author">
+          <div class="testi-avatar" style="background:linear-gradient(135deg,#ec4899,#f97316)">A</div>
+          <div><strong>Aisha Rahman</strong><span>Violin & History</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== CTA BANNER ===== -->
+<section class="cta-banner">
+  <div class="cta-bg">
+    <div class="cta-orb cta-orb-1"></div>
+    <div class="cta-orb cta-orb-2"></div>
+  </div>
+  <div class="container cta-inner">
+    <h2>Ready to Begin Your<br/><span class="grad-text">Musical Journey?</span></h2>
+    <p>Join 50,000+ students who are already learning, creating, and thriving with Harmonia.</p>
+    <div class="cta-actions">
+      <a href="index.html" class="btn-hero-primary">Get Started Free</a>
+      <span class="cta-note">No credit card required · Cancel anytime</span>
+    </div>
+  </div>
+</section>
+
+<!-- ===== FOOTER ===== -->
+<footer class="footer">
+  <div class="container">
+    <div class="footer-top">
+
+      <!-- Brand -->
+      <div class="footer-brand">
+        <a href="home.html" class="nav-logo" style="margin-bottom:12px">
+          <div class="logo-icon">
+            <svg width="24" height="24" viewBox="0 0 36 36" fill="none">
+              <path d="M13 24V12l12 3v9" stroke="url(#fLogoGrad)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+              <circle cx="11" cy="24" r="3" fill="url(#fLogoGrad)"/>
+              <circle cx="23" cy="22" r="3" fill="url(#fLogoGrad)"/>
+              <defs>
+                <linearGradient id="fLogoGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" style="stop-color:#a78bfa"/>
+                  <stop offset="100%" style="stop-color:#ec4899"/>
+                </linearGradient>
+              </defs>
+            </svg>
+          </div>
+          <span class="logo-text">Harmonia</span>
+        </a>
+        <p>The modern music learning platform for curious minds and creative souls.</p>
+        <div class="footer-social">
+          <a href="#" aria-label="Twitter">🐦</a>
+          <a href="#" aria-label="Instagram">📸</a>
+          <a href="#" aria-label="YouTube">▶️</a>
+          <a href="#" aria-label="Discord">💬</a>
+        </div>
+      </div>
+
+      <!-- Links: Learn -->
+      <div class="footer-col">
+        <h5>Learn</h5>
+        <a href="training.html">Instrument Training</a>
+        <a href="theory-quiz.html">Theory Quiz</a>
+        <a href="ear-training.html">Ear Training</a>
+        <a href="practice-mode.html">Practice Mode</a>
+        <a href="training.html">Learning Paths</a>
+      </div>
+
+      <!-- Links: Create & Track -->
+      <div class="footer-col">
+        <h5>Create & Track</h5>
+        <a href="ai-composer.html">AI Compose</a>
+        <a href="#">Style Transfer</a>
+        <a href="#">Lyric Assistant</a>
+        <a href="#">My Dashboard</a>
+        <a href="#">Achievements</a>
+      </div>
+
+      <!-- Links: Explore -->
+      <div class="footer-col">
+        <h5>Explore</h5>
+        <a href="#">Music History</a>
+        <a href="#">Genre Explorer</a>
+        <a href="#">3D Anatomy</a>
+        <a href="#">Community</a>
+        <a href="#">Concerts</a>
+      </div>
+
+    </div>
+
+    <div class="footer-bottom">
+      <div class="footer-copy">
+        © 2026 Harmonia. All rights reserved.
+      </div>
+      <!-- Accessibility Controls -->
+      <div class="accessibility">
+        <span>Accessibility:</span>
+        <button onclick="adjustFont(-1)" aria-label="Decrease font size">A−</button>
+        <button onclick="adjustFont(1)"  aria-label="Increase font size">A+</button>
+        <button onclick="toggleTheme()"  aria-label="Toggle theme" id="footerThemeBtn">🌙 Dark Mode</button>
+      </div>
+      <div class="footer-legal">
+        <a href="#">Privacy</a>
+        <a href="#">Terms</a>
+        <a href="#">Cookies</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script src="scripts/home.js"></script>
+</body>
+</html>
