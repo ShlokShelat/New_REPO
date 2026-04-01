@@ -1,0 +1,266 @@
+/* ===== ERA TIMELINE STYLES ===== */
+
+/* ── Hero extras ── */
+.et-hero-meta {
+  display: flex; align-items: center; gap: 20px;
+  margin-top: 28px; flex-wrap: wrap;
+  animation: fadeDown 0.6s 0.35s both;
+}
+.et-hero-meta-item {
+  display: flex; align-items: center; gap: 8px;
+  font-size: 0.8rem; color: var(--muted);
+}
+.et-hero-meta-item span {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px; padding: 4px 12px;
+  color: var(--text); font-weight: 500;
+}
+
+/* ── Era Navigation ── */
+.et-era-nav {
+  position: sticky; top: var(--nav-h);
+  background: rgba(8,8,16,0.9);
+  backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--border);
+  z-index: 100;
+  padding: 12px 0;
+}
+.et-era-nav-inner {
+  display: flex; align-items: center; gap: 6px;
+  overflow-x: auto; padding: 4px 0;
+  scrollbar-width: none;
+}
+.et-era-nav-inner::-webkit-scrollbar { display: none; }
+.et-era-nav-btn {
+  display: flex; align-items: center; gap: 6px;
+  background: none; border: 1px solid var(--border);
+  border-radius: 99px; padding: 7px 16px;
+  font-size: 0.78rem; font-weight: 600;
+  color: var(--muted); cursor: pointer;
+  font-family: inherit; white-space: nowrap;
+  transition: all 0.2s;
+}
+.et-era-nav-btn:hover { color: var(--text); background: rgba(255,255,255,0.04); }
+.et-era-nav-btn.active {
+  color: white; background: linear-gradient(135deg, #7c3aed, #db2777);
+  border-color: transparent;
+}
+.et-era-nav-dot { width: 8px; height: 8px; border-radius: 50%; background: currentColor; }
+
+/* ── Timeline Container ── */
+.et-timeline { padding: 80px 0; }
+
+/* ── Era Block ── */
+.et-era-block {
+  margin-bottom: 80px;
+  position: relative;
+}
+
+.et-era-header {
+  display: grid; grid-template-columns: 200px 1fr;
+  gap: 40px; align-items: start;
+  margin-bottom: 40px;
+  position: relative;
+}
+.et-era-header::after {
+  content: '';
+  position: absolute; left: 200px; top: 30px;
+  width: calc(100% - 200px); height: 1px;
+  background: linear-gradient(90deg, var(--era-color, #7c3aed), transparent);
+  opacity: 0.3;
+}
+
+.et-era-date-col {
+  display: flex; flex-direction: column; gap: 8px;
+  padding-right: 20px;
+}
+.et-era-years {
+  font-size: 0.7rem; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 2px;
+  color: var(--era-color, #a78bfa);
+}
+.et-era-name {
+  font-size: 1.8rem; font-weight: 900;
+  letter-spacing: -0.5px;
+  line-height: 1.1;
+}
+.et-era-name-sub {
+  font-size: 0.8rem; color: var(--muted);
+  line-height: 1.5; margin-top: 4px;
+}
+.et-era-badge {
+  display: inline-flex; align-items: center;
+  font-size: 0.68rem; font-weight: 700;
+  padding: 4px 12px; border-radius: 99px;
+  background: rgba(167,139,250,0.1);
+  color: var(--era-color, #a78bfa);
+  border: 1px solid rgba(167,139,250,0.2);
+  width: fit-content; margin-top: 8px;
+}
+
+.et-era-intro {
+  padding-top: 8px;
+  font-size: 0.9rem; color: var(--muted); line-height: 1.7;
+}
+
+/* ── Era Content Grid ── */
+.et-era-content {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  margin-left: 0;
+}
+.et-era-content-wide { grid-column: 1 / -1; }
+
+/* ── Era Feature Card ── */
+.et-feature-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px; padding: 22px;
+  position: relative; overflow: hidden;
+}
+.et-feature-card::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; height: 2px;
+  background: var(--era-grad, linear-gradient(90deg, #7c3aed, #a78bfa));
+}
+.et-feature-card h4 {
+  font-size: 0.78rem; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 1.5px;
+  color: var(--muted); margin-bottom: 16px;
+}
+
+/* Composers List */
+.et-composers { display: flex; flex-direction: column; gap: 12px; }
+.et-composer-item {
+  display: flex; align-items: center; gap: 12px;
+}
+.et-composer-avatar {
+  width: 40px; height: 40px; border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 700; font-size: 0.9rem; color: white;
+  flex-shrink: 0;
+}
+.et-composer-info strong { display: block; font-size: 0.84rem; }
+.et-composer-info span   { font-size: 0.72rem; color: var(--muted); }
+.et-composer-dates {
+  margin-left: auto; font-size: 0.72rem; color: var(--muted);
+  white-space: nowrap;
+}
+
+/* Characteristics */
+.et-chars { display: flex; flex-direction: column; gap: 10px; }
+.et-char-item {
+  display: flex; align-items: flex-start; gap: 10px;
+  padding: 10px 12px;
+  background: var(--surface2); border-radius: 10px;
+  border: 1px solid var(--border);
+}
+.et-char-icon { font-size: 1.1rem; flex-shrink: 0; margin-top: 1px; }
+.et-char-text { font-size: 0.83rem; line-height: 1.5; color: var(--muted); }
+.et-char-text strong { color: var(--text); }
+
+/* Key Works */
+.et-works { display: flex; flex-direction: column; gap: 8px; }
+.et-work-item {
+  display: flex; align-items: center; gap: 12px;
+  background: var(--surface2); border: 1px solid var(--border);
+  border-radius: 10px; padding: 10px 14px;
+}
+.et-work-icon { font-size: 1.2rem; flex-shrink: 0; }
+.et-work-info { flex: 1; }
+.et-work-info strong { display: block; font-size: 0.83rem; }
+.et-work-info span   { font-size: 0.72rem; color: var(--muted); }
+.et-work-year {
+  font-size: 0.72rem; font-weight: 700; color: var(--muted);
+  background: rgba(255,255,255,0.04); padding: 3px 8px;
+  border: 1px solid var(--border); border-radius: 6px;
+  flex-shrink: 0;
+}
+
+/* Timeline mini-bar */
+.et-span-bar {
+  background: var(--surface2); border: 1px solid var(--border);
+  border-radius: 12px; padding: 16px 20px;
+}
+.et-span-title {
+  font-size: 0.72rem; color: var(--muted); margin-bottom: 10px;
+  text-transform: uppercase; letter-spacing: 1px; font-weight: 600;
+}
+.et-span-track {
+  position: relative; height: 8px;
+  background: rgba(255,255,255,0.05); border-radius: 99px;
+}
+.et-span-fill {
+  position: absolute; top: 0; height: 100%;
+  border-radius: 99px;
+  background: var(--era-grad, linear-gradient(90deg, #7c3aed, #a78bfa));
+}
+.et-span-labels {
+  display: flex; justify-content: space-between;
+  margin-top: 6px; font-size: 0.7rem; color: var(--muted);
+}
+
+/* Context Card */
+.et-context-card {
+  background: linear-gradient(135deg, rgba(124,58,237,0.08), rgba(219,39,119,0.05));
+  border: 1px solid rgba(124,58,237,0.15);
+  border-radius: 16px; padding: 22px;
+}
+.et-context-card h4 {
+  font-size: 0.78rem; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 1.5px;
+  color: var(--accent1); margin-bottom: 14px;
+}
+.et-context-list { display: flex; flex-direction: column; gap: 8px; }
+.et-context-item {
+  display: flex; align-items: flex-start; gap: 10px;
+  font-size: 0.83rem; line-height: 1.5; color: var(--muted);
+}
+.et-context-item::before {
+  content: '→'; color: var(--accent1); flex-shrink: 0; font-weight: 700;
+}
+
+/* Era Divider */
+.et-era-divider {
+  display: flex; align-items: center; gap: 16px;
+  margin-bottom: 80px;
+}
+.et-era-divider::before,
+.et-era-divider::after {
+  content: ''; flex: 1; height: 1px;
+  background: linear-gradient(90deg, transparent, var(--border));
+}
+.et-era-divider::after {
+  background: linear-gradient(90deg, var(--border), transparent);
+}
+.et-era-divider-text {
+  font-size: 0.72rem; font-weight: 700;
+  color: var(--muted); text-transform: uppercase; letter-spacing: 2px;
+  white-space: nowrap;
+}
+
+/* ── Modern Genre Flow at bottom ── */
+.et-modern-genres {
+  display: flex; flex-wrap: wrap; gap: 10px;
+}
+.et-modern-genre {
+  display: flex; align-items: center; gap: 6px;
+  background: var(--surface2); border: 1px solid var(--border);
+  border-radius: 10px; padding: 8px 14px;
+  font-size: 0.82rem; font-weight: 600;
+  transition: border-color 0.2s; cursor: pointer;
+}
+.et-modern-genre:hover { border-color: var(--border-hi); }
+.et-modern-genre-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+
+/* ── Responsive ── */
+@media (max-width: 860px) {
+  .et-era-header { grid-template-columns: 1fr; gap: 16px; }
+  .et-era-header::after { display: none; }
+  .et-era-content { grid-template-columns: 1fr; }
+}
+@media (max-width: 640px) {
+  .et-era-name { font-size: 1.4rem; }
+}
