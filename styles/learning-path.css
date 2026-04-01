@@ -1,6 +1,119 @@
 /* ===== LEARNING PATH PAGE STYLES ===== */
 
 /* ── Page Hero ───────────────────────────────────────── */
+/* ================================================================
+   LEARNING PATH — CSS ADDITIONS
+   Paste these at the BOTTOM of your existing learning-path.css
+   ================================================================ */
+
+/* ── Real YouTube iframe embed ────────────────────────────────── */
+.lp-video-embed {
+  background: #000;
+  border-radius: 14px;
+  overflow: hidden;
+  aspect-ratio: 16 / 9;
+  position: relative;
+  border: 1px solid var(--border);
+  margin-bottom: 0;   /* caption sits below */
+  display: block;     /* override flex from base .lp-video-area */
+}
+
+.lp-video-embed iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+  display: block;
+}
+
+/* Caption line below the embed */
+.lp-video-caption {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.72rem;
+  color: var(--muted);
+  padding: 8px 4px 16px;
+}
+.lp-video-caption svg {
+  flex-shrink: 0;
+  opacity: 0.6;
+}
+
+/* ── Exercise-only hero banner (replaces video area) ─────────── */
+.lp-exercise-hero-banner {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  background: linear-gradient(135deg,
+    rgba(14,165,233,0.08) 0%,
+    rgba(167,139,250,0.06) 100%);
+  border: 1px solid rgba(14,165,233,0.25);
+  border-radius: 16px;
+  padding: 24px 26px;
+  margin-bottom: 4px;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Subtle shimmer bar across top */
+.lp-exercise-hero-banner::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, #38bdf8, #a78bfa, #ec4899);
+  border-radius: 16px 16px 0 0;
+}
+
+.lp-exhb-icon {
+  font-size: 2.8rem;
+  flex-shrink: 0;
+  line-height: 1;
+  filter: drop-shadow(0 2px 8px rgba(14,165,233,0.3));
+}
+
+.lp-exhb-text {
+  flex: 1;
+}
+
+.lp-exhb-text h3 {
+  font-size: 1.1rem;
+  font-weight: 800;
+  margin-bottom: 5px;
+  background: linear-gradient(135deg, #38bdf8, #a78bfa);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.lp-exhb-text p {
+  font-size: 0.8rem;
+  color: var(--muted);
+  line-height: 1.55;
+}
+
+.lp-exhb-badge {
+  flex-shrink: 0;
+  font-size: 0.68rem;
+  font-weight: 700;
+  padding: 4px 12px;
+  border-radius: 99px;
+  background: rgba(14,165,233,0.15);
+  color: #38bdf8;
+  border: 1px solid rgba(14,165,233,0.3);
+  white-space: nowrap;
+  align-self: flex-start;
+}
+
+/* Stack vertically on small screens */
+@media (max-width: 520px) {
+  .lp-exercise-hero-banner {
+    flex-wrap: wrap;
+  }
+  .lp-exhb-badge {
+    align-self: auto;
+  }
+}
 .lp-hero {
   min-height: 60vh;
   display: flex;
@@ -896,3 +1009,5 @@
   .lp-modal-footer { flex-direction: column; align-items: stretch; }
   .lp-complete-btn { width: 100%; justify-content: center; }
 }
+
+
