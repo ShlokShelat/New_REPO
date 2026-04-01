@@ -102,6 +102,7 @@ body::after{content:'';position:fixed;inset:0;background-image:url("data:image/s
 /* Status bar */
 .status-bar{height:32px;border-top:1px solid var(--border);display:flex;align-items:center;gap:14px;padding:0 20px;font-size:0.67rem;color:var(--muted);flex-shrink:0;background:rgba(255,255,255,0.01)}
 .live-dot{width:6px;height:6px;border-radius:50%;background:var(--green);box-shadow:0 0 5px var(--green);flex-shrink:0;animation:lv 2s infinite}
+.live-dot.err{background:var(--red);box-shadow:0 0 5px var(--red);animation:none}
 
 /* AI PANEL */
 .ai-panel{display:flex;flex-direction:column;overflow:hidden;background:var(--surface);border-left:1px solid var(--border)}
@@ -144,6 +145,12 @@ body::after{content:'';position:fixed;inset:0;background-image:url("data:image/s
 .sugg-note{font-size:0.63rem;color:var(--muted);font-style:italic}
 .sugg-ins{font-size:0.63rem;font-weight:700;background:rgba(167,139,250,0.1);border:1px solid rgba(167,139,250,0.2);color:var(--accent);padding:3px 8px;border-radius:6px;cursor:pointer;transition:background 0.15s;font-family:var(--font-body)}
 .sugg-ins:hover{background:rgba(167,139,250,0.2)}
+
+/* Error in panel */
+.panel-err{background:rgba(248,113,113,0.06);border:1px solid rgba(248,113,113,0.2);border-radius:9px;padding:11px 13px}
+.panel-err-title{font-size:0.67rem;font-weight:700;color:var(--red);margin-bottom:4px}
+.panel-err-msg{font-size:0.7rem;color:var(--muted);line-height:1.5;font-family:var(--font-mono);word-break:break-word}
+.panel-err-hint{font-size:0.68rem;color:var(--muted2);margin-top:7px;padding-top:7px;border-top:1px solid rgba(248,113,113,0.15)}
 
 /* Rhyme tab */
 .rh-row{display:flex;gap:7px}
@@ -191,7 +198,7 @@ body::after{content:'';position:fixed;inset:0;background-image:url("data:image/s
 .ra{font-size:0.69rem;font-weight:600;padding:6px 11px;border-radius:7px;cursor:pointer;border:1px solid var(--border);background:rgba(255,255,255,0.04);color:var(--muted);font-family:var(--font-body);transition:all 0.15s}
 .ra:hover{background:rgba(255,255,255,0.08);color:var(--text)}
 
-/* Streaming */
+/* Streaming cursor */
 .stream::after{content:'▋';color:var(--accent);animation:blink 0.7s step-end infinite}
 @keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
 
@@ -281,12 +288,10 @@ body::after{content:'';position:fixed;inset:0;background-image:url("data:image/s
     <div class="sec-tabs" id="secTabs"></div>
     <div class="lyric-area" id="lyricArea"></div>
     <div class="status-bar">
-      <div class="live-dot"></div>
-      <span>Live · AI Ready</span>
+      <div class="live-dot" id="liveDot"></div>
+      <span id="statusText">Live · AI Ready</span>
       <span>·</span>
       <span>Lyrics auto-saved locally</span>
-      <span>·</span>
-      <span>Use the AI panel → for suggestions</span>
     </div>
   </div>
 
@@ -381,34 +386,88 @@ body::after{content:'';position:fixed;inset:0;background-image:url("data:image/s
 <div class="la-toast" id="laToast"><span id="toastTxt"></span></div>
 
 <script>
-// ═══════════════════════════════════
 // ═══════════════════════════════════════════════════════
-// xAI PROXY CONFIG
-// Calls local proxy.js which forwards to api.x.ai
-// Run: node proxy.js   (in the harmonia folder)
+// CONFIG
 // ═══════════════════════════════════════════════════════
-const PROXY_URL  = 'http://localhost:3579/chat';
-const XAI_MODEL  = 'grok-3-latest';
+const PROXY_URL = 'http://localhost:3579/chat';
+const XAI_MODEL = 'grok-3-latest';
 
+// ═══════════════════════════════════
+// CORE API CALL — surfaces real errors, no silent fallback
+// ═══════════════════════════════════
 async function callGrok(system, user, maxTok, temp) {
-  const resp = await fetch(PROXY_URL, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      model:       XAI_MODEL,
-      messages:    [{ role: 'system', content: system }, { role: 'user', content: user }],
-      max_tokens:  maxTok || 1000,
-      temperature: temp   || 0.85,
-    }),
-  });
-  if (!resp.ok) {
-    const err = await resp.json().catch(() => ({ error: { message: 'Proxy error ' + resp.status } }));
-    // If proxy not running, fall back to demo mode
-    if (resp.status === 0 || resp.status >= 500) return null;
-    throw new Error(err.error?.message || 'API error ' + resp.status);
+  let resp;
+  try {
+    resp = await fetch(PROXY_URL, {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model:       XAI_MODEL,
+        messages:    [
+          { role: 'system', content: system },
+          { role: 'user',   content: user   },
+        ],
+        max_tokens:  maxTok || 1000,
+        temperature: temp !== undefined ? temp : 0.85,
+      }),
+    });
+  } catch(networkErr) {
+    // fetch itself threw — proxy is likely not running
+    setProxyStatus(false);
+    throw new Error('Cannot reach proxy. Is "node proxy.js" running? (' + networkErr.message + ')');
   }
-  const d = await resp.json();
-  return d.choices?.[0]?.message?.content || '';
+
+  // Parse body regardless of status so we can read error messages
+  let data;
+  try {
+    data = await resp.json();
+  } catch(e) {
+    throw new Error('Proxy returned non-JSON (HTTP ' + resp.status + ')');
+  }
+
+  if (!resp.ok) {
+    // Forward the actual error message from xAI
+    const msg = data?.error?.message || data?.error || JSON.stringify(data);
+    throw new Error('API error ' + resp.status + ': ' + msg);
+  }
+
+  const content = data?.choices?.[0]?.message?.content;
+  if (!content) {
+    throw new Error('Model returned empty content — choices[0].message.content missing');
+  }
+
+  setProxyStatus(true);
+  return content;
+}
+
+function setProxyStatus(ok) {
+  const dot  = document.getElementById('liveDot');
+  const text = document.getElementById('statusText');
+  if (!dot || !text) return;
+  if (ok) {
+    dot.className  = 'live-dot';
+    text.textContent = 'Live · AI Ready';
+  } else {
+    dot.className  = 'live-dot err';
+    text.textContent = 'Proxy offline — run: node proxy.js';
+  }
+}
+
+function showPanelError(containerId, errMsg) {
+  let hint = '';
+  if (errMsg.includes('proxy') || errMsg.includes('node proxy') || errMsg.includes('ERR_CONNECTION_REFUSED') || errMsg.includes('Failed to fetch')) {
+    hint = 'Run <strong>node proxy.js</strong> in your Harmonia folder.';
+  } else if (errMsg.includes('401') || errMsg.includes('Unauthorized')) {
+    hint = 'Invalid xAI API key — check <strong>proxy.js</strong>.';
+  } else if (errMsg.includes('429')) {
+    hint = 'Rate limit hit — wait a few seconds and try again.';
+  }
+  document.getElementById(containerId).innerHTML = `
+    <div class="panel-err">
+      <div class="panel-err-title">⚠️ AI error</div>
+      <div class="panel-err-msg">${escHtml(errMsg)}</div>
+      ${hint ? '<div class="panel-err-hint">💡 ' + hint + '</div>' : ''}
+    </div>`;
 }
 
 // ═══════════════════════════════════
@@ -452,15 +511,12 @@ let activeTab  = 'suggest';
 let themes     = new Set(['longing','night']);
 let rwMode     = 'elevate';
 let pendRewrite= '';
-// Use a map to store suggestion texts safely (avoids HTML escape issues)
 let suggMap    = {};
-let suggIdx    = 0;
 
 // ═══════════════════════════════════
 // INIT
 // ═══════════════════════════════════
 document.addEventListener('DOMContentLoaded', () => {
-  // Load seed from Style Transfer if available
   try {
     const seed = localStorage.getItem('harmonia_lyric_seed');
     if (seed) { sections[0].content = seed; localStorage.removeItem('harmonia_lyric_seed'); }
@@ -516,7 +572,7 @@ function renderContent() {
           ${sections.length>1?`<button class="sec-act del" onclick="delSec('${sec.id}')">✕ Delete</button>`:''}
         </div>
       </div>
-      <textarea class="lyric-ta" id="ta-${sec.id}" placeholder="${sec.ph.replace(/"/g,'&quot;')}" oninput="onInput(this)">${escHtml(sec.content)}</textarea>
+      <textarea class="lyric-ta" id="ta-${sec.id}" placeholder="${escHtml(sec.ph)}" oninput="onInput(this)">${escHtml(sec.content)}</textarea>
       <div class="line-tools">
         <button class="lt" onclick="quickRhyme()">🔤 Rhyme last word</button>
         <button class="lt" onclick="runAnalyze()">📊 Analyze</button>
@@ -528,7 +584,7 @@ function renderContent() {
 }
 
 function escHtml(s) {
-  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 
 function onInput(ta) {
@@ -570,18 +626,16 @@ function showAddMenu(event) {
     const c     = SEC_COL[type]||'#7c3aed';
     const b     = document.createElement('button');
     b.style.cssText = 'display:flex;align-items:center;gap:8px;width:100%;background:none;border:none;color:var(--text);font-family:var(--font-body);font-size:0.79rem;padding:8px 11px;border-radius:7px;cursor:pointer;text-align:left;transition:background 0.15s;';
-    b.innerHTML = `<span style="width:9px;height:9px;border-radius:3px;background:${c};display:inline-block;flex-shrink:0"></span>${label}`;
+    b.innerHTML = `<span style="width:9px;height:9px;border-radius:3px;background:${c};display:inline-block;flex-shrink:0"></span>${escHtml(label)}`;
     b.onmouseenter = ()=> b.style.background = 'rgba(255,255,255,0.07)';
     b.onmouseleave = ()=> b.style.background = 'none';
     b.onclick = () => { addSec(type,label); menu.remove(); };
     menu.appendChild(b);
   });
-  // Position near the Add button
   const r = event.target.getBoundingClientRect();
   menu.style.top  = (r.bottom+5) + 'px';
   menu.style.left = r.left + 'px';
   document.body.appendChild(menu);
-  // Close when clicking anywhere else
   setTimeout(() => {
     document.addEventListener('click', function closer(e) {
       if (!menu.contains(e.target)) { menu.remove(); document.removeEventListener('click',closer); }
@@ -651,7 +705,7 @@ function renderRwModes() {
 function setRwMode(id) { rwMode = id; renderRwModes(); }
 
 // ═══════════════════════════════════
-// SUGGEST (Grok API)
+// SUGGEST
 // ═══════════════════════════════════
 async function getSuggestions() {
   const btn  = document.getElementById('suggestBtn');
@@ -679,21 +733,17 @@ Rules:
 - Themes to weave in: ${themeStr||'any'}
 - Vary approaches: try concrete imagery, abstract emotion, and narrative
 ${ctx ? '- Writer context: "'+ctx+'"' : ''}
-- Return ONLY valid JSON array (no markdown backticks):
+- Return ONLY valid JSON array, no markdown backticks, no extra text:
 [{"text":"line1\\nline2","note":"brief style note"},{"text":"...","note":"..."},{"text":"...","note":"..."}]`;
 
   const usr = `Song so far:\n${allLyrics||'(blank canvas)'}\n\nSection: [${sec?.label}]\n${current||'(empty — suggest opening lines)'}`;
 
   try {
-    let suggestions;
     const result = await callGrok(sys, usr, 900, 0.88);
-    if (result) {
-      const cleaned = result.replace(/```json|```/g,'').trim();
-      suggestions = JSON.parse(cleaned);
-    } else {
-      suggestions = getDemoSuggestions(sec?.type);
-    }
-    // Store in map to avoid inline HTML escaping issues
+    const cleaned = result.replace(/```json|```/gi,'').trim();
+    const suggestions = JSON.parse(cleaned);
+
+    // Store text safely in a map to avoid HTML injection
     suggMap = {};
     suggestions.forEach((s, i) => { suggMap[i] = s.text; });
 
@@ -706,32 +756,11 @@ ${ctx ? '- Writer context: "'+ctx+'"' : ''}
         </div>
       </div>`).join('');
   } catch(e) {
-    wrap.innerHTML = `<div style="color:var(--red);font-size:0.77rem;padding:8px 0">⚠️ ${escHtml(e.message)}</div>`;
+    showPanelError('suggWrap', e.message);
   } finally {
     btn.disabled = false;
     btn.innerHTML = '✨ Generate Suggestions';
   }
-}
-
-function getDemoSuggestions(type) {
-  const demos = {
-    verse:[
-      {text:"The city light turns amber then gold,\neverything we said dissolving into cold.\nI kept the window open just in case,\nbut winter moved into your empty space.",note:"Concrete imagery with emotional subtext"},
-      {text:"I learned your name from a song I can't recall,\nsome late-night station on the FM dial.\nNow every frequency sounds like you.",note:"Indirect, atmospheric approach"},
-      {text:"The keys were on the counter when I woke,\nno note, no noise — just everything we broke.",note:"Sparse, direct — let the image carry the weight"},
-    ],
-    chorus:[
-      {text:"Tell me where the light goes when it's gone,\ntell me how a song forgets its words.\nI'm still standing in the space you left —\na door left open for a world that never comes.",note:"Rhetorical questions building to a confession"},
-      {text:"This is the part where I should let you go.\nThis is the part I never learned.",note:"Minimal, devastating — the unresolved admission"},
-      {text:"We were fire once, we were smoke,\nnow just ash and open road.",note:"Compressed narrative arc — rise and fall in 8 words"},
-    ],
-    bridge:[
-      {text:"Maybe I'm the one who kept the door unlocked,\nleft the porch light burning past the time we'd talked.",note:"Self-implicating turn — shifts perspective"},
-      {text:"Strange how the ordinary holds the weight —\nan unwashed mug, a half-read book, your handwriting on a date.",note:"Domestic detail as emotional devastation"},
-      {text:"I thought time would do what time is supposed to do.\nBut here it is again — the same hour, the same you.",note:"Circular structure mirrors emotional loop"},
-    ],
-  };
-  return demos[type] || demos.verse;
 }
 
 function insertSugg(i) {
@@ -761,16 +790,12 @@ async function findRhymes() {
   }
   try {
     const r = await callGrok(
-      'You are a rhyme dictionary. Return ONLY valid JSON (no markdown): {"perfect":["w1","w2"],"near":["w1","w2"],"family":["compound1"]}. Each array 6-10 words.',
+      'You are a rhyme dictionary. Return ONLY valid JSON, no markdown: {"perfect":["w1","w2"],"near":["w1","w2"],"family":["compound1"]}. Each array 6-10 words.',
       'Rhymes for: "'+word+'"'
     );
-    if (r) {
-      renderRhymes(JSON.parse(r.replace(/```json|```/g,'').trim()), res);
-    } else {
-      res.innerHTML = '<div style="color:var(--muted2);font-size:0.74rem">Add your xAI API key for AI rhyme finding</div>';
-    }
+    renderRhymes(JSON.parse(r.replace(/```json|```/gi,'').trim()), res);
   } catch(e) {
-    res.innerHTML = `<div style="color:var(--red);font-size:0.74rem">⚠️ ${escHtml(e.message)}</div>`;
+    showPanelError('rhymeResults', e.message);
   }
 }
 
@@ -781,9 +806,9 @@ function preRhyme(word) {
 
 function renderRhymes(data, el) {
   el.innerHTML = [
-    data.perfect?.length  ? `<div class="rh-sec"><div class="rh-sec-title">Perfect rhymes</div><div class="rh-words">${data.perfect.map(w=>`<span class="rw p" onclick="useRhyme('${w}')">${w}</span>`).join('')}</div></div>` : '',
-    data.near?.length     ? `<div class="rh-sec"><div class="rh-sec-title">Near / slant</div><div class="rh-words">${data.near.map(w=>`<span class="rw" onclick="useRhyme('${w}')">${w}</span>`).join('')}</div></div>` : '',
-    data.family?.length   ? `<div class="rh-sec"><div class="rh-sec-title">Word family</div><div class="rh-words">${data.family.map(w=>`<span class="rw" style="font-size:0.71rem;padding:3px 7px" onclick="useRhyme('${w}')">${w}</span>`).join('')}</div></div>` : '',
+    data.perfect?.length  ? `<div class="rh-sec"><div class="rh-sec-title">Perfect rhymes</div><div class="rh-words">${data.perfect.map(w=>`<span class="rw p" onclick="useRhyme('${escHtml(w)}')">${escHtml(w)}</span>`).join('')}</div></div>` : '',
+    data.near?.length     ? `<div class="rh-sec"><div class="rh-sec-title">Near / slant</div><div class="rh-words">${data.near.map(w=>`<span class="rw" onclick="useRhyme('${escHtml(w)}')">${escHtml(w)}</span>`).join('')}</div></div>` : '',
+    data.family?.length   ? `<div class="rh-sec"><div class="rh-sec-title">Word family</div><div class="rh-words">${data.family.map(w=>`<span class="rw" style="font-size:0.71rem;padding:3px 7px" onclick="useRhyme('${escHtml(w)}')">${escHtml(w)}</span>`).join('')}</div></div>` : '',
   ].join('');
 }
 
@@ -817,14 +842,17 @@ async function quickRhyme() {
     words = [...(local.p||[]).slice(0,6), ...(local.n||[]).slice(0,3)];
   } else {
     try {
-      const r = await callGrok('Return ONLY a JSON array of 8 rhyme words: ["w1","w2",...]. Mix perfect and slant.', '8 rhymes for: "'+lastWord+'"');
-      words   = r ? JSON.parse(r.replace(/```json|```/g,'').trim()) : [];
-    } catch(e){ words = []; }
+      const r = await callGrok('Return ONLY a JSON array of 8 rhyme words: ["w1","w2",...]. Mix perfect and slant rhymes. No markdown, no extra text.', '8 rhymes for: "'+lastWord+'"');
+      words   = JSON.parse(r.replace(/```json|```/gi,'').trim());
+    } catch(e){
+      el.innerHTML = `<span style="font-size:0.7rem;color:var(--red)">⚠️ ${escHtml(e.message)}</span>`;
+      return;
+    }
   }
 
   if (words.length) {
     el.innerHTML = `<span style="font-size:0.63rem;color:var(--muted2);align-self:center">"${escHtml(lastWord)}" →</span>` +
-      words.map(w => `<span class="r-chip" onclick="useRhyme('${w}')">${w}</span>`).join('');
+      words.map(w => `<span class="r-chip" onclick="useRhyme('${escHtml(w)}')">${escHtml(w)}</span>`).join('');
   } else {
     el.innerHTML = `<span style="font-size:0.7rem;color:var(--muted2)">No rhymes found — try the Rhyme tab</span>`;
   }
@@ -841,20 +869,15 @@ async function continueLine() {
   el.innerHTML = '<span style="font-size:0.66rem;color:var(--muted2)">✨ Getting ideas…</span>';
   try {
     const r = await callGrok(
-      'Suggest 2 natural next lines for these lyrics. Return ONLY JSON: [{"line":"..."},{"line":"..."}]',
+      'Suggest 2 natural next lines for these lyrics. Return ONLY JSON, no markdown: [{"line":"..."},{"line":"..."}]',
       'Continue these lyrics:\n'+ta.value
     );
-    if (r) {
-      const lines = JSON.parse(r.replace(/```json|```/g,'').trim());
-      // Store in a local map to avoid escaping issues
-      const cmap = {};
-      lines.forEach((l,i) => { cmap[i] = l.line; });
-      window._cmap = cmap;
-      el.innerHTML = `<span style="font-size:0.63rem;color:var(--muted2);align-self:center">Next line:</span>` +
-        lines.map((_,i) => `<span class="r-chip ai" onclick="insertFromCmap(${i})">${escHtml(lines[i].line)}</span>`).join('');
-    } else {
-      el.innerHTML = '<span style="font-size:0.7rem;color:var(--muted2)">Add your API key for AI continuations</span>';
-    }
+    const lines = JSON.parse(r.replace(/```json|```/gi,'').trim());
+    const cmap = {};
+    lines.forEach((l,i) => { cmap[i] = l.line; });
+    window._cmap = cmap;
+    el.innerHTML = `<span style="font-size:0.63rem;color:var(--muted2);align-self:center">Next line:</span>` +
+      lines.map((l,i) => `<span class="r-chip ai" onclick="insertFromCmap(${i})">${escHtml(l.line)}</span>`).join('');
   } catch(e) {
     el.innerHTML = `<span style="font-size:0.7rem;color:var(--red)">⚠️ ${escHtml(e.message)}</span>`;
   }
@@ -940,7 +963,7 @@ function analyzeMood(t) {
 }
 
 // ═══════════════════════════════════
-// REWRITE (Grok API)
+// REWRITE
 // ═══════════════════════════════════
 async function doRewrite() {
   saveCurrent();
@@ -973,12 +996,11 @@ async function doRewrite() {
       'Rewrite:\n'+ta.value,
       700, 0.82
     );
-    const output = r || getDemoRewrite(rwMode);
-    pendRewrite  = output;
+    pendRewrite = r;
 
     resEl.className = 'rw-result show stream';
     resEl.textContent = '';
-    const chars = output.split('');
+    const chars = r.split('');
     const spd   = Math.max(7, Math.round(1800/chars.length));
     let i = 0;
     function type() { if(i<chars.length){resEl.textContent+=chars[i++];setTimeout(type,spd);}else resEl.classList.remove('stream'); }
@@ -990,24 +1012,12 @@ async function doRewrite() {
   } catch(e) {
     resEl.className = 'rw-result show';
     resEl.style.color = 'var(--red)';
-    resEl.textContent = '⚠️ '+e.message;
+    resEl.textContent = '⚠️ ' + e.message;
   } finally {
     btn.disabled = false;
     btn.innerHTML= (mode ? mode.icon+' Rewrite: '+mode.name : '↺ Rewrite Active Section');
     renderRwModes();
   }
-}
-
-function getDemoRewrite(mode) {
-  const d = {
-    elevate:  'Every syllable arrives with intention now — carved from the weight of what was left unspoken, deliberate as a room that holds its last breath.',
-    simplify: 'You left. I stayed. The silence filled the space between.',
-    rhyme:    'The room remembers every word we spoke,\neach photograph a wound that will not unhook.\nI keep returning to the moment that broke,\nbut cannot unwrite the lines inside this book.',
-    rhythm:   'The walls still hold the shape of everything,\nevery silence has its own melody to sing.',
-    darker:   'Something died here slowly in the in-between — not with thunder but with rooms going cold one degree at a time, the light leaving things quietly, like a tide that simply stops returning.',
-    hopeful:  'Even in this the light is somewhere finding its way back — the way morning always manages to return, the way a held breath eventually becomes breathing again.',
-  };
-  return d[mode] || d.elevate;
 }
 
 function acceptRewrite() {
