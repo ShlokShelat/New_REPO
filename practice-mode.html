@@ -9,7 +9,7 @@
   <link rel="stylesheet" href="styles/practice-mode.css" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
 </head>
 <body>
 
@@ -115,7 +115,6 @@
   </div>
 </nav>
 
-<!-- Mobile Nav -->
 <div class="mobile-overlay" id="mobileOverlay" onclick="toggleMobileNav()"></div>
 <div class="mobile-nav" id="mobileNav">
   <div class="mobile-nav-header">
@@ -146,7 +145,6 @@
     <div class="staff-line"></div><div class="staff-line"></div>
     <div class="staff-line"></div>
   </div>
-
   <div class="container pm-hero-inner">
     <nav class="breadcrumb" aria-label="breadcrumb">
       <a href="home.html">Home</a>
@@ -155,17 +153,14 @@
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="m9 18 6-6-6-6"/></svg>
       <span>Practice Mode</span>
     </nav>
-
     <div class="pm-hero-content">
       <div class="pm-hero-text">
         <div class="pm-badge">
           <span class="badge-dot pm-dot"></span>
-          1 XP per minute · All levels
+          Guided Lessons · Real-time Feedback · 1 XP per minute
         </div>
         <h1 class="pm-title">Practice Makes <span class="pm-grad">Perfect</span></h1>
-        <p class="pm-subtitle">Set your tempo, choose your instrument, and start a focused practice session. Every minute earns XP — build your streak and unlock achievements.</p>
-
-        <!-- XP Widget -->
+        <p class="pm-subtitle">Pick your instrument, follow guided lessons step-by-step, pass the tests and earn XP. Every minute you practice builds your streak.</p>
         <div class="xp-widget">
           <div class="xp-header">
             <div class="xp-info">
@@ -179,32 +174,23 @@
           </div>
           <div class="xp-next" id="heroXPNext">0 / 500 XP to Level 2</div>
         </div>
-
-        <!-- Quick Stats -->
         <div class="th-stats">
           <div class="th-stat"><strong id="statSessions">0</strong><span>Sessions</span></div>
           <div class="th-stat-div"></div>
-          <div class="th-stat"><strong id="statTotalTime">0 min</strong><span>Total Time</span></div>
+          <div class="th-stat"><strong id="statLessons">0</strong><span>Lessons Passed</span></div>
           <div class="th-stat-div"></div>
           <div class="th-stat"><strong id="statStreak">0🔥</strong><span>Day Streak</span></div>
           <div class="th-stat-div"></div>
-          <div class="th-stat"><strong id="statGoal">0%</strong><span>Daily Goal</span></div>
+          <div class="th-stat"><strong id="statTotalTime">0 min</strong><span>Practice Time</span></div>
         </div>
       </div>
-
-      <!-- Hero Visual -->
       <div class="pm-hero-visual" aria-hidden="true">
         <div class="th-visual-ring th-ring-1"></div>
         <div class="th-visual-ring th-ring-2"></div>
         <div class="th-visual-ring th-ring-3"></div>
         <div class="pm-visual-icon">
           <svg viewBox="0 0 80 80" fill="none" width="72" height="72">
-            <defs>
-              <linearGradient id="pmIconGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" style="stop-color:#10b981"/>
-                <stop offset="100%" style="stop-color:#34d399"/>
-              </linearGradient>
-            </defs>
+            <defs><linearGradient id="pmIconGrad" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#10b981"/><stop offset="100%" style="stop-color:#34d399"/></linearGradient></defs>
             <rect x="28" y="58" width="24" height="6" rx="3" fill="url(#pmIconGrad)" opacity="0.9"/>
             <polygon points="40,12 27,58 53,58" stroke="url(#pmIconGrad)" stroke-width="3" fill="none" stroke-linejoin="round"/>
             <line x1="40" y1="12" x2="40" y2="58" stroke="url(#pmIconGrad)" stroke-width="2.5" stroke-linecap="round"/>
@@ -241,270 +227,203 @@
   </div>
 </div>
 
-<!-- ===== MAIN PRACTICE AREA ===== -->
-<section class="pm-main">
-  <div class="container pm-layout">
-
-    <!-- LEFT: Metronome + Timer -->
-    <div class="pm-left">
-
-      <!-- SESSION TIMER -->
-      <div class="pm-panel pm-timer-panel">
-        <div class="pm-panel-header">
-          <h2 class="pm-panel-title">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-            Session Timer
-          </h2>
-          <div class="pm-session-xp" id="sessionXPLive">+0 XP this session</div>
-        </div>
-
-        <div class="pm-timer-display">
-          <div class="pm-timer-digits" id="timerDisplay">00:00:00</div>
-          <div class="pm-timer-label" id="timerLabel">Ready to start your session</div>
-        </div>
-
-        <div class="pm-timer-controls">
-          <button class="pm-btn-start" id="startBtn" onclick="PracticeMode.startSession()">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="20" height="20"><polygon points="5 3 19 12 5 21 5 3"/></svg>
-            Start Session
-          </button>
-          <button class="pm-btn-pause pm-hidden" id="pauseBtn" onclick="PracticeMode.pauseSession()">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="20" height="20"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>
-            Pause
-          </button>
-          <button class="pm-btn-stop pm-hidden" id="stopBtn" onclick="PracticeMode.stopSession()">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="20" height="20"><rect x="3" y="3" width="18" height="18" rx="2"/></svg>
-            End &amp; Save
-          </button>
-        </div>
-
-        <div class="pm-session-goal">
-          <div class="pm-sg-label">
-            <span>Today's progress</span>
-            <span id="sgText">0 / 30 min</span>
-          </div>
-          <div class="pm-sg-bar">
-            <div class="pm-sg-fill" id="sgFill" style="width:0%"></div>
-          </div>
-        </div>
-      </div>
-
-      <!-- METRONOME -->
-      <div class="pm-panel pm-metro-panel">
-        <div class="pm-panel-header">
-          <h2 class="pm-panel-title">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
-              <polygon points="12 2 10 18 14 18 12 2"/>
-              <rect x="8" y="18" width="8" height="4" rx="2"/>
-            </svg>
-            Metronome
-          </h2>
-          <div class="pm-metro-status" id="metroStatus">
-            <span class="pm-status-dot"></span> Stopped
-          </div>
-        </div>
-
-        <!-- Pendulum visual -->
-        <div class="pm-pendulum-wrap" aria-hidden="true">
-          <div class="pm-pend-body">
-            <div class="pm-pendulum-rod" id="pendulumRod">
-              <div class="pm-pendulum-bob"></div>
-            </div>
-          </div>
-          <!-- Beat LEDs -->
-          <div class="pm-beat-leds" id="beatLeds">
-            <div class="pm-led" id="led0"></div>
-            <div class="pm-led" id="led1"></div>
-            <div class="pm-led" id="led2"></div>
-            <div class="pm-led" id="led3"></div>
-          </div>
-        </div>
-
-        <!-- BPM -->
-        <div class="pm-bpm-section">
-          <div class="pm-bpm-display">
-            <button class="pm-bpm-btn" onclick="PracticeMode.changeBPM(-5)" aria-label="Decrease BPM by 5">−5</button>
-            <div class="pm-bpm-value-wrap">
-              <span class="pm-bpm-value" id="bpmValue">120</span>
-              <span class="pm-bpm-label">BPM</span>
-            </div>
-            <button class="pm-bpm-btn" onclick="PracticeMode.changeBPM(5)" aria-label="Increase BPM by 5">+5</button>
-          </div>
-          <input type="range" class="pm-bpm-slider" id="bpmSlider"
-            min="20" max="300" value="120"
-            oninput="PracticeMode.setBPM(parseInt(this.value))"
-            aria-label="BPM slider" />
-          <div class="pm-bpm-presets">
-            <button class="pm-preset" onclick="PracticeMode.setBPM(40)">Grave<br><small>40</small></button>
-            <button class="pm-preset" onclick="PracticeMode.setBPM(60)">Largo<br><small>60</small></button>
-            <button class="pm-preset" onclick="PracticeMode.setBPM(80)">Andante<br><small>80</small></button>
-            <button class="pm-preset" onclick="PracticeMode.setBPM(120)">Allegro<br><small>120</small></button>
-            <button class="pm-preset" onclick="PracticeMode.setBPM(168)">Presto<br><small>168</small></button>
-          </div>
-        </div>
-
-        <!-- Time Sig + Tap -->
-        <div class="pm-metro-controls">
-          <div class="pm-time-sig-group">
-            <label class="pm-ctrl-label">Time Signature</label>
-            <div class="pm-time-sig-btns">
-              <button class="pm-ts-btn" data-beats="2" onclick="PracticeMode.setTimeSignature(2, this)">2/4</button>
-              <button class="pm-ts-btn pm-ts-active" data-beats="4" onclick="PracticeMode.setTimeSignature(4, this)">4/4</button>
-              <button class="pm-ts-btn" data-beats="3" onclick="PracticeMode.setTimeSignature(3, this)">3/4</button>
-              <button class="pm-ts-btn" data-beats="6" onclick="PracticeMode.setTimeSignature(6, this)">6/8</button>
-            </div>
-          </div>
-          <div class="pm-tap-group">
-            <label class="pm-ctrl-label">Tap Tempo</label>
-            <button class="pm-tap-btn" id="tapBtn" onclick="PracticeMode.tapTempo()">TAP</button>
-          </div>
-        </div>
-
-        <!-- Options -->
-        <div class="pm-metro-opts">
-          <div class="pm-opt-row">
-            <label class="pm-ctrl-label" for="accentToggle">Accent beat 1</label>
-            <label class="pm-toggle-sw">
-              <input type="checkbox" id="accentToggle" checked onchange="PracticeMode.setAccent(this.checked)"/>
-              <span class="pm-sw-track"></span>
-            </label>
-          </div>
-          <div class="pm-opt-row">
-            <label class="pm-ctrl-label" for="volSlider">Volume</label>
-            <input type="range" class="pm-vol-slider" id="volSlider"
-              min="0" max="100" value="80"
-              oninput="PracticeMode.setVolume(parseInt(this.value))"
-              aria-label="Metronome volume"/>
-          </div>
-          <div class="pm-opt-row">
-            <label class="pm-ctrl-label" for="visualToggle">Visual flash</label>
-            <label class="pm-toggle-sw">
-              <input type="checkbox" id="visualToggle" checked onchange="PracticeMode.setVisualFlash(this.checked)"/>
-              <span class="pm-sw-track"></span>
-            </label>
-          </div>
-        </div>
-
-        <button class="pm-metro-play-btn" id="metroPlayBtn" onclick="PracticeMode.toggleMetronome()">
-          <svg id="metroPlayIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="18" height="18"><polygon points="5 3 19 12 5 21 5 3"/></svg>
-          Start Metronome
-        </button>
+<!-- ===== STEP 1: INSTRUMENT ===== -->
+<section class="pm-instrument-section" id="instrumentSection">
+  <div class="container">
+    <div class="pm-section-title-row">
+      <div>
+        <span class="section-label">Step 1</span>
+        <h2 class="pm-section-h">Choose Your Instrument</h2>
+        <p class="pm-section-sub">Select the instrument you want to practice today</p>
       </div>
     </div>
+    <div class="pm-instrument-showcase" id="instrumentShowcase"></div>
+  </div>
+</section>
 
-    <!-- RIGHT: Session Setup -->
-    <div class="pm-right">
+<!-- ===== STEP 2: LESSON ===== -->
+<section class="pm-lesson-section pm-locked-section" id="lessonSection">
+  <div class="container">
+    <div class="pm-section-title-row">
+      <div>
+        <span class="section-label">Step 2</span>
+        <h2 class="pm-section-h" id="lessonSectionTitle">Pick a Lesson</h2>
+        <p class="pm-section-sub" id="lessonSectionSub">Choose what you want to work on today</p>
+      </div>
+      <div class="pm-lesson-filters" id="lessonFilters">
+        <button class="pm-lf-btn pm-lf-active" data-diff="all" onclick="PracticeMode.filterLessons('all',this)">All</button>
+        <button class="pm-lf-btn" data-diff="Beginner" onclick="PracticeMode.filterLessons('Beginner',this)">Beginner</button>
+        <button class="pm-lf-btn" data-diff="Intermediate" onclick="PracticeMode.filterLessons('Intermediate',this)">Intermediate</button>
+        <button class="pm-lf-btn" data-diff="Advanced" onclick="PracticeMode.filterLessons('Advanced',this)">Advanced</button>
+      </div>
+    </div>
+    <div class="pm-lessons-grid" id="lessonsGrid"></div>
+  </div>
+</section>
 
-      <!-- INSTRUMENT -->
-      <div class="pm-panel pm-instrument-panel">
-        <div class="pm-panel-header">
-          <h2 class="pm-panel-title">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
-            Instrument
-          </h2>
-          <span class="pm-selected-label" id="instrLabel">Guitar</span>
+<!-- ===== STEP 3: PRACTICE ARENA ===== -->
+<section class="pm-arena-section pm-locked-section" id="arenaSection">
+  <div class="container">
+    <div class="pm-arena-layout">
+
+      <!-- LEFT: Lesson guide -->
+      <div class="pm-arena-left">
+
+        <!-- Lesson info card -->
+        <div class="pm-arena-card pm-lesson-card">
+          <div class="pm-arena-card-header">
+            <div class="pm-lesson-info">
+              <span class="pm-lesson-instrument-tag" id="arenaInstrTag">🎸 Guitar</span>
+              <h3 class="pm-lesson-title" id="arenaLessonTitle">Select a Lesson</h3>
+              <div class="pm-lesson-meta-row">
+                <span class="pm-lesson-diff-badge" id="arenaLessonDiff">Beginner</span>
+                <span class="pm-lesson-xp-badge" id="arenaLessonXP">+50 XP</span>
+                <span class="pm-lesson-dur" id="arenaLessonDur">~10 min</span>
+              </div>
+            </div>
+            <div class="pm-lesson-progress-ring">
+              <svg viewBox="0 0 60 60" width="60" height="60">
+                <circle cx="30" cy="30" r="24" fill="none" stroke="rgba(255,255,255,0.07)" stroke-width="5"/>
+                <circle cx="30" cy="30" r="24" fill="none" stroke="#10b981" stroke-width="5"
+                  stroke-dasharray="150.8" stroke-dashoffset="150.8"
+                  stroke-linecap="round" transform="rotate(-90 30 30)"
+                  id="lessonProgressRing" style="transition:stroke-dashoffset 0.5s ease"/>
+              </svg>
+              <span class="pm-ring-pct" id="lessonRingPct">0%</span>
+            </div>
+          </div>
+          <div class="pm-step-nav">
+            <div class="pm-step-track" id="stepTrack"></div>
+          </div>
         </div>
-        <div class="pm-instrument-grid" id="instrumentGrid">
-          <button class="pm-instr pm-instr-active" data-instrument="Guitar" onclick="PracticeMode.selectInstrument(this)">
-            <span class="pm-instr-icon">🎸</span><span>Guitar</span>
-          </button>
-          <button class="pm-instr" data-instrument="Piano" onclick="PracticeMode.selectInstrument(this)">
-            <span class="pm-instr-icon">🎹</span><span>Piano</span>
-          </button>
-          <button class="pm-instr" data-instrument="Drums" onclick="PracticeMode.selectInstrument(this)">
-            <span class="pm-instr-icon">🥁</span><span>Drums</span>
-          </button>
-          <button class="pm-instr" data-instrument="Violin" onclick="PracticeMode.selectInstrument(this)">
-            <span class="pm-instr-icon">🎻</span><span>Violin</span>
-          </button>
-          <button class="pm-instr" data-instrument="Trumpet" onclick="PracticeMode.selectInstrument(this)">
-            <span class="pm-instr-icon">🎺</span><span>Trumpet</span>
-          </button>
-          <button class="pm-instr" data-instrument="Bass" onclick="PracticeMode.selectInstrument(this)">
-            <span class="pm-instr-icon">🎵</span><span>Bass</span>
-          </button>
-          <button class="pm-instr" data-instrument="Saxophone" onclick="PracticeMode.selectInstrument(this)">
-            <span class="pm-instr-icon">🎷</span><span>Saxophone</span>
-          </button>
-          <button class="pm-instr" data-instrument="Voice" onclick="PracticeMode.selectInstrument(this)">
-            <span class="pm-instr-icon">🎤</span><span>Voice</span>
-          </button>
+
+        <!-- Current step card -->
+        <div class="pm-arena-card pm-step-card" id="currentStepCard">
+          <div class="pm-step-header">
+            <div class="pm-step-num-badge" id="stepNumBadge">Step 1</div>
+            <div class="pm-step-type-tag" id="stepTypeTag">📖 Learn</div>
+          </div>
+          <h3 class="pm-step-title" id="stepTitle">Welcome</h3>
+          <div class="pm-step-body">
+            <p class="pm-step-desc" id="stepDesc">Select an instrument and lesson to begin your guided practice session.</p>
+          </div>
+          <div class="pm-visual-aid" id="visualAid" style="display:none"></div>
+          <div class="pm-exercise-area" id="exerciseArea" style="display:none"></div>
+          <div class="pm-step-actions">
+            <button class="pm-btn-prev" id="prevStepBtn" onclick="PracticeMode.prevStep()" disabled>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="16" height="16"><path d="M15 18l-6-6 6-6"/></svg>
+              Previous
+            </button>
+            <button class="pm-btn-next" id="nextStepBtn" onclick="PracticeMode.nextStep()">
+              Next Step
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="16" height="16"><path d="M9 18l6-6-6-6"/></svg>
+            </button>
+          </div>
         </div>
       </div>
 
-      <!-- FOCUS + GOAL -->
-      <div class="pm-panel pm-goal-panel">
-        <div class="pm-panel-header">
-          <h2 class="pm-panel-title">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
-            Session Focus
-          </h2>
-        </div>
-        <div class="pm-focus-grid">
-          <button class="pm-focus pm-focus-active" data-focus="Free Practice" onclick="PracticeMode.selectFocus(this)"><span>🎵</span> Free Practice</button>
-          <button class="pm-focus" data-focus="Scales &amp; Arpeggios" onclick="PracticeMode.selectFocus(this)"><span>🎼</span> Scales</button>
-          <button class="pm-focus" data-focus="Sight Reading" onclick="PracticeMode.selectFocus(this)"><span>👁️</span> Sight Reading</button>
-          <button class="pm-focus" data-focus="Technique Drills" onclick="PracticeMode.selectFocus(this)"><span>⚡</span> Technique</button>
-          <button class="pm-focus" data-focus="Repertoire" onclick="PracticeMode.selectFocus(this)"><span>📖</span> Repertoire</button>
-          <button class="pm-focus" data-focus="Improvisation" onclick="PracticeMode.selectFocus(this)"><span>✨</span> Improv</button>
-        </div>
+      <!-- RIGHT: Practice tools -->
+      <div class="pm-arena-right">
 
-        <div class="pm-goal-duration">
-          <label class="pm-ctrl-label">Session Goal</label>
-          <div class="pm-dur-btns">
-            <button class="pm-dur" data-dur="10" onclick="PracticeMode.setGoalDuration(10, this)">10 min</button>
-            <button class="pm-dur pm-dur-active" data-dur="15" onclick="PracticeMode.setGoalDuration(15, this)">15 min</button>
-            <button class="pm-dur" data-dur="30" onclick="PracticeMode.setGoalDuration(30, this)">30 min</button>
-            <button class="pm-dur" data-dur="45" onclick="PracticeMode.setGoalDuration(45, this)">45 min</button>
-            <button class="pm-dur" data-dur="60" onclick="PracticeMode.setGoalDuration(60, this)">1 hour</button>
-            <button class="pm-dur" data-dur="0" onclick="PracticeMode.setGoalDuration(0, this)">∞ Open</button>
+        <!-- Session Timer -->
+        <div class="pm-arena-card pm-timer-card">
+          <div class="pm-arena-card-header">
+            <h3 class="pm-arena-card-title">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+              Session Timer
+            </h3>
+            <span class="pm-session-xp-live" id="sessionXPLive">+0 XP</span>
+          </div>
+          <div class="pm-timer-display-compact">
+            <span class="pm-timer-digits-sm" id="timerDisplay">00:00:00</span>
+            <span class="pm-timer-sub" id="timerLabel">Ready to start</span>
+          </div>
+          <div class="pm-timer-btns">
+            <button class="pm-btn-start" id="startBtn" onclick="PracticeMode.startSession()">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="16" height="16"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+              Start
+            </button>
+            <button class="pm-btn-pause pm-hidden" id="pauseBtn" onclick="PracticeMode.pauseSession()">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="16" height="16"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>
+              Pause
+            </button>
+            <button class="pm-btn-stop pm-hidden" id="stopBtn" onclick="PracticeMode.stopSession()">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="16" height="16"><rect x="3" y="3" width="18" height="18" rx="2"/></svg>
+              End
+            </button>
+          </div>
+          <div class="pm-session-goal">
+            <div class="pm-sg-label"><span>Daily goal</span><span id="sgText">0 / 30 min</span></div>
+            <div class="pm-sg-bar"><div class="pm-sg-fill" id="sgFill" style="width:0%"></div></div>
           </div>
         </div>
 
-        <div class="pm-notes-group">
-          <label class="pm-ctrl-label" for="sessionNotes">Session Notes (optional)</label>
-          <textarea class="pm-notes-input" id="sessionNotes" placeholder="What are you working on? E.g. 'C major scale at 120 BPM, chord transitions…'" rows="3"></textarea>
+        <!-- Metronome -->
+        <div class="pm-arena-card pm-metro-card">
+          <div class="pm-arena-card-header">
+            <h3 class="pm-arena-card-title">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><polygon points="12 2 10 18 14 18 12 2"/><rect x="8" y="18" width="8" height="4" rx="2"/></svg>
+              Metronome
+            </h3>
+            <span class="pm-metro-status-sm" id="metroStatus">
+              <span class="pm-status-dot"></span> Off
+            </span>
+          </div>
+          <div class="pm-metro-compact">
+            <div class="pm-pendulum-mini" aria-hidden="true">
+              <div class="pm-pend-body">
+                <div class="pm-pendulum-rod" id="pendulumRod">
+                  <div class="pm-pendulum-bob"></div>
+                </div>
+              </div>
+              <div class="pm-beat-leds" id="beatLeds">
+                <div class="pm-led" id="led0"></div>
+                <div class="pm-led" id="led1"></div>
+                <div class="pm-led" id="led2"></div>
+                <div class="pm-led" id="led3"></div>
+              </div>
+            </div>
+            <div class="pm-bpm-compact">
+              <button class="pm-bpm-btn" onclick="PracticeMode.changeBPM(-5)">−5</button>
+              <div class="pm-bpm-center">
+                <span class="pm-bpm-num" id="bpmValue">120</span>
+                <span class="pm-bpm-label-sm">BPM</span>
+              </div>
+              <button class="pm-bpm-btn" onclick="PracticeMode.changeBPM(5)">+5</button>
+            </div>
+            <input type="range" class="pm-bpm-slider" id="bpmSlider" min="20" max="300" value="120"
+              oninput="PracticeMode.setBPM(parseInt(this.value))" aria-label="BPM slider"/>
+            <div class="pm-metro-row">
+              <div class="pm-time-sig-btns">
+                <button class="pm-ts-btn" data-beats="2" onclick="PracticeMode.setTimeSignature(2,this)">2/4</button>
+                <button class="pm-ts-btn pm-ts-active" data-beats="4" onclick="PracticeMode.setTimeSignature(4,this)">4/4</button>
+                <button class="pm-ts-btn" data-beats="3" onclick="PracticeMode.setTimeSignature(3,this)">3/4</button>
+              </div>
+              <button class="pm-tap-btn" onclick="PracticeMode.tapTempo()">TAP</button>
+            </div>
+            <div class="pm-metro-opt-row">
+              <label class="pm-ctrl-label" for="volSlider">Vol</label>
+              <input type="range" class="pm-vol-slider" id="volSlider" min="0" max="100" value="80"
+                oninput="PracticeMode.setVolume(parseInt(this.value))"/>
+            </div>
+          </div>
+          <button class="pm-metro-play-btn" id="metroPlayBtn" onclick="PracticeMode.toggleMetronome()">
+            <svg id="metroPlayIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="16" height="16"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+            Start Metronome
+          </button>
         </div>
-      </div>
 
-      <!-- KEY + DIFFICULTY -->
-      <div class="pm-panel pm-key-panel">
-        <div class="pm-panel-header">
-          <h2 class="pm-panel-title">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/></svg>
-            Key &amp; Difficulty
-          </h2>
-        </div>
-        <div class="pm-key-grid">
-          <div class="pm-key-group">
-            <label class="pm-ctrl-label" for="keySelect">Key</label>
-            <select class="pm-select" id="keySelect" onchange="PracticeMode.setKey(this.value)">
-              <option value="C">C Major</option>
-              <option value="G">G Major</option>
-              <option value="D">D Major</option>
-              <option value="A">A Major</option>
-              <option value="E">E Major</option>
-              <option value="B">B Major</option>
-              <option value="F">F Major</option>
-              <option value="Bb">B♭ Major</option>
-              <option value="Eb">E♭ Major</option>
-              <option value="Ab">A♭ Major</option>
-              <option value="Am">A Minor</option>
-              <option value="Em">E Minor</option>
-              <option value="Dm">D Minor</option>
-              <option value="Bm">B Minor</option>
-            </select>
+        <!-- Session Notes -->
+        <div class="pm-arena-card pm-notes-card">
+          <div class="pm-arena-card-header">
+            <h3 class="pm-arena-card-title">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+              Session Notes
+            </h3>
           </div>
-          <div class="pm-key-group">
-            <label class="pm-ctrl-label" for="diffSelect">Difficulty</label>
-            <select class="pm-select" id="diffSelect" onchange="PracticeMode.setDifficulty(this.value)">
-              <option value="Beginner">Beginner</option>
-              <option value="Intermediate" selected>Intermediate</option>
-              <option value="Advanced">Advanced</option>
-              <option value="Expert">Expert</option>
-            </select>
-          </div>
+          <textarea class="pm-notes-input" id="sessionNotes" placeholder="What are you working on? Any trouble spots?…" rows="3"></textarea>
         </div>
+
       </div>
     </div>
   </div>
@@ -513,41 +432,39 @@
 <!-- ===== BACKING TRACKS ===== -->
 <section class="pm-backing">
   <div class="container">
-    <div class="pm-section-header">
+    <div class="pm-section-title-row">
       <div>
-        <span class="section-label">Audio Tools</span>
-        <h2 class="section-title pm-sh-title">Backing Tracks</h2>
-        <p class="pm-sh-sub">Play along with professionally crafted backing tracks. Click to preview.</p>
+        <span class="section-label">Play Along</span>
+        <h2 class="pm-section-h">Backing Tracks</h2>
+        <p class="pm-section-sub">Play along with professionally crafted backing tracks</p>
       </div>
       <div class="pm-track-filters">
-        <button class="pm-tf-btn pm-tf-active" data-genre="all" onclick="PracticeMode.filterTracks('all', this)">All</button>
-        <button class="pm-tf-btn" data-genre="Blues" onclick="PracticeMode.filterTracks('Blues', this)">Blues</button>
-        <button class="pm-tf-btn" data-genre="Jazz" onclick="PracticeMode.filterTracks('Jazz', this)">Jazz</button>
-        <button class="pm-tf-btn" data-genre="Rock" onclick="PracticeMode.filterTracks('Rock', this)">Rock</button>
-        <button class="pm-tf-btn" data-genre="Latin" onclick="PracticeMode.filterTracks('Latin', this)">Latin</button>
-        <button class="pm-tf-btn" data-genre="Classical" onclick="PracticeMode.filterTracks('Classical', this)">Classical</button>
+        <button class="pm-tf-btn pm-tf-active" data-genre="all" onclick="PracticeMode.filterTracks('all',this)">All</button>
+        <button class="pm-tf-btn" data-genre="Blues" onclick="PracticeMode.filterTracks('Blues',this)">Blues</button>
+        <button class="pm-tf-btn" data-genre="Jazz" onclick="PracticeMode.filterTracks('Jazz',this)">Jazz</button>
+        <button class="pm-tf-btn" data-genre="Rock" onclick="PracticeMode.filterTracks('Rock',this)">Rock</button>
+        <button class="pm-tf-btn" data-genre="Latin" onclick="PracticeMode.filterTracks('Latin',this)">Latin</button>
+        <button class="pm-tf-btn" data-genre="Classical" onclick="PracticeMode.filterTracks('Classical',this)">Classical</button>
       </div>
     </div>
-    <div class="pm-tracks-grid" id="tracksGrid">
-      <!-- Populated by JS -->
-    </div>
+    <div class="pm-tracks-grid" id="tracksGrid"></div>
   </div>
 </section>
 
 <!-- ===== SESSION HISTORY ===== -->
 <section class="pm-history">
   <div class="container">
-    <div class="pm-section-header">
+    <div class="pm-section-title-row">
       <div>
         <span class="section-label">Your Progress</span>
-        <h2 class="section-title pm-sh-title">Session History</h2>
+        <h2 class="pm-section-h">Session History</h2>
       </div>
       <div class="pm-history-stats">
         <div class="pm-hs-item"><strong id="hsTotalSessions">0</strong><span>Sessions</span></div>
         <div class="pm-hs-divider"></div>
         <div class="pm-hs-item"><strong id="hsTotalTime">0 min</strong><span>Total Time</span></div>
         <div class="pm-hs-divider"></div>
-        <div class="pm-hs-item"><strong id="hsAvgTime">0 min</strong><span>Avg Session</span></div>
+        <div class="pm-hs-item"><strong id="hsLessonsPassed">0</strong><span>Lessons Passed</span></div>
         <div class="pm-hs-divider"></div>
         <div class="pm-hs-item"><strong id="hsBestSession">0 min</strong><span>Best Session</span></div>
       </div>
@@ -555,8 +472,7 @@
     <div class="pm-history-list" id="historyList">
       <div class="pm-history-empty">
         <span>🎸</span>
-        <p>No sessions yet. Start your first practice session above!</p>
-        <a href="#pm-main" class="pm-empty-cta" onclick="document.querySelector('.pm-main').scrollIntoView({behavior:'smooth'});return false;">Start Practicing →</a>
+        <p>No sessions yet — pick an instrument above to get started!</p>
       </div>
     </div>
   </div>
@@ -573,12 +489,7 @@
               <path d="M13 24V12l12 3v9" stroke="url(#fGradPM)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
               <circle cx="11" cy="24" r="3" fill="url(#fGradPM)"/>
               <circle cx="23" cy="22" r="3" fill="url(#fGradPM)"/>
-              <defs>
-                <linearGradient id="fGradPM" x1="0%" y1="0%" x2="100%" y2="100%">
-                  <stop offset="0%" style="stop-color:#a78bfa"/>
-                  <stop offset="100%" style="stop-color:#ec4899"/>
-                </linearGradient>
-              </defs>
+              <defs><linearGradient id="fGradPM" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#a78bfa"/><stop offset="100%" style="stop-color:#ec4899"/></linearGradient></defs>
             </svg>
           </div>
           <span class="logo-text">Harmonia</span>
@@ -629,8 +540,75 @@
   </div>
 </footer>
 
-<!-- ===== XP TOAST ===== -->
-<div class="pm-xp-toast" id="pmXpToast" aria-live="polite"></div>
+<!-- ===== LESSON COMPLETE MODAL ===== -->
+<div class="pm-modal-overlay pm-hidden" id="lessonCompleteModal">
+  <div class="pm-modal pm-lesson-modal">
+    <div class="pm-modal-confetti" id="modalConfetti"></div>
+    <div class="pm-modal-icon-wrap">🎓</div>
+    <h2 class="pm-modal-h pm-lesson-modal-h">Lesson Complete!</h2>
+    <p class="pm-modal-sub" id="lessonModalSub">You've completed the lesson!</p>
+    <div class="pm-lesson-score-wrap">
+      <div class="pm-lesson-score-ring">
+        <svg viewBox="0 0 120 120" width="120" height="120">
+          <circle cx="60" cy="60" r="50" fill="none" stroke="rgba(255,255,255,0.07)" stroke-width="10"/>
+          <circle cx="60" cy="60" r="50" fill="none" stroke="#10b981" stroke-width="10"
+            stroke-dasharray="314.16" stroke-dashoffset="314.16"
+            stroke-linecap="round" transform="rotate(-90 60 60)"
+            id="lessonScoreRing" style="transition:stroke-dashoffset 1s ease 0.3s"/>
+        </svg>
+        <div class="pm-lesson-score-center">
+          <span class="pm-lesson-score-num" id="lessonScoreNum">0%</span>
+          <span class="pm-lesson-score-label">Score</span>
+        </div>
+      </div>
+    </div>
+    <div class="pm-modal-stats">
+      <div class="pm-ms-item"><strong id="lmDuration">0 min</strong><span>Duration</span></div>
+      <div class="pm-ms-item pm-ms-xp"><strong id="lmXP">+0 XP</strong><span>Earned</span></div>
+      <div class="pm-ms-item"><strong id="lmSteps">0/0</strong><span>Steps</span></div>
+      <div class="pm-ms-item"><strong id="lmExercises">0/0</strong><span>Exercises</span></div>
+    </div>
+    <div class="pm-modal-achievements" id="lessonAchievements"></div>
+    <div class="pm-modal-actions">
+      <button class="pm-modal-btn-primary" onclick="PracticeMode.closeLessonModal()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="16" height="16"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+        Next Lesson
+      </button>
+      <a href="training.html" class="pm-modal-btn-secondary">Back to Training</a>
+    </div>
+  </div>
+</div>
+
+<!-- ===== SESSION COMPLETE MODAL ===== -->
+<div class="pm-modal-overlay pm-hidden" id="sessionModal">
+  <div class="pm-modal">
+    <div class="pm-modal-icon-wrap" id="sessionModalIcon">🎸</div>
+    <h2 class="pm-modal-h">Session Complete!</h2>
+    <p class="pm-modal-sub" id="modalSubtitle">Great work! Here's your session summary.</p>
+    <div class="pm-modal-stats">
+      <div class="pm-ms-item"><strong id="modalDuration">0 min</strong><span>Duration</span></div>
+      <div class="pm-ms-item pm-ms-xp"><strong id="modalXP">+0 XP</strong><span>Earned</span></div>
+      <div class="pm-ms-item"><strong id="modalBPM">120</strong><span>BPM</span></div>
+      <div class="pm-ms-item"><strong id="modalInstrument">Guitar</strong><span>Instrument</span></div>
+    </div>
+    <div class="pm-modal-meta">
+      <span class="pm-modal-focus-tag" id="modalFocus">Free Practice</span>
+      <span class="pm-modal-key-tag" id="modalLesson">—</span>
+    </div>
+    <div class="pm-modal-notes-wrap pm-hidden" id="modalNotesWrap">
+      <p class="pm-modal-notes-label">Session Notes</p>
+      <p class="pm-modal-notes-text" id="modalNotes"></p>
+    </div>
+    <div class="pm-modal-achievements" id="modalAchievements"></div>
+    <div class="pm-modal-actions">
+      <button class="pm-modal-btn-primary" onclick="PracticeMode.closeModal()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="16" height="16"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+        New Session
+      </button>
+      <a href="training.html" class="pm-modal-btn-secondary">Back to Training</a>
+    </div>
+  </div>
+</div>
 
 <!-- ===== LEVEL UP OVERLAY ===== -->
 <div class="pm-levelup-overlay pm-hidden" id="levelupOverlay">
@@ -643,65 +621,18 @@
   </div>
 </div>
 
-<!-- ===== SESSION COMPLETE MODAL ===== -->
-<div class="pm-modal-overlay pm-hidden" id="sessionModal">
-  <div class="pm-modal">
-    <div class="pm-modal-icon-wrap">🎸</div>
-    <h2 class="pm-modal-h">Session Complete!</h2>
-    <p class="pm-modal-sub" id="modalSubtitle">Great work! Here's your session summary.</p>
+<!-- ===== XP TOAST ===== -->
+<div class="pm-xp-toast" id="pmXpToast" aria-live="polite"></div>
 
-    <div class="pm-modal-stats">
-      <div class="pm-ms-item">
-        <strong id="modalDuration">0 min</strong>
-        <span>Duration</span>
-      </div>
-      <div class="pm-ms-item pm-ms-xp">
-        <strong id="modalXP">+0 XP</strong>
-        <span>Earned</span>
-      </div>
-      <div class="pm-ms-item">
-        <strong id="modalBPM">120</strong>
-        <span>BPM Used</span>
-      </div>
-      <div class="pm-ms-item">
-        <strong id="modalInstrument">Guitar</strong>
-        <span>Instrument</span>
-      </div>
-    </div>
-
-    <div class="pm-modal-meta">
-      <span class="pm-modal-focus-tag" id="modalFocus">Free Practice</span>
-      <span class="pm-modal-key-tag" id="modalKey">C Major</span>
-      <span class="pm-modal-diff-tag" id="modalDiff">Intermediate</span>
-    </div>
-
-    <div class="pm-modal-notes-wrap pm-hidden" id="modalNotesWrap">
-      <p class="pm-modal-notes-label">Session Notes</p>
-      <p class="pm-modal-notes-text" id="modalNotes"></p>
-    </div>
-
-    <div class="pm-modal-achievements" id="modalAchievements"></div>
-
-    <div class="pm-modal-actions">
-      <button class="pm-modal-btn-primary" onclick="PracticeMode.closeModal()">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="16" height="16"><polygon points="5 3 19 12 5 21 5 3"/></svg>
-        New Session
-      </button>
-      <a href="training.html" class="pm-modal-btn-secondary">Back to Training</a>
-    </div>
-  </div>
-</div>
-
-<!-- ===== KEYBOARD SHORTCUTS HINT ===== -->
+<!-- ===== KEYBOARD HINT ===== -->
 <div class="pm-shortcuts-hint" id="shortcutsHint">
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
-  <strong>Shortcuts:</strong>
-  Space = Start/Pause &nbsp;·&nbsp;
-  M = Toggle Metronome &nbsp;·&nbsp;
-  ↑↓ = BPM ±1 &nbsp;·&nbsp;
-  S = End Session
-  <button class="pm-hint-close" onclick="document.getElementById('shortcutsHint').style.display='none'" aria-label="Close">✕</button>
+  <strong>Shortcuts:</strong> Space = Start/Pause &nbsp;·&nbsp; M = Metronome &nbsp;·&nbsp; ↑↓ = BPM &nbsp;·&nbsp; → = Next Step &nbsp;·&nbsp; S = End
+  <button class="pm-hint-close" onclick="document.getElementById('shortcutsHint').style.display='none'">✕</button>
 </div>
+
+<!-- Flash overlay -->
+<div class="pm-flash-overlay" id="pmFlash"></div>
 
 <script src="scripts/training-db.js"></script>
 <script src="scripts/home.js"></script>
