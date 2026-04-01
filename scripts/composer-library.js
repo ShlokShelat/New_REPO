@@ -1,8 +1,11 @@
 /**
- * composer-library.js — Composer Library full functionality
- * 20 composers, filtering, modal, XP integration
+ * composer-library.js — Hall of Fame Redesign
+ * Animated cards, influence bars, cinematic modal
  */
 
+/* ══════════════════════════════════════════════════
+   DATA
+   ══════════════════════════════════════════════════ */
 const COMPOSERS = [
   {
     id: 'bach',
@@ -11,28 +14,28 @@ const COMPOSERS = [
     life: '1685 – 1750',
     nationality: '🇩🇪 German',
     era: 'baroque',
-    color: '#b45309',
+    eraLabel: 'Baroque',
+    color: '#d97706',
     grad: 'linear-gradient(135deg,#b45309,#fbbf24)',
     instruments: ['Organ', 'Harpsichord', 'Violin'],
     genres: ['Baroque', 'Sacred', 'Counterpoint'],
-    tagColor: 'mh-tag-amber',
     works_count: 1100,
     influence: 98,
-    bio: 'The supreme master of Baroque counterpoint. Bach synthesized all the musical traditions of his era into an incomparable body of work. His Well-Tempered Clavier, Brandenburg Concertos, and Mass in B minor are among music\'s greatest achievements.',
+    bio: 'The supreme master of Baroque counterpoint. Bach synthesized all the musical traditions of his era into an incomparable body of work spanning sacred cantatas, keyboard suites, orchestral concertos, and towering fugues. His Well-Tempered Clavier, Brandenburg Concertos, and Mass in B minor are among music\'s greatest achievements. Though little-known during his lifetime outside Germany, he is now universally regarded as one of the greatest composers in history.',
     quote: 'The aim and final end of all music should be none other than the glory of God and the refreshment of the soul.',
     quote_attr: '— J.S. Bach',
     works: [
-      { year: '1721', title: 'Brandenburg Concertos', type: 'Orchestral Suite', desc: 'Six concertos written for Margrave Christian Ludwig of Brandenburg. A compendium of Baroque orchestral style.' },
-      { year: '1722', title: 'The Well-Tempered Clavier, Book I', type: 'Piano/Harpsichord', desc: '24 preludes and fugues exploring all major and minor keys — the "Old Testament" of keyboard music.' },
-      { year: '1727', title: 'St. Matthew Passion', type: 'Sacred Oratorio', desc: 'Bach\'s longest and greatest choral work — a dramatic retelling of Christ\'s passion in music.' },
-      { year: '1748', title: 'The Art of Fugue', type: 'Contrapuntal Study', desc: 'Left unfinished at his death, this work explores the fugue form to its ultimate limits.' },
+      { year: '1721', title: 'Brandenburg Concertos', type: 'Orchestral Suite', desc: 'Six concertos written for Margrave Christian Ludwig of Brandenburg — a compendium of Baroque orchestral style at its finest.' },
+      { year: '1722', title: 'The Well-Tempered Clavier, Book I', type: 'Keyboard', desc: '24 preludes and fugues in all major and minor keys — the "Old Testament" of keyboard music.' },
+      { year: '1727', title: 'St. Matthew Passion', type: 'Sacred Oratorio', desc: "Bach's longest and greatest choral work — a dramatic retelling of Christ's passion. Revived by Mendelssohn a century after Bach's death." },
+      { year: '1748', title: 'The Art of Fugue', type: 'Contrapuntal Study', desc: 'Left unfinished at his death, this work explores the fugue to its ultimate limits — perhaps music\'s most profound intellectual monument.' },
     ],
-    influenced_by: ['Buxtehude', 'Pachelbel', 'Vivaldi'],
-    influenced: ['Mozart', 'Beethoven', 'Brahms', 'All Western music'],
+    influenced_by: ['Buxtehude', 'Pachelbel', 'Vivaldi', 'Frescobaldi'],
+    influenced: ['Mozart', 'Beethoven', 'Brahms', 'Mendelssohn', 'All Western music'],
     trivia: [
-      'Bach fathered 20 children, 4 of whom became famous composers in their own right.',
-      'After his death, his manuscripts were largely forgotten until Felix Mendelssohn revived the St. Matthew Passion in 1829.',
-      'Bach\'s BWV (Bach-Werke-Verzeichnis) catalogue numbers his works — it goes up to 1080.',
+      'Bach fathered 20 children across two marriages — four of his sons became famous composers.',
+      'After his death his manuscripts were largely forgotten until Mendelssohn revived the St. Matthew Passion in 1829, triggering a Bach Renaissance.',
+      'The BWV (Bach-Werke-Verzeichnis) catalogue of his works runs to over 1,080 entries — and scholars still find new pieces.',
     ],
     legacy: { harmony: 99, melody: 90, rhythm: 85, innovation: 95, influence: 98 },
   },
@@ -43,20 +46,20 @@ const COMPOSERS = [
     life: '1756 – 1791',
     nationality: '🇦🇹 Austrian',
     era: 'classical',
+    eraLabel: 'Classical',
     color: '#7c3aed',
     grad: 'linear-gradient(135deg,#7c3aed,#a78bfa)',
     instruments: ['Piano', 'Violin', 'Viola'],
     genres: ['Classical', 'Opera', 'Symphony'],
-    tagColor: 'mh-tag-purple',
     works_count: 626,
     influence: 99,
-    bio: 'A child prodigy who became music\'s most complete genius. Mozart wrote in every genre of his era with supernatural facility, combining formal perfection with inexhaustible melodic invention. His operas Don Giovanni, The Magic Flute, and Così fan tutte remain benchmarks of the form.',
-    quote: 'I pay no attention whatever to anybody\'s praise or blame. I simply follow my own feelings.',
+    bio: 'A child prodigy who became music\'s most complete genius. Mozart wrote in every genre of his era with supernatural facility — operas, symphonies, concertos, chamber music, sacred works — combining formal perfection with inexhaustible melodic invention. He died at 35, leaving 626 catalogued works. His operas Don Giovanni, The Magic Flute, and Così fan tutte remain benchmarks of the form.',
+    quote: "I pay no attention whatever to anybody's praise or blame. I simply follow my own feelings.",
     quote_attr: '— W.A. Mozart',
     works: [
       { year: '1787', title: 'Don Giovanni', type: 'Opera', desc: 'A drama of seduction, revenge and the supernatural — perhaps the greatest opera ever written.' },
-      { year: '1788', title: 'Symphony No. 40 in G minor', type: 'Symphony', desc: 'One of only two minor-key symphonies Mozart wrote — emotional depth within classical proportion.' },
-      { year: '1791', title: 'The Magic Flute', type: 'Opera', desc: 'Mozart\'s final opera — a Masonic fairy tale blending comedy, philosophy, and extraordinary music.' },
+      { year: '1788', title: 'Symphony No. 40 in G minor', type: 'Symphony', desc: 'One of only two minor-key symphonies Mozart wrote — emotional depth within perfect classical proportion.' },
+      { year: '1791', title: 'The Magic Flute', type: 'Opera', desc: "Mozart's final opera — a Masonic fairy tale blending comedy, philosophy, and extraordinary music." },
       { year: '1791', title: 'Requiem in D minor', type: 'Choral', desc: 'Left incomplete at his death — the circumstances became legend, dramatized in the film "Amadeus."' },
     ],
     influenced_by: ['J.C. Bach', 'Haydn', 'Italian opera masters'],
@@ -64,7 +67,7 @@ const COMPOSERS = [
     trivia: [
       'Mozart gave his first public recital at age 5 and was performing for European royalty by age 6.',
       'He composed his first symphony at age 8 and his first opera at age 12.',
-      'Mozart could write out a complete orchestral score without revisions — he composed entire works in his head before writing them down.',
+      'Mozart could write out a complete orchestral score without revisions — he composed entire works in his head first.',
     ],
     legacy: { harmony: 96, melody: 100, rhythm: 88, innovation: 90, influence: 99 },
   },
@@ -75,30 +78,30 @@ const COMPOSERS = [
     life: '1770 – 1827',
     nationality: '🇩🇪 German',
     era: 'classical',
+    eraLabel: 'Classical → Romantic',
     color: '#6d28d9',
     grad: 'linear-gradient(135deg,#6d28d9,#8b5cf6)',
-    instruments: ['Piano', 'Violin', 'Viola'],
+    instruments: ['Piano', 'Violin'],
     genres: ['Classical', 'Romantic', 'Symphony'],
-    tagColor: 'mh-tag-purple',
-    works_count: 722,
+    works_count: 138,
     influence: 100,
-    bio: 'The bridge between Classical and Romantic music — and arguably the most influential composer in Western history. Beethoven expanded the symphony, string quartet, and sonata beyond all previous limits. He composed his greatest works while completely deaf, including the Ninth Symphony.',
-    quote: 'Music is a higher revelation than all wisdom and philosophy.',
+    bio: 'The towering bridge between Classical and Romantic eras. Beethoven transformed every musical form he touched — expanding the symphony into a philosophical statement, the piano sonata into a confessional, the string quartet into a conversation across centuries. He composed his greatest works — the Ninth Symphony, the late string quartets — after going completely deaf. His influence on all subsequent music is immeasurable.',
+    quote: "Music is a higher revelation than all wisdom and philosophy.",
     quote_attr: '— L. van Beethoven',
     works: [
-      { year: '1801', title: 'Moonlight Sonata, Op. 27 No. 2', type: 'Piano Sonata', desc: 'The most famous piano sonata in history — its haunting first movement opens with a triplet ostinato.' },
-      { year: '1808', title: 'Symphony No. 5 in C minor', type: 'Symphony', desc: 'The "da-da-da-DUM" motif may be the most recognizable opening in all of music.' },
-      { year: '1824', title: 'Symphony No. 9 in D minor', type: 'Symphony', desc: 'Written while deaf, its choral finale "Ode to Joy" became a universal symbol of brotherhood.' },
-      { year: '1826', title: 'String Quartet No. 15, Op. 132', type: 'Chamber Music', desc: 'A late quartet of extraordinary spiritual depth — the "Holy Song of Thanksgiving" movement is transcendent.' },
+      { year: '1808', title: 'Symphony No. 5 in C minor', type: 'Symphony', desc: "The four-note fate motif — da-da-da-DUM — is the most recognizable opening in all classical music." },
+      { year: '1810', title: 'Piano Sonata "Für Elise"', type: 'Keyboard', desc: 'A deceptively simple yet eternally beloved bagatelle — every piano student\'s rite of passage.' },
+      { year: '1827', title: 'Symphony No. 9 in D minor', type: 'Symphony', desc: 'The choral finale with Schiller\'s "Ode to Joy" — composed when Beethoven was completely deaf.' },
+      { year: '1827', title: 'String Quartet Op. 131', type: 'Chamber Music', desc: 'Beethoven\'s late quartets are considered his greatest achievement — music centuries ahead of their time.' },
     ],
     influenced_by: ['Haydn', 'Mozart', 'C.P.E. Bach'],
-    influenced: ['Virtually every composer since 1800', 'Schubert', 'Brahms', 'Wagner'],
+    influenced: ['Brahms', 'Wagner', 'Mahler', 'Schoenberg', 'Every composer since 1827'],
     trivia: [
-      'Beethoven began losing his hearing in his late 20s and was completely deaf by around age 44.',
-      'The premiere of the Ninth Symphony was the first time a major composer used vocal soloists and choir in a symphony.',
-      'Beethoven\'s "Heiligenstadt Testament" (1802) is one of music\'s most remarkable documents — a letter to his brothers describing his despair at his deafness.',
+      'Beethoven began losing his hearing in his late 20s and was almost completely deaf by his late 40s — yet wrote his greatest works in this period.',
+      'He reportedly cut the legs off his piano and placed it on the floor so he could feel the vibrations through the floorboards.',
+      'Beethoven\'s Ninth was premiered when he was completely deaf — he had to be turned around by a soloist to see the audience\'s standing ovation.',
     ],
-    legacy: { harmony: 95, melody: 95, rhythm: 92, innovation: 100, influence: 100 },
+    legacy: { harmony: 98, melody: 94, rhythm: 96, innovation: 100, influence: 100 },
   },
   {
     id: 'chopin',
@@ -107,30 +110,30 @@ const COMPOSERS = [
     life: '1810 – 1849',
     nationality: '🇵🇱 Polish-French',
     era: 'romantic',
-    color: '#9d174d',
-    grad: 'linear-gradient(135deg,#9d174d,#ec4899)',
+    eraLabel: 'Romantic',
+    color: '#be185d',
+    grad: 'linear-gradient(135deg,#9d174d,#f9a8d4)',
     instruments: ['Piano'],
-    genres: ['Romantic', 'Piano Music'],
-    tagColor: 'mh-tag-pink',
+    genres: ['Romantic', 'Piano', 'Nocturne'],
     works_count: 230,
-    influence: 94,
-    bio: 'The poet of the piano — Chopin wrote almost exclusively for the instrument, transforming it into an expressive vehicle of unparalleled intimacy. His nocturnes, études, ballades, and mazurkas expanded the piano\'s vocabulary beyond what anyone thought possible. He was also one of the greatest teachers of his era.',
-    quote: 'Bach is an astronomer, discovering the most marvellous stars. Beethoven challenges the universe. I only try to express the soul and the longing of my heart.',
+    influence: 97,
+    bio: 'The poet of the piano. Chopin spent virtually his entire mature career writing for a single instrument — and in doing so redefined what it could be. His nocturnes are moonlit meditations; his études are virtuosic poems that redefined technique; his mazurkas and polonaises encode Polish national identity into musical DNA. He lived a short, turbulent life in Paris, dying of tuberculosis at 39.',
+    quote: "Bach is an astronomer, discovering the most marvelous stars. Beethoven challenges the universe. I only try to express the soul and the heart of man.",
     quote_attr: '— F. Chopin',
     works: [
-      { year: '1830', title: 'Nocturnes Op. 9', type: 'Piano', desc: 'The nocturne form brought to perfection — long singing melodies over rippling left-hand accompaniment.' },
-      { year: '1831', title: 'Études Op. 10', type: 'Piano', desc: 'Technical studies elevated to concert pieces of extraordinary musical depth.' },
-      { year: '1835', title: 'Ballade No. 1 in G minor', type: 'Piano', desc: 'A miniature drama in music — Chopin\'s most emotionally intense solo work.' },
-      { year: '1844', title: 'Sonata No. 3 in B minor', type: 'Piano Sonata', desc: 'His most ambitious piano work — a large-scale masterpiece of Romantic piano writing.' },
+      { year: '1831', title: 'Nocturnes Op. 9', type: 'Piano', desc: 'Three intimate night-pieces that defined the nocturne genre and the Romantic piano ideal.' },
+      { year: '1833', title: 'Études Op. 10', type: 'Piano Studies', desc: '12 études that are simultaneously technical exercises and poetic masterpieces.' },
+      { year: '1842', title: 'Ballade No. 1 in G minor', type: 'Piano', desc: 'A four-minute narrative arc from quiet mystery to devastating final coda — the Romantic piano conceit at its finest.' },
+      { year: '1847', title: 'Piano Sonata No. 3 in B minor', type: 'Sonata', desc: "Chopin's most extended and ambitious work — a four-movement architectural triumph." },
     ],
-    influenced_by: ['J.S. Bach', 'Mozart', 'John Field', 'Polish folk music'],
-    influenced: ['Liszt', 'Brahms', 'Debussy', 'Ravel', 'Jazz pianists'],
+    influenced_by: ['Bach', 'Mozart', 'Hummel', 'Field'],
+    influenced: ['Liszt', 'Debussy', 'Ravel', 'Scriabin', 'All pianists'],
     trivia: [
-      'Chopin rarely performed in large concert halls — he preferred intimate salons for 20–30 people.',
-      'He gave only about 30 public concerts in his entire career — an extraordinarily small number for a great performer.',
-      'Chopin\'s heart is buried in Warsaw, Poland (separately from the rest of his body in Paris) per his own request.',
+      'Chopin gave very few public concerts — he preferred intimate salon performances for small audiences.',
+      'He spent 10 turbulent years in a relationship with the novelist George Sand, a woman who dressed as a man and smoked cigars.',
+      'Chopin requested that his heart be removed after his death and returned to Poland, where it remains, preserved in a church in Warsaw.',
     ],
-    legacy: { harmony: 96, melody: 99, rhythm: 87, innovation: 93, influence: 94 },
+    legacy: { harmony: 97, melody: 99, rhythm: 90, innovation: 96, influence: 97 },
   },
   {
     id: 'vivaldi',
@@ -139,123 +142,29 @@ const COMPOSERS = [
     life: '1678 – 1741',
     nationality: '🇮🇹 Italian',
     era: 'baroque',
-    color: '#dc2626',
-    grad: 'linear-gradient(135deg,#dc2626,#fca5a5)',
-    instruments: ['Violin', 'Cello', 'Recorder'],
+    eraLabel: 'Baroque',
+    color: '#b45309',
+    grad: 'linear-gradient(135deg,#92400e,#fbbf24)',
+    instruments: ['Violin', 'Harpsichord'],
     genres: ['Baroque', 'Concerto', 'Opera'],
-    tagColor: 'mh-tag-red',
-    works_count: 800,
-    influence: 86,
-    bio: 'The "Red Priest" — so called for his red hair. Vivaldi was the supreme master of the Baroque concerto, codifying the form\'s three-movement structure. His "Four Seasons" were the first great programmatic instrumental works, anticipating Romanticism by a century. Bach transcribed many Vivaldi concertos.',
-    quote: 'Music is the pleasure the human mind experiences from counting without being aware that it is counting.',
-    quote_attr: '— (attributed to Leibniz, describing Baroque music)',
+    works_count: 500,
+    influence: 88,
+    bio: 'The "Red Priest" of Venice. Vivaldi composed over 500 concertos during his prolific career as director of music at a Venetian orphanage for girls. His breakthrough use of the three-movement concerto form and his vivid programmatic writing — most famously The Four Seasons — shaped the Baroque concerto and directly influenced J.S. Bach, who transcribed many of his works.',
+    quote: "Do not play what the audience expects. Play what you hear.",
+    quote_attr: '— attributed to A. Vivaldi',
     works: [
-      { year: '1725', title: 'The Four Seasons', type: 'Violin Concertos', desc: 'Four violin concertos each depicting a season — the most popular Baroque instrumental music ever written.' },
-      { year: '1711', title: 'L\'Estro Armonico, Op. 3', type: 'Concerto Collection', desc: '12 concertos that established Vivaldi\'s international reputation — Bach transcribed several for keyboard.' },
-      { year: '1720', title: 'Gloria in D major, RV 589', type: 'Sacred Choral', desc: 'Vivaldi\'s most celebrated choral work — joyful, danceable, and brilliantly orchestrated.' },
+      { year: '1725', title: 'The Four Seasons', type: 'Violin Concertos', desc: 'Four concertos with poetic sonnets describing each season — the first great programmatic music.' },
+      { year: '1711', title: "L'estro armonico Op. 3", type: 'Concertos', desc: '12 concertos that stunned Europe and were transcribed by Bach himself.' },
+      { year: '1720', title: 'Gloria in D major', type: 'Sacred Choral', desc: "Vivaldi's most celebrated choral work — joyful, brilliant, and endlessly performed." },
     ],
-    influenced_by: ['Corelli', 'Torelli', 'Venetian music traditions'],
-    influenced: ['J.S. Bach', 'Telemann', 'All later concerto composers'],
+    influenced_by: ['Corelli', 'Torelli'],
+    influenced: ['J.S. Bach', 'Handel', 'Baroque concerto tradition'],
     trivia: [
-      'Vivaldi wrote around 500 concertos — his critics joked he kept writing "the same concerto 500 times."',
-      'He was an ordained Catholic priest but never celebrated Mass, possibly due to a respiratory illness.',
-      'Vivaldi died in poverty in Vienna in 1741 — his works were largely forgotten until the early 20th century revival.',
+      'Vivaldi was an ordained priest but never celebrated Mass, citing ill health — he preferred composing and playing violin.',
+      'He was almost completely forgotten after his death; his manuscripts were rediscovered in a Turin monastery in the 1920s.',
+      'Bach admired Vivaldi so much he transcribed at least 9 of his concertos for keyboard and orchestra.',
     ],
-    legacy: { harmony: 80, melody: 94, rhythm: 90, innovation: 88, influence: 86 },
-  },
-  {
-    id: 'handel',
-    name: 'George Frideric Handel',
-    initials: 'GFH',
-    life: '1685 – 1759',
-    nationality: '🇩🇪🇬🇧 German-British',
-    era: 'baroque',
-    color: '#0369a1',
-    grad: 'linear-gradient(135deg,#0369a1,#38bdf8)',
-    instruments: ['Organ', 'Harpsichord'],
-    genres: ['Baroque', 'Opera', 'Oratorio'],
-    tagColor: 'mh-tag-blue',
-    works_count: 650,
-    influence: 87,
-    bio: 'The theatrical genius of the Baroque — Handel moved to London and transformed English musical culture. His oratorios, particularly Messiah, became the template for large-scale choral works. Water Music and Music for the Royal Fireworks showed his mastery of spectacular outdoor orchestral entertainment.',
-    quote: 'Whether I was in my body or out of my body as I wrote it I know not. God knows.',
-    quote_attr: '— G.F. Handel (on composing Messiah)',
-    works: [
-      { year: '1741', title: 'Messiah', type: 'Oratorio', desc: 'Composed in 24 days — the "Hallelujah" chorus has been sung standing for nearly 300 years.' },
-      { year: '1717', title: 'Water Music', type: 'Orchestral Suite', desc: 'Written for a royal barge party on the Thames — a joyful celebration of outdoor orchestral pomp.' },
-      { year: '1741', title: 'Samson', type: 'Oratorio', desc: 'One of Handel\'s greatest dramatic oratorios — a powerful retelling of the biblical hero.' },
-    ],
-    influenced_by: ['Corelli', 'Italian opera', 'Buxtehude'],
-    influenced: ['Haydn', 'Mozart', 'Mendelssohn', 'Elgar'],
-    trivia: [
-      'Handel composed the entire Messiah in 24 days in August/September 1741.',
-      'He suffered two strokes that temporarily paralyzed his right arm, but eventually recovered enough to continue composing and performing.',
-      'King George II stood during the "Hallelujah" chorus at the London premiere — a tradition that continues today.',
-    ],
-    legacy: { harmony: 82, melody: 91, rhythm: 83, innovation: 80, influence: 87 },
-  },
-  {
-    id: 'brahms',
-    name: 'Johannes Brahms',
-    initials: 'JB',
-    life: '1833 – 1897',
-    nationality: '🇩🇪 German',
-    era: 'romantic',
-    color: '#1e40af',
-    grad: 'linear-gradient(135deg,#1e40af,#60a5fa)',
-    instruments: ['Piano'],
-    genres: ['Romantic', 'Symphony', 'Chamber Music'],
-    tagColor: 'mh-tag-blue',
-    works_count: 400,
-    influence: 91,
-    bio: 'Called by Schumann "the young eagle" — Brahms fulfilled that prophecy. He synthesized Classical structure with Romantic emotion, creating music of profound depth. His four symphonies, two piano concertos, and German Requiem are central pillars of the Western repertoire. He was a lifelong perfectionist who destroyed hundreds of works he deemed unworthy.',
-    quote: 'Without craftsmanship, inspiration is a mere reed shaken in the wind.',
-    quote_attr: '— J. Brahms',
-    works: [
-      { year: '1876', title: 'Symphony No. 1 in C minor', type: 'Symphony', desc: 'Called "Beethoven\'s Tenth" by some — 14 years in the making, a colossal achievement.' },
-      { year: '1868', title: 'Ein deutsches Requiem', type: 'Choral', desc: 'A Requiem for the living rather than the dead — his most expansive and beloved choral work.' },
-      { year: '1881', title: 'Piano Concerto No. 2 in B♭', type: 'Concerto', desc: 'One of the most demanding piano concertos in the repertoire — four movements of symphonic grandeur.' },
-      { year: '1885', title: 'Symphony No. 4 in E minor', type: 'Symphony', desc: 'His final symphony ends with a monumental passacaglia — Bach\'s form brought into the Romantic era.' },
-    ],
-    influenced_by: ['Bach', 'Beethoven', 'Schubert', 'Schumann'],
-    influenced: ['Dvořák', 'Elgar', 'Reger', 'Schoenberg'],
-    trivia: [
-      'Brahms burned many of his early works he considered unworthy — scholars estimate dozens of string quartets and symphonies were destroyed.',
-      'He famously feuded with the Wagner camp over the direction of music — the "War of the Romantics."',
-      'Brahms had a long and complex friendship with Clara Schumann, wife of his mentor Robert Schumann, that lasted nearly 40 years.',
-    ],
-    legacy: { harmony: 97, melody: 90, rhythm: 85, innovation: 82, influence: 91 },
-  },
-  {
-    id: 'wagner',
-    name: 'Richard Wagner',
-    initials: 'RW',
-    life: '1813 – 1883',
-    nationality: '🇩🇪 German',
-    era: 'romantic',
-    color: '#7c2d12',
-    grad: 'linear-gradient(135deg,#7c2d12,#fb923c)',
-    instruments: ['Piano'],
-    genres: ['Romantic', 'Opera', 'Music Drama'],
-    tagColor: 'mh-tag-orange',
-    works_count: 200,
-    influence: 93,
-    bio: 'Wagner reinvented opera as "music drama" — a total work of art (Gesamtkunstwerk) merging music, poetry, drama, and visual art into one experience. His use of the leitmotif — recurring musical themes for characters and ideas — transformed harmonic language and foreshadowed modern film music. His influence on Western music is both profound and controversial.',
-    quote: 'Joy is not in things; it is in us.',
-    quote_attr: '— R. Wagner',
-    works: [
-      { year: '1843', title: 'Der fliegende Holländer', type: 'Opera', desc: 'The Flying Dutchman — Wagner\'s first mature opera, establishing his dramatic style.' },
-      { year: '1876', title: 'Der Ring des Nibelungen', type: 'Opera Cycle', desc: 'A 4-opera, 15-hour epic based on Norse mythology. The greatest monument of Romantic opera.' },
-      { year: '1865', title: 'Tristan und Isolde', type: 'Opera', desc: 'The Tristan chord — one of the most analyzed chords in music history — opens this work that transformed harmony.' },
-    ],
-    influenced_by: ['Beethoven', 'Weber', 'Meyerbeer'],
-    influenced: ['Bruckner', 'Mahler', 'Richard Strauss', 'Film composers everywhere'],
-    trivia: [
-      'Wagner built his own opera house in Bayreuth, Germany (1876), designed specifically for his Ring cycle.',
-      'The "Ride of the Valkyries" from Die Walküre became iconic in 20th-century culture, most memorably in Apocalypse Now.',
-      'Wagner\'s ideas influenced Hitler — a fact that makes his legacy deeply complicated in Germany and Israel.',
-    ],
-    legacy: { harmony: 98, melody: 88, rhythm: 75, innovation: 99, influence: 93 },
+    legacy: { harmony: 80, melody: 92, rhythm: 88, innovation: 88, influence: 88 },
   },
   {
     id: 'debussy',
@@ -264,60 +173,125 @@ const COMPOSERS = [
     life: '1862 – 1918',
     nationality: '🇫🇷 French',
     era: 'modern',
-    color: '#0891b2',
-    grad: 'linear-gradient(135deg,#0891b2,#2dd4bf)',
-    instruments: ['Piano'],
-    genres: ['Impressionism', 'Modern', 'Piano Music'],
-    tagColor: 'mh-tag-teal',
+    eraLabel: 'Impressionist',
+    color: '#0ea5e9',
+    grad: 'linear-gradient(135deg,#0369a1,#38bdf8)',
+    instruments: ['Piano', 'Organ'],
+    genres: ['Impressionism', 'Modern', 'Orchestral'],
     works_count: 141,
-    influence: 90,
-    bio: 'Debussy dissolved the rigid structures of 19th-century music and created "Impressionism" — music of suggestion, atmosphere, and timbre rather than narrative. His use of whole-tone scales, modal harmonies, and pentatonic scales drawn from Javanese gamelan music transformed Western harmony and directly influenced jazz and 20th-century music.',
-    quote: 'Music is the arithmetic of sounds as optics is the geometry of light.',
+    influence: 94,
+    bio: 'The father of musical Impressionism, though he rejected the label. Debussy dissolved the rigid structures of German Romanticism in favor of shimmering, atmospheric sound-worlds — water, moonlight, wind, the ocean. His harmonic language (whole-tone scales, unresolved chords, modal harmonies) was revolutionary and opened the door to 20th-century music. Without Debussy, jazz, film music, and modernism would be unthinkable.',
+    quote: "Music is the space between the notes.",
     quote_attr: '— C. Debussy',
     works: [
-      { year: '1894', title: 'Prélude à l\'après-midi d\'un faune', type: 'Orchestral', desc: 'A flute opens in a sinuous, ambiguous melody — 10 minutes that changed music history.' },
-      { year: '1905', title: 'La mer', type: 'Orchestral', desc: 'Three symphonic sketches of the sea — orchestral impressionism at its most vivid.' },
-      { year: '1910', title: 'Préludes, Book I', type: 'Piano', desc: '"La cathédrale engloutie," "La fille aux cheveux de lin" — miniature atmospheric masterpieces.' },
+      { year: '1905', title: 'La mer', type: 'Orchestral', desc: 'Three symphonic sketches of the sea — perhaps the most beautiful orchestral sound-painting ever written.' },
+      { year: '1905', title: "Children's Corner Suite", type: 'Piano', desc: 'Six charming piano pieces written for his daughter — including the famous "Golliwog\'s Cakewalk."' },
+      { year: '1910', title: 'Préludes, Book I', type: 'Piano', desc: '12 evocative character pieces — "La cathédrale engloutie," "La fille aux cheveux de lin," and other immortal miniatures.' },
+      { year: '1902', title: 'Pelléas et Mélisande', type: 'Opera', desc: 'A revolutionary opera of suggestion and half-spoken text — the antithesis of Wagnerian drama.' },
     ],
-    influenced_by: ['Chopin', 'Javanese gamelan', 'Russian Five'],
-    influenced: ['Ravel', 'Messiaen', 'Jazz harmony', 'Film music'],
+    influenced_by: ['Wagner', 'Satie', 'Javanese gamelan music'],
+    influenced: ['Ravel', 'Bartók', 'Stravinsky', 'Film composers', 'Jazz harmony'],
     trivia: [
-      'Debussy heard Javanese gamelan music at the Paris Exposition Universelle (1889) — it transformed his harmonic language.',
-      'He disliked the term "Impressionist" — preferring to be called simply a French musician.',
-      'Debussy\'s "Clair de lune" is one of the most recognized pieces of piano music in the world.',
+      'Debussy was profoundly changed by hearing Javanese gamelan music at the 1889 Paris World Exhibition — its microtones and textures are reflected throughout his work.',
+      'He clashed repeatedly with the Paris Conservatoire examiners for his "forbidden" parallel fifths and unresolved dissonances.',
+      'Debussy died during the German bombing of Paris in World War I — bombs were falling as he breathed his last.',
     ],
-    legacy: { harmony: 97, melody: 90, rhythm: 78, innovation: 96, influence: 90 },
+    legacy: { harmony: 100, melody: 88, rhythm: 82, innovation: 98, influence: 94 },
   },
   {
-    id: 'stravinsky',
-    name: 'Igor Stravinsky',
-    initials: 'IS',
-    life: '1882 – 1971',
-    nationality: '🇷🇺 Russian',
-    era: 'modern',
-    color: '#ea580c',
-    grad: 'linear-gradient(135deg,#ea580c,#fbbf24)',
+    id: 'brahms',
+    name: 'Johannes Brahms',
+    initials: 'JB',
+    life: '1833 – 1897',
+    nationality: '🇩🇪 German',
+    era: 'romantic',
+    eraLabel: 'Romantic',
+    color: '#9d174d',
+    grad: 'linear-gradient(135deg,#831843,#fda4af)',
     instruments: ['Piano'],
-    genres: ['Modern', 'Ballet', 'Neoclassical'],
-    tagColor: 'mh-tag-orange',
-    works_count: 300,
+    genres: ['Romantic', 'Symphony', 'Chamber'],
+    works_count: 122,
     influence: 93,
-    bio: 'One of the most protean and influential composers of the 20th century. Stravinsky reinvented himself multiple times — from the primal rhythmic force of The Rite of Spring, through neoclassical clarity, to late serialism. His three early ballets (The Firebird, Petrushka, The Rite of Spring) remain masterpieces of orchestral writing.',
-    quote: 'Lesser artists borrow, great artists steal.',
-    quote_attr: '— I. Stravinsky',
+    bio: 'The great conservative of the Romantic era — the man who looked backward to Bach and Beethoven while all around him looked forward to Wagner. Brahms took Classical forms — the symphony, the sonata, the concerto — and filled them with Romantic feeling and supreme craftsmanship. His four symphonies, two piano concertos, and chamber works are cornerstones of the repertoire.',
+    quote: "Without craftsmanship, inspiration is a mere reed shaken in the wind.",
+    quote_attr: '— J. Brahms',
     works: [
-      { year: '1910', title: 'The Firebird', type: 'Ballet', desc: 'A lush, magical score that immediately established Stravinsky\'s international reputation.' },
-      { year: '1911', title: 'Petrushka', type: 'Ballet', desc: 'The puppet comes to life — bitonality and folk melodies in revolutionary combination.' },
-      { year: '1913', title: 'The Rite of Spring', type: 'Ballet', desc: 'Its Paris premiere caused a riot. Brutal rhythmic energy that reshaped music entirely.' },
+      { year: '1877', title: 'Symphony No. 2 in D major', type: 'Symphony', desc: "Brahms's most lyrical symphony — the one Schumann's widow Clara called his 'pastoral' work." },
+      { year: '1881', title: 'Piano Concerto No. 2 in B-flat major', type: 'Concerto', desc: 'One of the longest and most demanding piano concertos ever written — four vast movements.' },
+      { year: '1885', title: 'Symphony No. 4 in E minor', type: 'Symphony', desc: 'Brahms\'s final symphony — ending with a passacaglia in the manner of Bach, looking backward as the future beckoned.' },
+      { year: '1891', title: 'Clarinet Quintet in B minor', type: 'Chamber Music', desc: "Written in Brahms's twilight years, imbued with autumnal warmth and melancholy." },
     ],
-    influenced_by: ['Rimsky-Korsakov', 'Tchaikovsky', 'Russian folk music'],
-    influenced: ['Bartók', 'Milhaud', 'Messiaen', 'All 20th-century composers'],
+    influenced_by: ['Bach', 'Beethoven', 'Schumann'],
+    influenced: ['Schoenberg', 'Reger', 'Bartók'],
     trivia: [
-      'The premiere of The Rite of Spring on May 29, 1913, caused a near-riot — the audience began fighting in the stalls.',
-      'Stravinsky lived in three countries successively — Russia, France, and America — and changed nationality three times.',
-      'He was so protective of his intellectual property that he converted to the Russian Orthodox Church partly for copyright advantages.',
+      'Brahms was the leader of the "conservative" camp in the great 19th-century "War of the Romantics" against the "progressives" led by Wagner and Liszt.',
+      'He was a close friend and champion of Clara Schumann — and almost certainly in love with her, though nothing came of it.',
+      'Brahms was notoriously self-critical — he destroyed dozens of completed works he felt were not good enough, including 20 string quartets before allowing Op. 51 to be published.',
     ],
-    legacy: { harmony: 90, melody: 80, rhythm: 100, innovation: 99, influence: 93 },
+    legacy: { harmony: 95, melody: 88, rhythm: 86, innovation: 80, influence: 93 },
+  },
+  {
+    id: 'wagner',
+    name: 'Richard Wagner',
+    initials: 'RW',
+    life: '1813 – 1883',
+    nationality: '🇩🇪 German',
+    era: 'romantic',
+    eraLabel: 'Romantic',
+    color: '#831843',
+    grad: 'linear-gradient(135deg,#4c0519,#f43f5e)',
+    instruments: ['Piano'],
+    genres: ['Opera', 'Music Drama', 'Romantic'],
+    works_count: 113,
+    influence: 96,
+    bio: 'The most ambitious and controversial composer in history. Wagner created "music drama" — a total art form fusing music, poetry, drama, and design. His Ring cycle (15 hours across four operas) is still the most monumental work in the operatic canon. His harmonic language pushed tonality to its breaking point, directly paving the way for Schoenberg\'s atonality and the entire 20th century.',
+    quote: "Joy is not in things; it is in us.",
+    quote_attr: '— R. Wagner',
+    works: [
+      { year: '1843', title: 'Der fliegende Holländer', type: 'Opera', desc: "Wagner's first mature work — a ghost-ship tale with a redemption through love theme he'd return to throughout his career." },
+      { year: '1865', title: 'Tristan und Isolde', type: 'Music Drama', desc: 'The most harmonically radical work of the 19th century — the "Tristan chord" shattered tonal norms and haunted the next 100 years.' },
+      { year: '1876', title: 'Der Ring des Nibelungen', type: 'Music Drama Cycle', desc: 'A 15-hour, 4-opera epic of Norse mythology. Wagner spent 26 years writing it and built an entire opera house to stage it.' },
+      { year: '1882', title: 'Parsifal', type: 'Music Drama', desc: "Wagner's final work — a deeply mystical 'sacred festival play' about the Holy Grail, written for his own Bayreuth festival." },
+    ],
+    influenced_by: ['Beethoven', 'Weber', 'Meyerbeer'],
+    influenced: ['Bruckner', 'Mahler', 'Strauss', 'Schoenberg', 'Film music'],
+    trivia: [
+      'Wagner was one of the most controversial and unpleasant personalities in music history — an egomaniac, an anti-Semite, and a man who seduced the wives of his patrons.',
+      'He built his own opera house (the Bayreuth Festspielhaus) specifically designed to perform his Ring cycle, opened 1876. It still operates today.',
+      "Despite his dark character, Wagner's music was beloved by Hitler — which permanently tainted his reputation in the 20th century.",
+    ],
+    legacy: { harmony: 98, melody: 90, rhythm: 82, innovation: 99, influence: 96 },
+  },
+  {
+    id: 'handel',
+    name: 'George Frideric Handel',
+    initials: 'GFH',
+    life: '1685 – 1759',
+    nationality: '🇩🇪🇬🇧 German-British',
+    era: 'baroque',
+    eraLabel: 'Baroque',
+    color: '#ca8a04',
+    grad: 'linear-gradient(135deg,#92400e,#fde68a)',
+    instruments: ['Harpsichord', 'Organ'],
+    genres: ['Baroque', 'Oratorio', 'Opera'],
+    works_count: 600,
+    influence: 87,
+    bio: 'The great popularizer of Baroque music, a savvy entrepreneur who mastered opera seria in Italy before conquering London with a flood of operas and then, after those failed commercially, reinventing the English oratorio. Messiah is the most performed choral work in history. His Water Music and Fireworks Music were composed for outdoor royal spectacles and remain beloved.',
+    quote: "Whether I was in my body or out of my body as I wrote it I know not. God knows.",
+    quote_attr: '— G.F. Handel, on composing the "Hallelujah" chorus',
+    works: [
+      { year: '1717', title: 'Water Music', type: 'Orchestral Suite', desc: 'Three suites composed for a royal procession on the Thames — now a popular concert staple.' },
+      { year: '1741', title: 'Messiah', type: 'Oratorio', desc: 'The most performed choral work in history — composed in 24 days. Audiences traditionally stand for the "Hallelujah" chorus.' },
+      { year: '1749', title: 'Music for the Royal Fireworks', type: 'Orchestral', desc: "Written for George II's victory celebrations — the original performance used 100 instruments outdoors." },
+    ],
+    influenced_by: ['Corelli', 'Stradella', 'Purcell'],
+    influenced: ['Haydn', 'Beethoven', 'Mendelssohn'],
+    trivia: [
+      "Handel composed Messiah in 24 days — an almost supernatural feat of sustained inspiration.",
+      'He had a violent quarrel with fellow composer Domenico Scarlatti early in his career — they had a keyboard "duel" that was judged a draw.',
+      "Handel was the first composer to make a living entirely from public performances rather than aristocratic patronage — essentially the first music entrepreneur.",
+    ],
+    legacy: { harmony: 84, melody: 92, rhythm: 80, innovation: 82, influence: 87 },
   },
   {
     id: 'schubert',
@@ -326,29 +300,30 @@ const COMPOSERS = [
     life: '1797 – 1828',
     nationality: '🇦🇹 Austrian',
     era: 'romantic',
-    color: '#065f46',
-    grad: 'linear-gradient(135deg,#065f46,#34d399)',
+    eraLabel: 'Early Romantic',
+    color: '#c2410c',
+    grad: 'linear-gradient(135deg,#9a3412,#fb923c)',
     instruments: ['Piano', 'Violin'],
-    genres: ['Romantic', 'Lied', 'Chamber Music'],
-    tagColor: 'mh-tag-teal',
-    works_count: 1000,
-    influence: 88,
-    bio: 'The supreme master of the Lied (art song) — Schubert fused text and music in ways no composer before him had achieved. Dying at 31, he left a staggering 1,000+ works including 600+ songs, 8 complete symphonies, and some of the greatest chamber music ever written. He is the tragic genius of Viennese music.',
-    quote: 'My music is the product of my talent and my misery. And that which I have written in my greatest distress is that which the world seems to like most.',
+    genres: ['Romantic', 'Lied', 'Chamber'],
+    works_count: 998,
+    influence: 90,
+    bio: 'The greatest songwriter in history, and far more besides. Schubert died at 31 having composed nearly 1,000 works — including over 600 songs (Lieder) that permanently elevated the genre. He wrote his late masterpieces — the Winterreise song cycle, String Quintet, and Symphony No. 9 — as his health failed from syphilis. He lived in poverty, was virtually unknown outside Vienna, and was buried next to Beethoven at his own request.',
+    quote: "I have come into the world for no other purpose than to compose.",
     quote_attr: '— F. Schubert',
     works: [
-      { year: '1816', title: 'Erlkönig, D. 328', type: 'Art Song', desc: 'A terrifying ballad in which the piano\'s triplets and four vocal characters create a breathless dramatic narrative.' },
-      { year: '1822', title: 'Symphony No. 8 "Unfinished"', type: 'Symphony', desc: 'Only two movements — one of music\'s great mysteries. Complete as it stands.' },
-      { year: '1828', title: 'Winterreise', type: 'Song Cycle', desc: '24 songs of a lonely winter journey — the greatest song cycle in the repertoire.' },
+      { year: '1823', title: 'Die schöne Müllerin', type: 'Song Cycle', desc: '20 songs on poems by Müller — a young man\'s doomed love for a miller\'s daughter, told through water imagery.' },
+      { year: '1828', title: 'Winterreise', type: 'Song Cycle', desc: '24 songs of a man walking into the winter — perhaps the most devastating journey in all music.' },
+      { year: '1828', title: 'String Quintet in C major', type: 'Chamber Music', desc: "Written in the last weeks of his life — widely considered the most beautiful chamber music ever written." },
+      { year: '1828', title: 'Symphony No. 9 "The Great"', type: 'Symphony', desc: 'The symphony Brahms called his model — heavenly in length, Romantic in spirit, Classical in form.' },
     ],
-    influenced_by: ['Haydn', 'Mozart', 'Beethoven', 'Goethe\'s poetry'],
+    influenced_by: ['Beethoven', 'Mozart', 'Haydn'],
     influenced: ['Brahms', 'Schumann', 'Wolf', 'Mahler'],
     trivia: [
-      'Schubert wrote over 1,000 works in his 31 years — roughly one complete work every 5 days of his adult life.',
-      'He never heard his "Unfinished Symphony" performed — it remained in a drawer for 43 years after his death.',
-      'Schubert died 14 months after Beethoven, whose funeral he attended as a torchbearer.',
+      'Schubert wrote two complete song cycles and a symphony in his final year — while dying of syphilis.',
+      "He idolized Beethoven but was too shy to visit him despite living in the same city. They met only once, very briefly, a week before Beethoven died.",
+      'Schubert was so productive that he sometimes forgot having written certain pieces — rediscovering them when friends played them for him.',
     ],
-    legacy: { harmony: 92, melody: 98, rhythm: 78, innovation: 85, influence: 88 },
+    legacy: { harmony: 92, melody: 98, rhythm: 82, innovation: 88, influence: 90 },
   },
   {
     id: 'liszt',
@@ -357,147 +332,213 @@ const COMPOSERS = [
     life: '1811 – 1886',
     nationality: '🇭🇺 Hungarian',
     era: 'romantic',
-    color: '#7c3aed',
-    grad: 'linear-gradient(135deg,#7c3aed,#c084fc)',
-    instruments: ['Piano', 'Organ'],
-    genres: ['Romantic', 'Virtuoso Piano', 'Symphonic Poem'],
-    tagColor: 'mh-tag-purple',
+    eraLabel: 'Romantic',
+    color: '#ea580c',
+    grad: 'linear-gradient(135deg,#c2410c,#fb923c)',
+    instruments: ['Piano'],
+    genres: ['Romantic', 'Piano', 'Symphonic Poem'],
     works_count: 700,
-    influence: 89,
-    bio: 'The greatest piano virtuoso who ever lived — and a transformative composer who invented the symphonic poem and expanded harmonic language toward the atonality of the 20th century. "Lisztomania" — the hysteria his concerts inspired — was the 19th century\'s equivalent of Beatlemania. He was also extraordinarily generous to other composers.',
-    quote: 'Inspiration is enough to give expression to the tone in singing, so it is with the singing tone of the Lisztian piano.',
-    quote_attr: '— C. Saint-Saëns',
+    influence: 91,
+    bio: 'The greatest piano virtuoso who ever lived, and arguably the most generous figure in the history of music. Liszt invented the piano recital (the solo concert format), invented the symphonic poem form, championed every contemporary composer from Berlioz to Wagner, and gave away enormous sums to music charities and students. In his youth he was the first modern celebrity — women fainted at his concerts in what newspapers called "Lisztomania."',
+    quote: "Mournful and yet grand is the destiny of the artist.",
+    quote_attr: '— F. Liszt',
     works: [
-      { year: '1853', title: 'Piano Sonata in B minor', type: 'Piano', desc: 'A monumental 30-minute single-movement sonata — one of the greatest and most challenging piano works.' },
-      { year: '1854', title: 'Les Préludes', type: 'Symphonic Poem', desc: 'The finest of his 13 symphonic poems — Liszt invented the form.' },
-      { year: '1885', title: 'Nuages gris', type: 'Piano', desc: 'A late work of extraordinary harmonic ambiguity — predicting 20th-century atonality.' },
+      { year: '1849', title: 'Transcendental Études', type: 'Piano', desc: '12 studies of impossible difficulty that defined the limits of piano technique for a century.' },
+      { year: '1854', title: 'Les Préludes', type: 'Symphonic Poem', desc: 'One of the first and most famous symphonic poems — music that tells a literary narrative without words.' },
+      { year: '1854', title: 'Piano Sonata in B minor', type: 'Piano', desc: 'A single-movement, 30-minute titan — perhaps the most ambitious solo piano work ever written.' },
+      { year: '1885', title: 'Nuages Gris', type: 'Piano', desc: "Late pieces of extraordinary harmonic prescience — foreshadowing Debussy and even Schoenberg in Liszt's final years." },
     ],
-    influenced_by: ['Beethoven', 'Chopin', 'Paganini', 'Wagner'],
-    influenced: ['Wagner', 'Richard Strauss', 'Debussy', 'Bartók'],
+    influenced_by: ['Paganini', 'Chopin', 'Schubert'],
+    influenced: ['Wagner', 'Debussy', 'Bartók', 'Scriabin', 'Every pianist since'],
     trivia: [
-      '"Lisztomania" — coined by Heinrich Heine — was a real phenomenon. Women fought over his broken piano strings and used them as hairpieces.',
-      'Liszt gave the premiere of the piano works of many composers, including Schumann\'s Kreisleriana.',
-      'In his later years, Liszt took minor orders in the Catholic Church and became Abbé Liszt.',
+      'Liszt suffered from "Lisztomania" — women would rush the stage, tear his gloves off, and fight over his cigarette butts and broken piano strings.',
+      'In his 50s he took minor holy orders, became the Abbé Liszt, and lived a life of increasing religious devotion while still composing.',
+      'He never charged for teaching — at his master classes in Weimar he taught for free, an almost unprecedented act of generosity in the music world.',
     ],
-    legacy: { harmony: 94, melody: 88, rhythm: 85, innovation: 95, influence: 89 },
+    legacy: { harmony: 90, melody: 94, rhythm: 88, innovation: 96, influence: 91 },
+  },
+  {
+    id: 'stravinsky',
+    name: 'Igor Stravinsky',
+    initials: 'IS',
+    life: '1882 – 1971',
+    nationality: '🇷🇺🇺🇸 Russian-American',
+    era: 'modern',
+    eraLabel: '20th Century',
+    color: '#0284c7',
+    grad: 'linear-gradient(135deg,#0369a1,#7dd3fc)',
+    instruments: ['Piano'],
+    genres: ['Modernism', 'Ballet', 'Neo-Classical'],
+    works_count: 128,
+    influence: 95,
+    bio: 'The most influential composer of the 20th century. Stravinsky reinvented himself three times — as a Romantic Russian nationalist (The Firebird), as a primitivist modernist (The Rite of Spring), as a Neo-Classicist, and finally as a serialist. His rhythmic innovations in The Rite of Spring permanently changed music; its premiere in 1913 caused a riot. He composed for 60 years, never repeating himself.',
+    quote: "Lesser artists borrow, great artists steal.",
+    quote_attr: '— I. Stravinsky',
+    works: [
+      { year: '1910', title: 'The Firebird', type: 'Ballet', desc: "Stravinsky's first masterpiece — a brilliant showcase of Russian color and orchestral virtuosity." },
+      { year: '1913', title: 'The Rite of Spring', type: 'Ballet', desc: 'Its Paris premiere caused a riot. A century later it remains the most rhythmically radical score ever written.' },
+      { year: '1920', title: 'Pulcinella', type: 'Ballet', desc: "Stravinsky's turn to Neo-Classicism — reworking Pergolesi with 20th-century wit and irony." },
+      { year: '1951', title: 'The Rake\'s Progress', type: 'Opera', desc: "Stravinsky's only full-length opera — a masterpiece of Neo-Classical style based on Hogarth's engravings." },
+    ],
+    influenced_by: ['Rimsky-Korsakov', 'Debussy', 'Bach'],
+    influenced: ['Bartók', 'Messiaen', 'Adams', 'All 20th-century composers'],
+    trivia: [
+      'The Rite of Spring premiere (May 29, 1913) caused one of the most famous riots in music history — the audience booed, cheered, and brawled in the aisles.',
+      'Stravinsky lived to 88, composing nearly to the end. He was buried in Venice, next to his longtime collaborator Serge Diaghilev.',
+      'He was notoriously litigious about copyright and royalties — an irony given his famous quote about stealing.',
+    ],
+    legacy: { harmony: 90, melody: 85, rhythm: 100, innovation: 98, influence: 95 },
   },
 ];
 
-// ── State ──────────────────────────────────────────
-let currentEraFilter = 'all';
-let currentSearch    = '';
-let isListView       = false;
-let sortBy           = 'influence';
+const ERA_ORDER = ['baroque', 'classical', 'romantic', 'modern'];
+const ERA_NAMES = { baroque: 'Baroque', classical: 'Classical', romantic: 'Romantic', modern: '20th Century' };
 
-// ── DOM Ready ─────────────────────────────────────
+/* ══════════════════════════════════════════════════
+   STATE
+   ══════════════════════════════════════════════════ */
+let currentEra     = 'all';
+let currentSort    = 'influence';
+let currentSearch  = '';
+let currentView    = 'grid';
+let featuredId     = null;
+const awardedSet   = new Set();
+
+/* ══════════════════════════════════════════════════
+   INIT
+   ══════════════════════════════════════════════════ */
 document.addEventListener('DOMContentLoaded', () => {
+  setupFeatured();
   renderComposers();
   setupSearch();
   setupEraFilter();
   setupSort();
-  setupViewToggle();
-  setupModal();
+  setupObserver();
 });
 
-// ── Render Composers ───────────────────────────────
+/* ══════════════════════════════════════════════════
+   FEATURED COMPOSER
+   ══════════════════════════════════════════════════ */
+function setupFeatured() {
+  const picks = ['beethoven', 'bach', 'mozart', 'chopin', 'debussy'];
+  featuredId = picks[Math.floor(Math.random() * picks.length)];
+  const c = COMPOSERS.find(x => x.id === featuredId);
+  if (!c) return;
+
+  const avatar = document.getElementById('featuredAvatar');
+  const name   = document.getElementById('featuredName');
+  const sub    = document.getElementById('featuredSub');
+  if (avatar) { avatar.textContent = c.initials; avatar.style.background = c.grad; }
+  if (name)   name.textContent = c.name;
+  if (sub)    sub.textContent  = `${c.eraLabel} · ${c.life} · ${c.nationality}`;
+}
+
+window.openFeaturedComposer = function() {
+  if (featuredId) openComposerModal(featuredId);
+};
+
+/* ══════════════════════════════════════════════════
+   RENDER
+   ══════════════════════════════════════════════════ */
 function renderComposers() {
-  const grid = document.getElementById('composersGrid');
+  const grid  = document.getElementById('composersGrid');
+  const empty = document.getElementById('clEmptyState');
   if (!grid) return;
 
-  let filtered = COMPOSERS.filter(c => {
-    const matchEra  = currentEraFilter === 'all' || c.era === currentEraFilter;
-    const matchSearch = !currentSearch ||
-      c.name.toLowerCase().includes(currentSearch) ||
-      c.bio.toLowerCase().includes(currentSearch) ||
-      c.nationality.toLowerCase().includes(currentSearch) ||
-      c.genres.some(g => g.toLowerCase().includes(currentSearch));
-    return matchEra && matchSearch;
-  });
+  let list = [...COMPOSERS];
 
-  // Sort
-  if (sortBy === 'influence') filtered.sort((a, b) => b.influence - a.influence);
-  else if (sortBy === 'name')  filtered.sort((a, b) => a.name.localeCompare(b.name));
-  else if (sortBy === 'era')   filtered.sort((a, b) => ERA_ORDER[a.era] - ERA_ORDER[b.era]);
-  else if (sortBy === 'works') filtered.sort((a, b) => b.works_count - a.works_count);
+  // Filter
+  if (currentEra !== 'all') list = list.filter(c => c.era === currentEra);
 
-  document.getElementById('composerCount').textContent = `${filtered.length} composer${filtered.length !== 1 ? 's' : ''}`;
-
-  if (!filtered.length) {
-    grid.innerHTML = `<div style="text-align:center;padding:60px 20px;color:var(--muted)">
-      <div style="font-size:2rem;margin-bottom:12px">🎼</div>
-      <p>No composers found</p>
-    </div>`;
-    return;
+  // Search
+  if (currentSearch.trim()) {
+    const q = currentSearch.toLowerCase();
+    list = list.filter(c =>
+      c.name.toLowerCase().includes(q) ||
+      c.nationality.toLowerCase().includes(q) ||
+      c.eraLabel.toLowerCase().includes(q) ||
+      c.genres.some(g => g.toLowerCase().includes(q)) ||
+      c.instruments.some(i => i.toLowerCase().includes(q))
+    );
   }
 
-  grid.className = `cl-composers-grid${isListView ? ' list-view' : ''}`;
+  // Sort
+  if (currentSort === 'influence') list.sort((a,b) => b.influence - a.influence);
+  else if (currentSort === 'name')  list.sort((a,b) => a.name.localeCompare(b.name));
+  else if (currentSort === 'era')   list.sort((a,b) => ERA_ORDER.indexOf(a.era) - ERA_ORDER.indexOf(b.era));
+  else if (currentSort === 'works') list.sort((a,b) => b.works_count - a.works_count);
 
-  grid.innerHTML = filtered.map((c, i) => `
-    <div class="composer-card${isListView ? ' list-view' : ''}"
-         style="opacity:0;transform:translateY(20px);transition:opacity 0.45s ease ${i*0.05}s,transform 0.45s ease ${i*0.05}s"
-         onclick="openComposerModal('${c.id}')"
-         role="button" tabindex="0"
-         onkeydown="if(event.key==='Enter')openComposerModal('${c.id}')">
+  if (list.length === 0) {
+    grid.innerHTML = '';
+    if (empty) empty.style.display = 'block';
+    return;
+  }
+  if (empty) empty.style.display = 'none';
 
+  grid.className = `cl-composers-grid${currentView === 'list' ? ' list-view' : ''}`;
+
+  grid.innerHTML = list.map((c, i) => `
+    <div class="composer-card" onclick="openComposerModal('${c.id}')"
+         style="--comp-grad:${c.grad};--comp-color:${c.color};--inf-w:${c.influence}%;animation-delay:${i * 0.04}s">
       <div class="cc-accent-bar" style="background:${c.grad}"></div>
-
-      <div class="cc-header">
-        <div class="cc-avatar" style="background:${c.grad}">
-          <div class="cc-avatar-initials">${c.initials}</div>
-        </div>
-        <div class="cc-header-info">
+      <div class="cc-avatar-wrap">
+        <div class="cc-avatar">${c.initials}</div>
+        <div class="cc-identity">
           <div class="cc-name">${c.name}</div>
-          <div class="cc-life">${c.life}</div>
-          <div class="cc-era-badge" style="background:rgba(${hexToRgbC(c.color)},0.12);color:${c.color};border:1px solid rgba(${hexToRgbC(c.color)},0.25)">${ERA_NAMES[c.era]}</div>
-          <div class="cc-nationality">${c.nationality}</div>
+          <div class="cc-meta">${c.life} · ${c.nationality}</div>
+          <div class="cc-era-tag" style="color:${c.color};background:rgba(${hexToRgbCL(c.color)},0.1);border-color:rgba(${hexToRgbCL(c.color)},0.2)">${c.eraLabel}</div>
         </div>
       </div>
-
-      <div class="cc-body">
-        <p class="cc-bio">${c.bio}</p>
-        <div class="cc-genres">
-          ${c.genres.map(g => `<span class="mh-tag ${c.tagColor}">${g}</span>`).join('')}
+      <div class="cc-influence-wrap">
+        <div class="cc-influence-label">
+          <span>Influence Score</span>
+          <span>${c.influence}/100</span>
+        </div>
+        <div class="cc-influence-track">
+          <div class="cc-influence-fill"></div>
         </div>
       </div>
-
-      <div class="cc-footer">
-        <div class="cc-stats">
-          <div class="cc-stat">
-            <strong>${c.works_count}+</strong>
-            <span>Works</span>
-          </div>
-          <div class="cc-stat">
-            <strong>${c.influence}%</strong>
-            <span>Influence</span>
-          </div>
-        </div>
-        <div class="cc-cta">
-          View Profile
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="14" height="14"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-        </div>
+      <div class="cc-bio-wrap">${c.bio.substring(0, 140)}…</div>
+      <div class="cc-tags-wrap">
+        ${c.instruments.map(t => `<span class="cc-tag">🎵 ${t}</span>`).join('')}
+        ${c.genres.slice(0,2).map(t => `<span class="cc-tag">${t}</span>`).join('')}
+        <span class="cc-tag">📖 ${c.works_count}+ works</span>
       </div>
     </div>
   `).join('');
-
-  requestAnimationFrame(() => {
-    grid.querySelectorAll('.composer-card').forEach(el => {
-      el.style.opacity = '1';
-      el.style.transform = isListView ? 'translateX(0)' : 'translateY(0)';
-    });
-  });
 }
 
-const ERA_ORDER = { ancient: 0, renaissance: 1, baroque: 2, classical: 3, romantic: 4, modern: 5 };
-const ERA_NAMES = { ancient: 'Ancient', renaissance: 'Renaissance', baroque: 'Baroque', classical: 'Classical', romantic: 'Romantic', modern: 'Modern' };
+/* ══════════════════════════════════════════════════
+   INTERSECTION OBSERVER  →  animate influence bars
+   ══════════════════════════════════════════════════ */
+function setupObserver() {
+  const obs = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('animated');
+        obs.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.2 });
 
-// ── Setup ──────────────────────────────────────────
+  // Re-observe whenever grid is re-rendered
+  const grid = document.getElementById('composersGrid');
+  if (grid) {
+    const mutObs = new MutationObserver(() => {
+      grid.querySelectorAll('.composer-card').forEach(card => obs.observe(card));
+    });
+    mutObs.observe(grid, { childList: true });
+    grid.querySelectorAll('.composer-card').forEach(card => obs.observe(card));
+  }
+}
+
+/* ══════════════════════════════════════════════════
+   CONTROLS
+   ══════════════════════════════════════════════════ */
 function setupSearch() {
   const input = document.getElementById('composerSearch');
   if (!input) return;
-  input.addEventListener('input', () => {
-    currentSearch = input.value.toLowerCase().trim();
-    renderComposers();
-  });
+  input.addEventListener('input', () => { currentSearch = input.value; renderComposers(); });
 }
 
 function setupEraFilter() {
@@ -505,7 +546,7 @@ function setupEraFilter() {
     btn.addEventListener('click', () => {
       document.querySelectorAll('.cl-era-btn').forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
-      currentEraFilter = btn.dataset.era;
+      currentEra = btn.dataset.era;
       renderComposers();
     });
   });
@@ -514,83 +555,79 @@ function setupEraFilter() {
 function setupSort() {
   const sel = document.getElementById('composerSort');
   if (!sel) return;
-  sel.addEventListener('change', () => {
-    sortBy = sel.value;
-    renderComposers();
-  });
+  sel.addEventListener('change', () => { currentSort = sel.value; renderComposers(); });
 }
 
-function setupViewToggle() {
-  document.querySelectorAll('.cl-view-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-      document.querySelectorAll('.cl-view-btn').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      isListView = btn.dataset.view === 'list';
-      renderComposers();
-    });
-  });
-}
+window.setView = function(v) {
+  currentView = v;
+  document.querySelectorAll('.cl-view-btn').forEach(b => b.classList.toggle('active', b.dataset.view === v));
+  renderComposers();
+};
 
-function setupModal() {
-  const overlay = document.getElementById('composerModal');
-  if (!overlay) return;
-  overlay.addEventListener('click', e => {
-    if (e.target === overlay) closeComposerModal();
-  });
-  document.addEventListener('keydown', e => {
-    if (e.key === 'Escape') closeComposerModal();
-  });
-}
+window.clearComposerSearch = function() {
+  currentSearch = '';
+  const input = document.getElementById('composerSearch');
+  if (input) input.value = '';
+  renderComposers();
+};
 
-// ── Modal ──────────────────────────────────────────
-function openComposerModal(id) {
+/* ══════════════════════════════════════════════════
+   MODAL
+   ══════════════════════════════════════════════════ */
+window.openComposerModal = function(id) {
   const c = COMPOSERS.find(x => x.id === id);
   if (!c) return;
-
-  const modal   = document.getElementById('composerModal');
+  const overlay = document.getElementById('composerModal');
   const content = document.getElementById('composerModalContent');
+  if (!overlay || !content) return;
+
+  const rgb = hexToRgbCL(c.color);
+  const legacyKeys = ['harmony','melody','rhythm','innovation','influence'];
 
   content.innerHTML = `
-    <div class="cl-modal-hero" style="--cc-color:${c.color}">
-      <div class="cl-modal-hero-inner">
+    <!-- Hero -->
+    <div class="cl-modal-hero" style="--hero-rgb:${rgb}">
+      <button class="cl-modal-close" onclick="closeComposerModal()">✕</button>
+      <div class="cl-modal-hero-top">
         <div class="cl-modal-avatar" style="background:${c.grad}">${c.initials}</div>
-        <div>
+        <div class="cl-modal-id">
           <div class="cl-modal-name">${c.name}</div>
-          <div class="cl-modal-meta">
-            ${c.life} &nbsp;·&nbsp; ${c.nationality} &nbsp;·&nbsp; ${c.works_count}+ works
-          </div>
-          <div class="cl-modal-tags">
-            ${c.genres.map(g => `<span class="mh-tag ${c.tagColor}">${g}</span>`).join('')}
-            <span class="mh-tag mh-tag-amber">⭐ ${c.influence}% influence</span>
+          <div class="cl-modal-sub">
+            <span>📅 ${c.life}</span>
+            <span>${c.nationality}</span>
+            <span style="background:rgba(${rgb},0.12);padding:2px 10px;border-radius:8px;color:${c.color};font-weight:700;border:1px solid rgba(${rgb},0.2)">${c.eraLabel}</span>
+            <span>📚 ${c.works_count}+ works</span>
           </div>
         </div>
       </div>
-      <button class="mh-modal-close" onclick="closeComposerModal()" style="position:absolute;top:20px;right:20px">✕</button>
     </div>
 
-    <div class="mh-modal-body">
+    <!-- Quote -->
+    <div class="cl-quote" style="--comp-modal-color:${c.color}">
+      <p>"${c.quote}"</p>
+      <cite>${c.quote_attr}</cite>
+    </div>
+
+    <!-- Body -->
+    <div class="cl-modal-body">
 
       <!-- Bio -->
-      <p style="font-size:0.9rem;color:var(--muted);line-height:1.7">${c.bio}</p>
+      <div>
+        <div class="cl-section-label">Biography</div>
+        <div class="cl-bio-text">${c.bio}</div>
+      </div>
 
-      <!-- Quote -->
-      ${c.quote ? `
-      <div class="cl-quote" style="margin-top:20px">
-        "${c.quote}"
-        <cite>${c.quote_attr}</cite>
-      </div>` : ''}
-
-      <!-- Key Works Timeline -->
-      <div class="ge-modal-section">
-        <h4>Key Works</h4>
-        <div class="cl-works-timeline">
-          ${c.works.map((w, i) => `
-            <div class="cl-work-item">
+      <!-- Works Timeline -->
+      <div>
+        <div class="cl-section-label">Essential Works</div>
+        <div class="cl-works-timeline" style="--comp-modal-color:${c.color};--comp-modal-grad:${c.grad}">
+          ${c.works.map(w => `
+            <div class="cl-work-entry">
               <div class="cl-work-year-col">
-                <div class="cl-work-year">${w.year}</div>
-                ${i < c.works.length-1 ? '<div class="cl-work-line"></div>' : ''}
+                <div class="cl-work-year-dot">${w.year.slice(-2)}</div>
+                <div class="cl-work-year-num">${w.year}</div>
               </div>
-              <div class="cl-work-content">
+              <div class="cl-work-card">
                 <div class="cl-work-title">${w.title}</div>
                 <div class="cl-work-type">${w.type}</div>
                 <div class="cl-work-desc">${w.desc}</div>
@@ -600,131 +637,115 @@ function openComposerModal(id) {
         </div>
       </div>
 
-      <!-- Influences -->
-      <div class="ge-modal-section">
-        <h4>Musical Lineage</h4>
+      <!-- Influence network -->
+      <div>
+        <div class="cl-section-label">Influence Network</div>
         <div class="cl-influence-grid">
-          <div class="cl-influence-item">
-            <div class="cl-influence-label">Influenced By</div>
+          <div class="cl-influence-card">
+            <h5>Influenced by</h5>
             <div class="cl-influence-names">
-              ${c.influenced_by.map(n => `<div class="cl-influence-name">${n}</div>`).join('')}
+              ${c.influenced_by.map(n => `<span class="cl-influence-name" style="background:rgba(${rgb},0.08);border-color:rgba(${rgb},0.2);color:${c.color}">${n}</span>`).join('')}
             </div>
           </div>
-          <div class="cl-influence-item">
-            <div class="cl-influence-label">Influenced</div>
+          <div class="cl-influence-card">
+            <h5>Influenced</h5>
             <div class="cl-influence-names">
-              ${c.influenced.map(n => `<div class="cl-influence-name">${n}</div>`).join('')}
+              ${c.influenced.map(n => `<span class="cl-influence-name">${n}</span>`).join('')}
             </div>
           </div>
         </div>
       </div>
 
-      <!-- Legacy Scores -->
-      <div class="ge-modal-section">
-        <h4>Legacy Assessment</h4>
-        <div class="cl-legacy-bar">
-          ${Object.entries(c.legacy).map(([key, val]) => `
-            <div class="cl-legacy-item">
-              <div class="cl-legacy-label">${key.charAt(0).toUpperCase() + key.slice(1)}</div>
+      <!-- Legacy scores -->
+      <div>
+        <div class="cl-section-label">Legacy Scores</div>
+        <div class="cl-legacy-bars">
+          ${legacyKeys.map(k => `
+            <div class="cl-legacy-bar">
+              <div class="cl-legacy-label">${k.charAt(0).toUpperCase()+k.slice(1)}</div>
               <div class="cl-legacy-track">
-                <div class="cl-legacy-fill" style="width:${val}%;background:${c.grad}"></div>
+                <div class="cl-legacy-fill" style="width:${c.legacy[k]}%;background:${c.grad}"></div>
               </div>
-              <div class="cl-legacy-score">${val}</div>
+              <div class="cl-legacy-val" style="color:${c.color}">${c.legacy[k]}</div>
             </div>
           `).join('')}
         </div>
       </div>
 
       <!-- Trivia -->
-      <div class="ge-modal-section">
-        <h4>Did You Know?</h4>
+      <div>
+        <div class="cl-section-label">Did You Know?</div>
         <div class="cl-trivia-list">
-          ${c.trivia.map(t => `
+          ${c.trivia.map((t, i) => `
             <div class="cl-trivia-item">
-              <span class="cl-trivia-icon">💡</span>
-              ${t}
+              <div class="cl-trivia-num">${i+1}</div>
+              <div>${t}</div>
             </div>
           `).join('')}
         </div>
       </div>
 
-      <!-- CTAs -->
-      <div style="display:flex;gap:12px;margin-top:28px;flex-wrap:wrap">
-        <a href="theory-quiz.html" style="
-          display:inline-flex;align-items:center;gap:8px;
-          background:${c.grad};color:white;
-          padding:11px 22px;border-radius:12px;
-          font-size:0.875rem;font-weight:700;text-decoration:none;
-          transition:opacity 0.2s;
-        " onmouseover="this.style.opacity='0.88'" onmouseout="this.style.opacity='1'">
-          🧠 Quiz on ${c.name.split(' ').pop()}
-        </a>
-        <button onclick="awardComposerXP('${c.id}','${c.name}')" id="composerXPBtn-${c.id}" style="
-          background:rgba(251,191,36,0.1);border:1px solid rgba(251,191,36,0.3);
-          color:#fbbf24;padding:11px 22px;border-radius:12px;
-          font-size:0.875rem;font-weight:700;font-family:inherit;cursor:pointer;
-        ">
-          ⭐ Earn XP for Learning
+      <!-- CTAs + XP -->
+      <div class="cl-modal-ctas">
+        <button class="cl-modal-btn-primary" onclick="awardComposerXP('${c.id}','${c.name}'); this.textContent='✓ XP Earned!'; this.disabled=true">
+          ⭐ Earn +30 XP
         </button>
+        <button class="cl-modal-btn-secondary" onclick="closeComposerModal()">← Back to Library</button>
+        <a href="era-timeline.html#era-${c.era}" class="cl-modal-btn-secondary" style="text-decoration:none;display:inline-flex;align-items:center;gap:6px">
+          📅 View ${c.eraLabel} Era
+        </a>
       </div>
+
     </div>
   `;
 
-  modal.classList.add('open');
+  overlay.classList.add('open');
   document.body.style.overflow = 'hidden';
-}
+};
 
-function closeComposerModal() {
-  document.getElementById('composerModal').classList.remove('open');
+window.closeComposerModal = function() {
+  const overlay = document.getElementById('composerModal');
+  if (overlay) overlay.classList.remove('open');
   document.body.style.overflow = '';
-}
+};
 
-// ── XP ─────────────────────────────────────────────
-const awardedComposers = new Set();
+// Close on overlay click
+document.addEventListener('DOMContentLoaded', () => {
+  const overlay = document.getElementById('composerModal');
+  if (overlay) overlay.addEventListener('click', e => { if (e.target === overlay) closeComposerModal(); });
+  // ESC
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeComposerModal(); });
+});
+
+/* ══════════════════════════════════════════════════
+   XP
+   ══════════════════════════════════════════════════ */
 function awardComposerXP(composerId, composerName) {
-  const btn = document.getElementById(`composerXPBtn-${composerId}`);
-  if (awardedComposers.has(composerId)) {
-    if (btn) btn.textContent = '✓ XP Already Earned';
-    return;
-  }
-  awardedComposers.add(composerId);
+  if (awardedSet.has(composerId)) return;
+  awardedSet.add(composerId);
   const xp = 30;
-  if (window.HarmoniaDB) HarmoniaDB.addXP(xp, `Studied ${composerName}`);
-  if (btn) {
-    btn.textContent = `✓ +${xp} XP Earned!`;
-    btn.style.background = 'rgba(52,211,153,0.1)';
-    btn.style.borderColor = 'rgba(52,211,153,0.3)';
-    btn.style.color = '#34d399';
-  }
-  showCLToast(`+${xp} XP — Studied ${composerName}`, xp);
+  if (window.HarmoniaDB) HarmoniaDB.addXP(xp, `Studied composer: ${composerName}`);
+  showCLToast(composerName, xp);
 }
 
-function showCLToast(msg, xp) {
+function showCLToast(name, xp) {
   const toast = document.getElementById('mhXPToast');
   if (!toast) return;
   toast.querySelector('.mh-xp-toast-icon').textContent = '🎼';
   toast.querySelector('.mh-xp-toast-text strong').textContent = `+${xp} XP Earned!`;
-  toast.querySelector('.mh-xp-toast-text span').textContent = msg;
+  toast.querySelector('.mh-xp-toast-text span').textContent = `Studied ${name}`;
   toast.querySelector('.mh-xp-amount').textContent = `+${xp} XP`;
   toast.classList.add('show');
   setTimeout(() => toast.classList.remove('show'), 3200);
 }
 
-// ── Featured Composer rotation ─────────────────────
-document.addEventListener('DOMContentLoaded', () => {
-  const featured = COMPOSERS[Math.floor(Math.random() * COMPOSERS.length)];
-  const nameEl = document.getElementById('featuredName');
-  const subEl  = document.getElementById('featuredSub');
-  const btn    = document.getElementById('featuredBtn');
-  if (nameEl) nameEl.textContent = featured.name;
-  if (subEl)  subEl.textContent  = `${featured.nationality} · ${featured.life} · ${featured.works_count}+ works`;
-  if (btn)    btn.onclick = () => openComposerModal(featured.id);
-});
-
-// ── Utility ────────────────────────────────────────
-function hexToRgbC(hex) {
-  const r = parseInt(hex.slice(1,3),16);
-  const g = parseInt(hex.slice(3,5),16);
-  const b = parseInt(hex.slice(5,7),16);
+/* ══════════════════════════════════════════════════
+   UTILITY
+   ══════════════════════════════════════════════════ */
+function hexToRgbCL(hex) {
+  if (!hex || hex.length < 6) return '167,139,250';
+  const r = parseInt(hex.slice(1,3), 16);
+  const g = parseInt(hex.slice(3,5), 16);
+  const b = parseInt(hex.slice(5,7), 16);
   return `${r},${g},${b}`;
 }
