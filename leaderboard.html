@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Leaderboard – Harmonia</title>
+  <link rel="stylesheet" href="styles/home.css" />
+  <link rel="stylesheet" href="styles/leaderboard.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+</head>
+<body>
+
+<!-- ===== CONFETTI CANVAS ===== -->
+<canvas id="confettiCanvas" style="position:fixed;inset:0;pointer-events:none;z-index:9999;"></canvas>
+
+<!-- ===== NAVBAR ===== -->
+<nav class="navbar" id="navbar">
+  <div class="nav-inner">
+    <a href="home.html" class="nav-logo">
+      <div class="logo-icon">
+        <svg width="28" height="28" viewBox="0 0 36 36" fill="none">
+          <defs><linearGradient id="navLogoGrad" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#a78bfa"/><stop offset="100%" style="stop-color:#ec4899"/></linearGradient></defs>
+          <path d="M13 24V12l12 3v9" stroke="url(#navLogoGrad)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+          <circle cx="11" cy="24" r="3" fill="url(#navLogoGrad)"/>
+          <circle cx="23" cy="22" r="3" fill="url(#navLogoGrad)"/>
+        </svg>
+      </div>
+      <span class="logo-text">Harmonia</span>
+    </a>
+
+    <ul class="nav-links" id="navLinks">
+      <li class="nav-item has-dropdown">
+        <button class="nav-link">Training
+          <svg class="caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m6 9 6 6 6-6"/></svg>
+        </button>
+        <div class="dropdown"><div class="dropdown-inner">
+          <a href="training.html" class="dd-item"><span class="dd-icon">🛤️</span><span class="dd-content"><strong>Learning Path</strong><span>Structured curriculum</span></span></a>
+          <a href="theory-quiz.html" class="dd-item"><span class="dd-icon">🧠</span><span class="dd-content"><strong>Theory Quiz</strong><span>Test your knowledge</span></span><span class="dd-tag xp">+XP</span></a>
+          <a href="ear-training.html" class="dd-item"><span class="dd-icon">👂</span><span class="dd-content"><strong>Ear Training</strong><span>Sharpen your hearing</span></span></a>
+          <a href="practice-mode.html" class="dd-item"><span class="dd-icon">🎸</span><span class="dd-content"><strong>Practice Mode</strong><span>Guided sessions</span></span><span class="dd-tag new">New</span></a>
+        </div></div>
+      </li>
+      <li class="nav-item has-dropdown">
+        <button class="nav-link">AI Generator
+          <svg class="caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m6 9 6 6 6-6"/></svg>
+        </button>
+        <div class="dropdown"><div class="dropdown-inner">
+          <a href="#" class="dd-item"><span class="dd-icon">🤖</span><span class="dd-content"><strong>AI Compose</strong><span>Generate original music</span></span></a>
+          <a href="#" class="dd-item"><span class="dd-icon">🎨</span><span class="dd-content"><strong>Style Transfer</strong><span>Reimagine your tracks</span></span><span class="dd-tag beta">Beta</span></a>
+          <a href="#" class="dd-item"><span class="dd-icon">✍️</span><span class="dd-content"><strong>Lyric Assistant</strong><span>AI-powered songwriting</span></span></a>
+        </div></div>
+      </li>
+      <li class="nav-item has-dropdown">
+        <button class="nav-link">Music History
+          <svg class="caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m6 9 6 6 6-6"/></svg>
+        </button>
+        <div class="dropdown"><div class="dropdown-inner">
+          <a href="#" class="dd-item"><span class="dd-icon">🌍</span><span class="dd-content"><strong>Genre Explorer</strong><span>From jazz to EDM</span></span></a>
+          <a href="#" class="dd-item"><span class="dd-icon">📅</span><span class="dd-content"><strong>Era Timeline</strong><span>Centuries of music</span></span></a>
+          <a href="#" class="dd-item"><span class="dd-icon">🎼</span><span class="dd-content"><strong>Composer Library</strong><span>Masters & legends</span></span></a>
+        </div></div>
+      </li>
+      <li class="nav-item has-dropdown">
+        <button class="nav-link active-nav">Dashboard
+          <svg class="caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m6 9 6 6 6-6"/></svg>
+        </button>
+        <div class="dropdown"><div class="dropdown-inner">
+          <a href="leaderboard.html" class="dd-item"><span class="dd-icon">🏆</span><span class="dd-content"><strong>Leaderboard</strong><span>Top performers</span></span></a>
+          <a href="progress.html" class="dd-item"><span class="dd-icon">📈</span><span class="dd-content"><strong>My Progress</strong><span>Track your growth</span></span></a>
+          <a href="achievements.html" class="dd-item"><span class="dd-icon">🥇</span><span class="dd-content"><strong>Achievements</strong><span>Badges & rewards</span></span></a>
+        </div></div>
+      </li>
+    </ul>
+
+    <div class="nav-right">
+      <div class="search-wrap" id="searchWrap">
+        <button class="icon-btn search-toggle" id="searchToggle" onclick="toggleSearch()" aria-label="Search">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+        </button>
+        <div class="search-expand" id="searchExpand">
+          <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+          <input type="text" placeholder="Search lessons, instruments…" id="searchInput" />
+          <button class="search-close" onclick="toggleSearch()">✕</button>
+        </div>
+      </div>
+      <button class="icon-btn theme-btn" id="themeBtn" onclick="toggleTheme()" aria-label="Toggle theme">
+        <svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+        <svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+      </button>
+      <div class="profile-menu" id="profileMenu">
+        <button class="profile-btn" onclick="toggleProfile()" aria-label="Profile menu">
+          <div class="avatar" id="navAvatar">G</div>
+          <span class="profile-name" id="navName">Guest</span>
+          <svg class="caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m6 9 6 6 6-6"/></svg>
+        </button>
+        <div class="profile-dropdown" id="profileDropdown">
+          <div class="pd-header">
+            <div class="pd-avatar" id="pdAvatar">G</div>
+            <div><div class="pd-name" id="pdName">Guest User</div><div class="pd-email">Not signed in</div></div>
+          </div>
+          <hr class="pd-divider"/>
+          <a href="#" class="pd-item">My Profile</a>
+          <a href="#" class="pd-item">Settings</a>
+          <hr class="pd-divider"/>
+          <a href="index.html" class="pd-item pd-signout">Sign Out</a>
+        </div>
+      </div>
+      <a href="index.html" class="btn-signout">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        Sign Out
+      </a>
+      <button class="hamburger" id="hamburger" onclick="toggleMobileNav()" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </div>
+</nav>
+
+<!-- Mobile Nav -->
+<div class="mobile-overlay" id="mobileOverlay" onclick="toggleMobileNav()"></div>
+<div class="mobile-nav" id="mobileNav">
+  <div class="mobile-nav-header">
+    <span class="logo-text">Harmonia</span>
+    <button onclick="toggleMobileNav()">✕</button>
+  </div>
+  <div class="mobile-nav-links">
+    <details><summary>Training</summary>
+      <a href="training.html">Learning Path</a>
+      <a href="theory-quiz.html">Theory Quiz</a>
+      <a href="ear-training.html">Ear Training</a>
+      <a href="practice-mode.html">Practice Mode</a>
+    </details>
+    <details open><summary>Dashboard</summary>
+      <a href="leaderboard.html">🏆 Leaderboard</a>
+      <a href="progress.html">📈 My Progress</a>
+      <a href="achievements.html">🥇 Achievements</a>
+    </details>
+    <a href="index.html" class="mobile-signout">Sign Out</a>
+  </div>
+</div>
+
+<!-- ===== HERO ===== -->
+<section class="lb-hero">
+  <div class="lb-hero-bg">
+    <div class="lb-orb lb-orb-1"></div>
+    <div class="lb-orb lb-orb-2"></div>
+    <div class="lb-orb lb-orb-3"></div>
+    <div class="lb-grid"></div>
+    <!-- Animated trophies -->
+    <div class="trophy-float tf-1">🏆</div>
+    <div class="trophy-float tf-2">⭐</div>
+    <div class="trophy-float tf-3">🥇</div>
+    <div class="trophy-float tf-4">🎯</div>
+    <div class="trophy-float tf-5">🔥</div>
+  </div>
+
+  <div class="container lb-hero-inner">
+    <div class="lb-hero-left">
+      <nav class="breadcrumb" aria-label="breadcrumb">
+        <a href="home.html">Home</a>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="m9 18 6-6-6-6"/></svg>
+        <a href="#">Dashboard</a>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="m9 18 6-6-6-6"/></svg>
+        <span>Leaderboard</span>
+      </nav>
+
+      <div class="lb-badge">
+        <span class="badge-dot"></span>
+        Live Rankings · Updated Every Hour
+      </div>
+
+      <h1 class="lb-title">
+        Global <span class="grad-text">Leaderboard</span>
+      </h1>
+      <p class="lb-subtitle">
+        Compete with musicians worldwide. Earn XP through lessons, quizzes, ear training and practice to climb the ranks.
+      </p>
+
+      <!-- Your rank card -->
+      <div class="my-rank-card" id="myRankCard">
+        <div class="mrc-left">
+          <div class="mrc-rank" id="myRankDisplay">#—</div>
+          <div class="mrc-avatar" id="myRankAvatar">G</div>
+          <div class="mrc-info">
+            <strong id="myRankName">Guest User</strong>
+            <span id="myRankLevel">Level 1 · Newcomer</span>
+          </div>
+        </div>
+        <div class="mrc-right">
+          <div class="mrc-xp" id="myRankXP">0 XP</div>
+          <div class="mrc-change" id="myRankChange">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="12" height="12"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
+            <span>Your rank</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Podium -->
+    <div class="lb-podium" id="lbPodium" aria-label="Top 3 players">
+      <!-- Populated by JS -->
+    </div>
+  </div>
+</section>
+
+<!-- ===== FILTERS & SEARCH ===== -->
+<div class="lb-controls">
+  <div class="container lb-controls-inner">
+    <!-- Time filters -->
+    <div class="lb-time-filters">
+      <button class="lb-tf active" data-time="alltime">All Time</button>
+      <button class="lb-tf" data-time="month">This Month</button>
+      <button class="lb-tf" data-time="week">This Week</button>
+    </div>
+
+    <!-- Category filters -->
+    <div class="lb-cat-filters">
+      <button class="lb-cf active" data-cat="overall">
+        <span>🌟</span> Overall
+      </button>
+      <button class="lb-cf" data-cat="theory">
+        <span>🧠</span> Theory Quiz
+      </button>
+      <button class="lb-cf" data-cat="ear">
+        <span>👂</span> Ear Training
+      </button>
+      <button class="lb-cf" data-cat="practice">
+        <span>🎸</span> Practice
+      </button>
+    </div>
+
+    <!-- Search -->
+    <div class="lb-search">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      <input type="text" placeholder="Search players…" id="playerSearch" oninput="filterPlayers(this.value)" />
+    </div>
+  </div>
+</div>
+
+<!-- ===== MAIN CONTENT ===== -->
+<main class="lb-main">
+  <div class="container lb-layout">
+
+    <!-- Leaderboard Table -->
+    <div class="lb-table-wrap">
+      <div class="lb-table-header">
+        <span class="lbth-rank">Rank</span>
+        <span class="lbth-player">Player</span>
+        <span class="lbth-level">Level</span>
+        <span class="lbth-quizzes">Quizzes</span>
+        <span class="lbth-streak">Streak</span>
+        <span class="lbth-xp">XP</span>
+      </div>
+
+      <div class="lb-table-body" id="lbTableBody">
+        <!-- Populated by JS -->
+      </div>
+
+      <!-- Loading skeleton -->
+      <div class="lb-loading" id="lbLoading">
+        <div class="lb-skeleton" style="--d:0"></div>
+        <div class="lb-skeleton" style="--d:1"></div>
+        <div class="lb-skeleton" style="--d:2"></div>
+        <div class="lb-skeleton" style="--d:3"></div>
+        <div class="lb-skeleton" style="--d:4"></div>
+      </div>
+    </div>
+
+    <!-- Sidebar -->
+    <aside class="lb-sidebar">
+
+      <!-- XP Breakdown -->
+      <div class="lb-widget">
+        <div class="lb-widget-header">
+          <h3>Your XP Breakdown</h3>
+          <span class="lb-widget-icon">⭐</span>
+        </div>
+        <div class="lb-xp-breakdown" id="xpBreakdown">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+
+      <!-- Season Info -->
+      <div class="lb-widget lb-season-widget">
+        <div class="lb-season-header">
+          <span class="lb-season-badge">Season 1</span>
+          <span class="lb-season-title">Spring Overture</span>
+        </div>
+        <p class="lb-season-desc">Season ends in</p>
+        <div class="lb-season-countdown" id="seasonCountdown">
+          <div class="scd-unit"><span id="scdDays">14</span><small>Days</small></div>
+          <div class="scd-sep">:</div>
+          <div class="scd-unit"><span id="scdHours">08</span><small>Hrs</small></div>
+          <div class="scd-sep">:</div>
+          <div class="scd-unit"><span id="scdMins">32</span><small>Min</small></div>
+        </div>
+        <div class="lb-season-rewards">
+          <div class="lb-season-reward">
+            <span class="lsr-rank">#1–3</span>
+            <span class="lsr-reward">🏆 Gold Trophy + 5000 XP</span>
+          </div>
+          <div class="lb-season-reward">
+            <span class="lsr-rank">#4–10</span>
+            <span class="lsr-reward">🥈 Silver Badge + 2000 XP</span>
+          </div>
+          <div class="lb-season-reward">
+            <span class="lsr-rank">#11–50</span>
+            <span class="lsr-reward">🎖️ Bronze Ribbon + 500 XP</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Top Movers -->
+      <div class="lb-widget">
+        <div class="lb-widget-header">
+          <h3>🚀 Top Movers Today</h3>
+        </div>
+        <div class="lb-movers" id="lbMovers">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+
+      <!-- Quick Nav -->
+      <div class="lb-widget lb-quicknav">
+        <h3>Dashboard</h3>
+        <a href="progress.html" class="lb-qn-item">
+          <span class="lb-qn-icon">📈</span>
+          <div>
+            <strong>My Progress</strong>
+            <span>Skills & module stats</span>
+          </div>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="14" height="14"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </a>
+        <a href="achievements.html" class="lb-qn-item">
+          <span class="lb-qn-icon">🥇</span>
+          <div>
+            <strong>Achievements</strong>
+            <span>Badges & milestones</span>
+          </div>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="14" height="14"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </a>
+        <a href="training.html" class="lb-qn-item">
+          <span class="lb-qn-icon">🎸</span>
+          <div>
+            <strong>Start Training</strong>
+            <span>Earn more XP now</span>
+          </div>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="14" height="14"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </a>
+      </div>
+
+    </aside>
+  </div>
+
+  <!-- Your rank pinned bar -->
+  <div class="lb-pinned-bar" id="lbPinnedBar">
+    <div class="container lb-pinned-inner">
+      <div class="lpb-left">
+        <span class="lpb-label">Your Position</span>
+        <span class="lpb-rank" id="pinnedRank">#—</span>
+        <div class="lpb-avatar" id="pinnedAvatar">G</div>
+        <strong id="pinnedName">Guest</strong>
+      </div>
+      <div class="lpb-right">
+        <span class="lpb-xp" id="pinnedXP">0 XP</span>
+        <a href="training.html" class="lpb-cta">Earn More XP →</a>
+      </div>
+    </div>
+  </div>
+</main>
+
+<!-- ===== FOOTER ===== -->
+<footer class="footer">
+  <div class="container">
+    <div class="footer-top">
+      <div class="footer-brand">
+        <a href="home.html" class="nav-logo" style="margin-bottom:12px">
+          <div class="logo-icon">
+            <svg width="24" height="24" viewBox="0 0 36 36" fill="none">
+              <path d="M13 24V12l12 3v9" stroke="url(#fLogoGrad2)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+              <circle cx="11" cy="24" r="3" fill="url(#fLogoGrad2)"/>
+              <circle cx="23" cy="22" r="3" fill="url(#fLogoGrad2)"/>
+              <defs><linearGradient id="fLogoGrad2" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#a78bfa"/><stop offset="100%" style="stop-color:#ec4899"/></linearGradient></defs>
+            </svg>
+          </div>
+          <span class="logo-text">Harmonia</span>
+        </a>
+        <p>The modern music learning platform for curious minds and creative souls.</p>
+        <div class="footer-social">
+          <a href="#" aria-label="Twitter">🐦</a>
+          <a href="#" aria-label="Instagram">📸</a>
+          <a href="#" aria-label="YouTube">▶️</a>
+          <a href="#" aria-label="Discord">💬</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h5>Training</h5>
+        <a href="training.html">Learning Path</a>
+        <a href="theory-quiz.html">Theory Quiz</a>
+        <a href="ear-training.html">Ear Training</a>
+        <a href="practice-mode.html">Practice Mode</a>
+      </div>
+      <div class="footer-col">
+        <h5>Dashboard</h5>
+        <a href="leaderboard.html">Leaderboard</a>
+        <a href="progress.html">My Progress</a>
+        <a href="achievements.html">Achievements</a>
+      </div>
+      <div class="footer-col">
+        <h5>Account</h5>
+        <a href="#">Profile</a>
+        <a href="#">Settings</a>
+        <a href="index.html">Sign Out</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div class="footer-copy">© 2026 Harmonia. All rights reserved.</div>
+      <div class="accessibility">
+        <span>Accessibility:</span>
+        <button onclick="adjustFont(-1)" aria-label="Decrease font size">A−</button>
+        <button onclick="adjustFont(1)" aria-label="Increase font size">A+</button>
+        <button onclick="toggleTheme()" id="footerThemeBtn">🌙 Dark Mode</button>
+      </div>
+      <div class="footer-legal"><a href="#">Privacy</a><a href="#">Terms</a></div>
+    </div>
+  </div>
+</footer>
+
+<script src="scripts/training-db.js"></script>
+<script src="scripts/home.js"></script>
+<script src="scripts/leaderboard.js"></script>
+</body>
+</html>
