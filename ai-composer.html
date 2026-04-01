@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI Composer – Harmonia</title>
+  <link rel="stylesheet" href="styles/home.css" />
+  <link rel="stylesheet" href="styles/ai-composer.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+</head>
+<body>
+
+<!-- ===== NAVBAR ===== -->
+<nav class="navbar" id="navbar">
+  <div class="nav-inner">
+    <a href="home.html" class="nav-logo">
+      <div class="logo-icon">
+        <svg width="28" height="28" viewBox="0 0 36 36" fill="none">
+          <defs>
+            <linearGradient id="navLogoGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" style="stop-color:#a78bfa"/>
+              <stop offset="100%" style="stop-color:#ec4899"/>
+            </linearGradient>
+          </defs>
+          <path d="M13 24V12l12 3v9" stroke="url(#navLogoGrad)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+          <circle cx="11" cy="24" r="3" fill="url(#navLogoGrad)"/>
+          <circle cx="23" cy="22" r="3" fill="url(#navLogoGrad)"/>
+        </svg>
+      </div>
+      <span class="logo-text">Harmonia</span>
+    </a>
+
+    <ul class="nav-links" id="navLinks">
+      <li class="nav-item has-dropdown">
+        <button class="nav-link">Training
+          <svg class="caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m6 9 6 6 6-6"/></svg>
+        </button>
+        <div class="dropdown"><div class="dropdown-inner">
+          <a href="learning-path.html" class="dd-item"><span class="dd-icon">🛤️</span><span class="dd-content"><strong>Learning Path</strong><span>Structured curriculum</span></span></a>
+          <a href="theory-quiz.html" class="dd-item"><span class="dd-icon">🧠</span><span class="dd-content"><strong>Theory Quiz</strong><span>Test your knowledge</span></span><span class="dd-tag xp">+XP</span></a>
+          <a href="ear-training.html" class="dd-item"><span class="dd-icon">👂</span><span class="dd-content"><strong>Ear Training</strong><span>Sharpen your hearing</span></span></a>
+          <a href="practice-mode.html" class="dd-item"><span class="dd-icon">🎸</span><span class="dd-content"><strong>Practice Mode</strong><span>Guided sessions</span></span><span class="dd-tag new">New</span></a>
+        </div></div>
+      </li>
+      <li class="nav-item has-dropdown">
+        <button class="nav-link active-nav">AI Generator
+          <svg class="caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m6 9 6 6 6-6"/></svg>
+        </button>
+        <div class="dropdown"><div class="dropdown-inner">
+          <a href="ai-composer.html" class="dd-item"><span class="dd-icon">🤖</span><span class="dd-content"><strong>AI Compose</strong><span>Generate original music</span></span></a>
+          <a href="#" class="dd-item"><span class="dd-icon">🎨</span><span class="dd-content"><strong>Style Transfer</strong><span>Reimagine your tracks</span></span><span class="dd-tag beta">Beta</span></a>
+          <a href="#" class="dd-item"><span class="dd-icon">✍️</span><span class="dd-content"><strong>Lyric Assistant</strong><span>AI-powered songwriting</span></span></a>
+        </div></div>
+      </li>
+      <li class="nav-item has-dropdown">
+        <button class="nav-link">Music History
+          <svg class="caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m6 9 6 6 6-6"/></svg>
+        </button>
+        <div class="dropdown"><div class="dropdown-inner">
+          <a href="#" class="dd-item"><span class="dd-icon">🌍</span><span class="dd-content"><strong>Genre Explorer</strong><span>From jazz to EDM</span></span></a>
+          <a href="#" class="dd-item"><span class="dd-icon">📅</span><span class="dd-content"><strong>Era Timeline</strong><span>Centuries of music</span></span></a>
+          <a href="#" class="dd-item"><span class="dd-icon">🎼</span><span class="dd-content"><strong>Composer Library</strong><span>Masters & legends</span></span></a>
+        </div></div>
+      </li>
+      <li class="nav-item has-dropdown">
+        <button class="nav-link">Dashboard
+          <svg class="caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m6 9 6 6 6-6"/></svg>
+        </button>
+        <div class="dropdown"><div class="dropdown-inner">
+          <a href="#" class="dd-item"><span class="dd-icon">🏆</span><span class="dd-content"><strong>Leaderboard</strong><span>Top performers</span></span></a>
+          <a href="#" class="dd-item"><span class="dd-icon">📈</span><span class="dd-content"><strong>My Progress</strong><span>Track your growth</span></span></a>
+          <a href="#" class="dd-item"><span class="dd-icon">🥇</span><span class="dd-content"><strong>Achievements</strong><span>Badges & rewards</span></span></a>
+        </div></div>
+      </li>
+    </ul>
+
+    <div class="nav-right">
+      <div class="search-wrap" id="searchWrap">
+        <button class="icon-btn search-toggle" id="searchToggle" onclick="toggleSearch()" aria-label="Search">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+        </button>
+        <div class="search-expand" id="searchExpand">
+          <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+          <input type="text" placeholder="Search…" id="searchInput" />
+          <button class="search-close" onclick="toggleSearch()">✕</button>
+        </div>
+      </div>
+      <button class="icon-btn theme-btn" id="themeBtn" onclick="toggleTheme()" aria-label="Toggle theme">
+        <svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+        <svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+      </button>
+      <div class="profile-menu" id="profileMenu">
+        <button class="profile-btn" onclick="toggleProfile()" aria-label="Profile menu">
+          <div class="avatar">G</div>
+          <span class="profile-name">Guest</span>
+          <svg class="caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m6 9 6 6 6-6"/></svg>
+        </button>
+        <div class="profile-dropdown" id="profileDropdown">
+          <div class="pd-header">
+            <div class="pd-avatar">G</div>
+            <div><div class="pd-name">Guest User</div><div class="pd-email">Not signed in</div></div>
+          </div>
+          <hr class="pd-divider"/>
+          <a href="#" class="pd-item">My Profile</a>
+          <a href="#" class="pd-item">Settings</a>
+          <hr class="pd-divider"/>
+          <a href="index.html" class="pd-item pd-signout">Sign Out</a>
+        </div>
+      </div>
+      <a href="index.html" class="btn-signout">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        Sign Out
+      </a>
+      <button class="hamburger" id="hamburger" onclick="toggleMobileNav()" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </div>
+</nav>
+
+<div class="mobile-overlay" id="mobileOverlay" onclick="toggleMobileNav()"></div>
+<div class="mobile-nav" id="mobileNav">
+  <div class="mobile-nav-header">
+    <span class="logo-text">Harmonia</span>
+    <button onclick="toggleMobileNav()">✕</button>
+  </div>
+  <div class="mobile-nav-links">
+    <details><summary>AI Generator</summary>
+      <a href="ai-composer.html">AI Compose</a>
+      <a href="#">Style Transfer <span class="dd-tag beta">Beta</span></a>
+      <a href="#">Lyric Assistant</a>
+    </details>
+    <a href="index.html" class="mobile-signout">Sign Out</a>
+  </div>
+</div>
+
+<!-- ===== HERO ===== -->
+<section class="ac-hero">
+  <div class="ac-hero-bg">
+    <div class="ac-orb ac-orb-1"></div>
+    <div class="ac-orb ac-orb-2"></div>
+    <div class="ac-orb ac-orb-3"></div>
+    <canvas id="waveCanvas" class="ac-wave-canvas"></canvas>
+  </div>
+
+  <div class="container">
+    <nav class="breadcrumb" aria-label="breadcrumb">
+      <a href="home.html">Home</a>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="m9 18 6-6-6-6"/></svg>
+      <a href="#">AI Generator</a>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="m9 18 6-6-6-6"/></svg>
+      <span>AI Composer</span>
+    </nav>
+
+    <div class="ac-hero-content">
+      <div class="ac-hero-text">
+        <div class="ac-badge">
+          <span class="ac-badge-dot"></span>
+          <span>Powered by Claude AI</span>
+          <span class="ac-badge-sep">·</span>
+          <span class="ac-badge-new">v2.0 Live</span>
+        </div>
+        <h1 class="ac-hero-title">
+          Compose Music<br/><span class="grad-text">With Your Mind</span>
+        </h1>
+        <p class="ac-hero-sub">
+          Describe any musical idea — a mood, a genre, an emotion — and watch our AI transform your vision into fully realized compositions, chord progressions, sheet music, and more.
+        </p>
+        <div class="ac-hero-pills">
+          <span class="ac-pill" onclick="injectPrompt('A melancholic jazz ballad in D minor with walking bass')">🎷 Jazz Ballad</span>
+          <span class="ac-pill" onclick="injectPrompt('Upbeat electronic dance track with synth leads and a heavy kick at 128 BPM')">⚡ EDM Drop</span>
+          <span class="ac-pill" onclick="injectPrompt('Romantic classical string quartet in the style of Debussy')">🎻 Classical</span>
+          <span class="ac-pill" onclick="injectPrompt('Cinematic orchestral theme for an epic fantasy film climax')">🎬 Cinematic</span>
+          <span class="ac-pill" onclick="injectPrompt('Relaxing lo-fi hip hop beat with a rainy day atmosphere')">🌧️ Lo-Fi</span>
+        </div>
+      </div>
+      <div class="ac-hero-visual" aria-hidden="true">
+        <div class="ac-visual-ring ac-ring-1"></div>
+        <div class="ac-visual-ring ac-ring-2"></div>
+        <div class="ac-visual-ring ac-ring-3"></div>
+        <div class="ac-visual-center">
+          <svg viewBox="0 0 80 80" fill="none" width="64" height="64">
+            <defs>
+              <linearGradient id="compGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" style="stop-color:#a78bfa"/>
+                <stop offset="100%" style="stop-color:#ec4899"/>
+              </linearGradient>
+            </defs>
+            <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" fill="url(#compGrad)" opacity="0.9"/>
+            <circle cx="55" cy="20" r="8" stroke="url(#compGrad)" stroke-width="2.5" fill="none"/>
+            <path d="M45 55 Q55 35 65 55" stroke="url(#compGrad)" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div class="ac-float-note ac-fn-1">♪</div>
+        <div class="ac-float-note ac-fn-2">♫</div>
+        <div class="ac-float-note ac-fn-3">♬</div>
+        <div class="ac-float-note ac-fn-4">𝄞</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== MAIN COMPOSER WORKSPACE ===== -->
+<main class="ac-workspace">
+  <div class="container ac-workspace-grid">
+
+    <!-- ── LEFT PANEL: Controls ── -->
+    <aside class="ac-panel ac-panel-controls">
+
+      <!-- Genre -->
+      <div class="ac-section">
+        <div class="ac-section-label">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+          Genre
+        </div>
+        <div class="ac-genre-grid" id="genreGrid">
+          <button class="ac-genre-btn active" data-genre="any">✨ Any</button>
+          <button class="ac-genre-btn" data-genre="classical">🎻 Classical</button>
+          <button class="ac-genre-btn" data-genre="jazz">🎷 Jazz</button>
+          <button class="ac-genre-btn" data-genre="pop">🎤 Pop</button>
+          <button class="ac-genre-btn" data-genre="rock">🎸 Rock</button>
+          <button class="ac-genre-btn" data-genre="electronic">⚡ Electronic</button>
+          <button class="ac-genre-btn" data-genre="hip-hop">🎧 Hip-Hop</button>
+          <button class="ac-genre-btn" data-genre="ambient">🌊 Ambient</button>
+          <button class="ac-genre-btn" data-genre="folk">🪕 Folk</button>
+          <button class="ac-genre-btn" data-genre="r&b">💜 R&amp;B</button>
+          <button class="ac-genre-btn" data-genre="cinematic">🎬 Cinematic</button>
+          <button class="ac-genre-btn" data-genre="lo-fi">☕ Lo-Fi</button>
+        </div>
+      </div>
+
+      <!-- Mood -->
+      <div class="ac-section">
+        <div class="ac-section-label">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>
+          Mood
+        </div>
+        <div class="ac-mood-grid" id="moodGrid">
+          <button class="ac-mood-btn active" data-mood="any">Any</button>
+          <button class="ac-mood-btn" data-mood="happy">😄 Happy</button>
+          <button class="ac-mood-btn" data-mood="melancholic">😢 Melancholic</button>
+          <button class="ac-mood-btn" data-mood="energetic">⚡ Energetic</button>
+          <button class="ac-mood-btn" data-mood="calm">😌 Calm</button>
+          <button class="ac-mood-btn" data-mood="dark">🌑 Dark</button>
+          <button class="ac-mood-btn" data-mood="romantic">❤️ Romantic</button>
+          <button class="ac-mood-btn" data-mood="epic">⚔️ Epic</button>
+          <button class="ac-mood-btn" data-mood="mysterious">🔮 Mysterious</button>
+        </div>
+      </div>
+
+      <!-- Key & Tempo -->
+      <div class="ac-section">
+        <div class="ac-section-label">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+          Key & Tempo
+        </div>
+        <div class="ac-params">
+          <div class="ac-param-group">
+            <label class="ac-param-label">Key</label>
+            <select class="ac-select" id="keySelect">
+              <option value="any">Any Key</option>
+              <option value="C major">C Major</option>
+              <option value="G major">G Major</option>
+              <option value="D major">D Major</option>
+              <option value="A major">A Major</option>
+              <option value="E major">E Major</option>
+              <option value="F major">F Major</option>
+              <option value="Bb major">Bb Major</option>
+              <option value="Eb major">Eb Major</option>
+              <option value="A minor">A Minor</option>
+              <option value="D minor">D Minor</option>
+              <option value="E minor">E Minor</option>
+              <option value="B minor">B Minor</option>
+              <option value="F# minor">F# Minor</option>
+              <option value="G minor">G Minor</option>
+              <option value="C minor">C Minor</option>
+            </select>
+          </div>
+          <div class="ac-param-group">
+            <label class="ac-param-label">Time Signature</label>
+            <select class="ac-select" id="timeSelect">
+              <option value="4/4">4/4 (Common)</option>
+              <option value="3/4">3/4 (Waltz)</option>
+              <option value="6/8">6/8 (Compound)</option>
+              <option value="5/4">5/4 (Irregular)</option>
+              <option value="7/8">7/8 (Asymmetric)</option>
+              <option value="2/4">2/4 (March)</option>
+            </select>
+          </div>
+        </div>
+        <div class="ac-tempo-group">
+          <label class="ac-param-label">Tempo: <span id="tempoVal">120</span> BPM</label>
+          <input type="range" class="ac-slider" id="tempoSlider" min="40" max="220" value="120" oninput="document.getElementById('tempoVal').textContent=this.value" />
+          <div class="ac-slider-labels"><span>40</span><span>Slow</span><span>Medium</span><span>Fast</span><span>220</span></div>
+        </div>
+      </div>
+
+      <!-- Instruments -->
+      <div class="ac-section">
+        <div class="ac-section-label">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+          Instruments
+        </div>
+        <div class="ac-instruments" id="instrumentGrid">
+          <label class="ac-instr-check"><input type="checkbox" value="piano" checked/><span>🎹 Piano</span></label>
+          <label class="ac-instr-check"><input type="checkbox" value="guitar"/><span>🎸 Guitar</span></label>
+          <label class="ac-instr-check"><input type="checkbox" value="bass"/><span>🎸 Bass</span></label>
+          <label class="ac-instr-check"><input type="checkbox" value="drums"/><span>🥁 Drums</span></label>
+          <label class="ac-instr-check"><input type="checkbox" value="strings"/><span>🎻 Strings</span></label>
+          <label class="ac-instr-check"><input type="checkbox" value="brass"/><span>🎺 Brass</span></label>
+          <label class="ac-instr-check"><input type="checkbox" value="synth"/><span>🎛️ Synth</span></label>
+          <label class="ac-instr-check"><input type="checkbox" value="vocals"/><span>🎤 Vocals</span></label>
+          <label class="ac-instr-check"><input type="checkbox" value="flute"/><span>🪈 Flute</span></label>
+          <label class="ac-instr-check"><input type="checkbox" value="saxophone"/><span>🎷 Sax</span></label>
+        </div>
+      </div>
+
+      <!-- Output Format -->
+      <div class="ac-section">
+        <div class="ac-section-label">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+          Output Format
+        </div>
+        <div class="ac-format-group" id="formatGroup">
+          <label class="ac-format-radio"><input type="radio" name="format" value="full" checked/><div class="ac-format-card"><span class="ac-format-icon">🎼</span><span class="ac-format-name">Full Composition</span><span class="ac-format-desc">Complete arrangement with all sections</span></div></label>
+          <label class="ac-format-radio"><input type="radio" name="format" value="chord"/><div class="ac-format-card"><span class="ac-format-icon">🎹</span><span class="ac-format-name">Chord Progression</span><span class="ac-format-desc">Harmonic framework & voicings</span></div></label>
+          <label class="ac-format-radio"><input type="radio" name="format" value="melody"/><div class="ac-format-card"><span class="ac-format-icon">🎵</span><span class="ac-format-name">Melody Line</span><span class="ac-format-desc">Lead melody with notation</span></div></label>
+          <label class="ac-format-radio"><input type="radio" name="format" value="lead-sheet"/><div class="ac-format-card"><span class="ac-format-icon">📜</span><span class="ac-format-name">Lead Sheet</span><span class="ac-format-desc">Melody + chords + lyrics placeholder</span></div></label>
+        </div>
+      </div>
+
+    </aside>
+
+    <!-- ── CENTER PANEL: Prompt & Output ── -->
+    <div class="ac-panel ac-panel-main">
+
+      <!-- Prompt Input -->
+      <div class="ac-prompt-section">
+        <div class="ac-prompt-header">
+          <span class="ac-prompt-label">🎨 Describe Your Music</span>
+          <div class="ac-prompt-actions">
+            <button class="ac-icon-action" onclick="shufflePrompt()" title="Surprise me">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><polyline points="16 3 21 3 21 8"/><line x1="4" y1="20" x2="21" y2="3"/><polyline points="21 16 21 21 16 21"/><line x1="15" y1="15" x2="21" y2="21"/></svg>
+              Shuffle
+            </button>
+            <button class="ac-icon-action" onclick="clearPrompt()" title="Clear">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+              Clear
+            </button>
+          </div>
+        </div>
+        <div class="ac-prompt-wrap">
+          <textarea class="ac-prompt-textarea" id="promptTextarea" placeholder="Describe your musical vision… Try: 'A haunting piano melody in F minor with slow cello accompaniment, evoking a rainy night in Paris…'" rows="4" maxlength="800"></textarea>
+          <div class="ac-prompt-footer">
+            <span class="ac-char-count"><span id="charCount">0</span>/800</span>
+            <div class="ac-prompt-examples">
+              <span>Try:</span>
+              <button class="ac-example-pill" onclick="injectPrompt('A sunrise acoustic guitar piece that builds from gentle fingerpicking to a full orchestral swell')">🌅 Sunrise</button>
+              <button class="ac-example-pill" onclick="injectPrompt('Dark synthwave track with arpeggiating synths and driving drums for a cyberpunk chase scene')">🌆 Cyberpunk</button>
+              <button class="ac-example-pill" onclick="injectPrompt('Traditional Irish folk tune in E dorian with fiddle, tin whistle and bodhran')">🍀 Irish Folk</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Generate Button -->
+        <button class="ac-generate-btn" id="generateBtn" onclick="generateComposition()">
+          <div class="ac-generate-inner">
+            <div class="ac-generate-icon" id="generateIcon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="22" height="22"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+            </div>
+            <span class="ac-generate-text" id="generateText">Generate Composition</span>
+            <div class="ac-generate-xp">+75 XP</div>
+          </div>
+          <div class="ac-generate-shine"></div>
+        </button>
+      </div>
+
+      <!-- Output Area -->
+      <div class="ac-output-wrap" id="outputWrap">
+
+        <!-- Empty State -->
+        <div class="ac-empty-state" id="emptyState">
+          <div class="ac-empty-visual">
+            <div class="ac-empty-rings">
+              <div class="ac-empty-ring"></div>
+              <div class="ac-empty-ring"></div>
+              <div class="ac-empty-ring"></div>
+            </div>
+            <span class="ac-empty-icon">🎼</span>
+          </div>
+          <h3>Your Composition Awaits</h3>
+          <p>Configure your settings, describe your vision, and let AI craft something extraordinary for you.</p>
+          <div class="ac-empty-features">
+            <div class="ac-empty-feat"><span>🎵</span> Full musical notation</div>
+            <div class="ac-empty-feat"><span>🎹</span> Chord analysis</div>
+            <div class="ac-empty-feat"><span>📖</span> Theory explanations</div>
+            <div class="ac-empty-feat"><span>🎸</span> Performance tips</div>
+          </div>
+        </div>
+
+        <!-- Loading State -->
+        <div class="ac-loading-state hidden" id="loadingState">
+          <div class="ac-loading-visual">
+            <div class="ac-loading-bars">
+              <span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+            </div>
+          </div>
+          <div class="ac-loading-text">
+            <h3 id="loadingHeadline">Composing your masterpiece…</h3>
+            <p id="loadingSubtext">Analyzing musical structure and harmonic relationships</p>
+          </div>
+          <div class="ac-loading-steps">
+            <div class="ac-load-step active" id="lstep1"><div class="ac-load-step-dot"></div><span>Understanding your vision</span></div>
+            <div class="ac-load-step" id="lstep2"><div class="ac-load-step-dot"></div><span>Crafting harmonic structure</span></div>
+            <div class="ac-load-step" id="lstep3"><div class="ac-load-step-dot"></div><span>Writing melodic lines</span></div>
+            <div class="ac-load-step" id="lstep4"><div class="ac-load-step-dot"></div><span>Finalizing the score</span></div>
+          </div>
+        </div>
+
+        <!-- Result State -->
+        <div class="ac-result-state hidden" id="resultState">
+
+          <!-- Result Header -->
+          <div class="ac-result-header">
+            <div class="ac-result-title-row">
+              <div>
+                <h2 class="ac-result-title" id="resultTitle">Untitled Composition</h2>
+                <div class="ac-result-meta" id="resultMeta"></div>
+              </div>
+              <div class="ac-result-actions">
+                <button class="ac-action-btn" onclick="copyComposition()" title="Copy to clipboard">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                  Copy
+                </button>
+                <button class="ac-action-btn" onclick="downloadComposition()" title="Download">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                  Save
+                </button>
+                <button class="ac-action-btn ac-btn-primary" onclick="generateComposition()" title="Regenerate">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.28"/></svg>
+                  Regenerate
+                </button>
+              </div>
+            </div>
+
+            <!-- Tabs -->
+            <div class="ac-tabs">
+              <button class="ac-tab active" data-tab="composition" onclick="switchTab(this,'composition')">📄 Composition</button>
+              <button class="ac-tab" data-tab="chords" onclick="switchTab(this,'chords')">🎹 Chords</button>
+              <button class="ac-tab" data-tab="theory" onclick="switchTab(this,'theory')">📚 Theory</button>
+              <button class="ac-tab" data-tab="performance" onclick="switchTab(this,'performance')">🎸 Performance</button>
+            </div>
+          </div>
+
+          <!-- Tab Contents -->
+          <div class="ac-tab-body">
+            <div class="ac-tab-content active" id="tab-composition">
+              <div class="ac-composition-output" id="compositionOutput"></div>
+            </div>
+            <div class="ac-tab-content" id="tab-chords">
+              <div class="ac-chords-output" id="chordsOutput"></div>
+            </div>
+            <div class="ac-tab-content" id="tab-theory">
+              <div class="ac-theory-output" id="theoryOutput"></div>
+            </div>
+            <div class="ac-tab-content" id="tab-performance">
+              <div class="ac-performance-output" id="performanceOutput"></div>
+            </div>
+          </div>
+
+          <!-- Playback Simulator -->
+          <div class="ac-playback-bar">
+            <button class="ac-play-btn" id="playBtn" onclick="togglePlayback()">
+              <svg id="playIcon" viewBox="0 0 24 24" fill="currentColor" width="20" height="20"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+              <svg id="pauseIcon" viewBox="0 0 24 24" fill="currentColor" width="20" height="20" style="display:none"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>
+            </button>
+            <div class="ac-playback-info">
+              <span class="ac-playback-title" id="playbackTitle">Ready to preview</span>
+              <div class="ac-playback-progress-wrap">
+                <div class="ac-playback-progress" id="playbackProgress"></div>
+              </div>
+            </div>
+            <span class="ac-playback-time" id="playbackTime">0:00 / 0:00</span>
+            <div class="ac-playback-volume">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
+              <input type="range" class="ac-vol-slider" id="volSlider" min="0" max="100" value="80" />
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ── RIGHT PANEL: History & Presets ── -->
+    <aside class="ac-panel ac-panel-right">
+
+      <!-- Inspiration Presets -->
+      <div class="ac-section">
+        <div class="ac-section-label">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          Inspiration Presets
+        </div>
+        <div class="ac-presets">
+          <button class="ac-preset-btn" onclick="loadPreset('beethoven')">
+            <span class="ac-preset-icon">🎻</span>
+            <div><strong>Beethoven-esque</strong><span>Dramatic classical sonata</span></div>
+          </button>
+          <button class="ac-preset-btn" onclick="loadPreset('miles')">
+            <span class="ac-preset-icon">🎷</span>
+            <div><strong>Miles Davis Cool</strong><span>Modal jazz in Kind of Blue style</span></div>
+          </button>
+          <button class="ac-preset-btn" onclick="loadPreset('lofi')">
+            <span class="ac-preset-icon">☕</span>
+            <div><strong>Study Lo-Fi</strong><span>Chill beats to focus to</span></div>
+          </button>
+          <button class="ac-preset-btn" onclick="loadPreset('hans')">
+            <span class="ac-preset-icon">🎬</span>
+            <div><strong>Epic Cinematic</strong><span>Hans Zimmer inspired score</span></div>
+          </button>
+          <button class="ac-preset-btn" onclick="loadPreset('debussy')">
+            <span class="ac-preset-icon">🌊</span>
+            <div><strong>Impressionist</strong><span>Debussy-inspired dreamscape</span></div>
+          </button>
+          <button class="ac-preset-btn" onclick="loadPreset('edm')">
+            <span class="ac-preset-icon">🔊</span>
+            <div><strong>Festival EDM</strong><span>Big room progressive house</span></div>
+          </button>
+        </div>
+      </div>
+
+      <!-- Generation History -->
+      <div class="ac-section">
+        <div class="ac-section-header-row">
+          <div class="ac-section-label">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            Recent Creations
+          </div>
+          <button class="ac-clear-hist" onclick="clearHistory()">Clear</button>
+        </div>
+        <div class="ac-history-list" id="historyList">
+          <div class="ac-history-empty">
+            <span>🎵</span>
+            <p>Your compositions will appear here</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Stats -->
+      <div class="ac-section">
+        <div class="ac-section-label">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+          Your Stats
+        </div>
+        <div class="ac-stats-grid">
+          <div class="ac-stat-card">
+            <span class="ac-stat-num" id="statComposed">0</span>
+            <span class="ac-stat-lbl">Composed</span>
+          </div>
+          <div class="ac-stat-card">
+            <span class="ac-stat-num" id="statGenres">0</span>
+            <span class="ac-stat-lbl">Genres</span>
+          </div>
+          <div class="ac-stat-card">
+            <span class="ac-stat-num" id="statXP">0</span>
+            <span class="ac-stat-lbl">XP Earned</span>
+          </div>
+          <div class="ac-stat-card">
+            <span class="ac-stat-num" id="statSaved">0</span>
+            <span class="ac-stat-lbl">Saved</span>
+          </div>
+        </div>
+      </div>
+
+    </aside>
+
+  </div>
+</main>
+
+<!-- ===== FOOTER ===== -->
+<footer class="footer">
+  <div class="container">
+    <div class="footer-top">
+      <div class="footer-brand">
+        <a href="home.html" class="nav-logo" style="margin-bottom:12px">
+          <div class="logo-icon">
+            <svg width="24" height="24" viewBox="0 0 36 36" fill="none">
+              <path d="M13 24V12l12 3v9" stroke="url(#fLogoGrad3)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+              <circle cx="11" cy="24" r="3" fill="url(#fLogoGrad3)"/>
+              <circle cx="23" cy="22" r="3" fill="url(#fLogoGrad3)"/>
+              <defs><linearGradient id="fLogoGrad3" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#a78bfa"/><stop offset="100%" style="stop-color:#ec4899"/></linearGradient></defs>
+            </svg>
+          </div>
+          <span class="logo-text">Harmonia</span>
+        </a>
+        <p>The modern music learning platform for curious minds and creative souls.</p>
+      </div>
+      <div class="footer-col"><h5>AI Generator</h5><a href="ai-composer.html">AI Compose</a><a href="#">Style Transfer</a><a href="#">Lyric Assistant</a></div>
+      <div class="footer-col"><h5>Training</h5><a href="training.html">Learning Path</a><a href="theory-quiz.html">Theory Quiz</a><a href="ear-training.html">Ear Training</a></div>
+      <div class="footer-col"><h5>Account</h5><a href="#">Dashboard</a><a href="#">Achievements</a><a href="#">Settings</a></div>
+    </div>
+    <div class="footer-bottom">
+      <div class="footer-copy">© 2026 Harmonia. All rights reserved.</div>
+      <div class="accessibility">
+        <span>Accessibility:</span>
+        <button onclick="adjustFont(-1)">A−</button>
+        <button onclick="adjustFont(1)">A+</button>
+        <button onclick="toggleTheme()" id="footerThemeBtn">🌙 Dark Mode</button>
+      </div>
+      <div class="footer-legal"><a href="#">Privacy</a><a href="#">Terms</a></div>
+    </div>
+  </div>
+</footer>
+
+<!-- Toast -->
+<div class="ac-toast" id="acToast"></div>
+
+<script src="scripts/training-db.js"></script>
+<script src="scripts/home.js"></script>
+<script src="scripts/ai-composer.js"></script>
+</body>
+</html>
