@@ -158,7 +158,7 @@
       <div class="ac-hero-text">
         <div class="ac-badge">
           <span class="ac-badge-dot"></span>
-          <span>Powered by Claude AI</span>
+          <span>Powered by Grok AI</span>
           <span class="ac-badge-sep">·</span>
           <span class="ac-badge-new">v2.0 Live</span>
         </div>
@@ -616,6 +616,54 @@
 
 <!-- Toast -->
 <div class="ac-toast" id="acToast"></div>
+
+<!-- ===== API KEY MODAL ===== -->
+<div class="ac-modal-overlay" id="apiKeyModal">
+  <div class="ac-modal">
+    <div class="ac-modal-header">
+      <div class="ac-modal-icon">🔑</div>
+      <h2>Connect Your API Key</h2>
+      <p>Enter your xAI API key to unlock real AI composition. Your key is stored only in your browser and never sent anywhere except directly to xAI.</p>
+    </div>
+    <div class="ac-modal-body">
+      <div class="ac-modal-field">
+        <label>xAI API Key</label>
+        <div class="ac-modal-input-wrap">
+          <input type="password" id="apiKeyInput" placeholder="xai-..." autocomplete="off" />
+          <button class="ac-modal-eye" onclick="toggleApiKeyVisibility()" id="apiKeyEye">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="17" height="17"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+          </button>
+        </div>
+        <span class="ac-modal-hint">Get your key at <a href="https://console.x.ai" target="_blank" rel="noopener">console.x.ai</a></span>
+      </div>
+      <div class="ac-modal-actions">
+        <button class="ac-modal-btn-secondary" onclick="closeApiModal(true)">Use Demo Mode</button>
+        <button class="ac-modal-btn-primary" onclick="saveApiKey()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="16" height="16"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+          Connect & Compose
+        </button>
+      </div>
+      <p class="ac-modal-note">🔒 Your key is saved to localStorage only. Clear browser data anytime to remove it.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ===== API KEY STATUS BAR ===== -->
+<div class="ac-api-status-bar" id="apiStatusBar" style="display:none">
+  <div class="container ac-api-status-inner">
+    <div class="ac-api-status-left">
+      <span class="ac-api-dot" id="apiStatusDot"></span>
+      <span id="apiStatusText">No API key set</span>
+    </div>
+    <div class="ac-api-status-right">
+      <button class="ac-api-change-btn" onclick="openApiModal()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+        Change Key
+      </button>
+      <button class="ac-api-change-btn ac-api-remove-btn" onclick="removeApiKey()">Remove</button>
+    </div>
+  </div>
+</div>
 
 <script src="scripts/training-db.js"></script>
 <script src="scripts/home.js"></script>
