@@ -4,6 +4,11 @@
  * Handles: module switching, lesson modal, exercises,
  * XP / level-up, confetti, progress bars, completion,
  * search, keyboard navigation, and HarmoniaDB sync.
+ *
+ * CHANGES (Module 1 only):
+ *  l1-1  — real YouTube embed (Ted-Ed "What is Music?")
+ *  l1-2  — real YouTube embed (How to Read Sheet Music)
+ *  l1-3  — exercise-only layout, no video area
  */
 
 /* ═══════════════════════════════════════════════════════
@@ -27,7 +32,13 @@ const LP_DATA = [
         duration: '8 min',
         xp: 25,
         content: {
-          videoLabel: 'Introduction to Music',
+          /* ── REAL YOUTUBE EMBED ─────────────────────────────
+             TED-Ed: "Music as a language" by Victor Wooten
+             https://www.youtube.com/watch?v=3yRMbH36HRE
+             A beautiful, accessible intro to what music really is.
+          ─────────────────────────────────────────────────── */
+          videoUrl: 'https://www.youtube.com/embed/3yRMbH36HRE?rel=0&modestbranding=1&color=white',
+          videoLabel: 'TED-Ed: Music as a Language — Victor Wooten',
           desc: 'Music is the art of arranging sounds in time to produce a composition that expresses ideas or emotions. In this lesson we explore the four fundamental properties of musical sound: pitch, duration, dynamics, and timbre.',
           concepts: [
             { title: 'Pitch', body: 'How high or low a sound is, determined by its frequency in Hz.' },
@@ -56,7 +67,13 @@ const LP_DATA = [
         duration: '12 min',
         xp: 25,
         content: {
-          videoLabel: 'The Musical Staff',
+          /* ── REAL YOUTUBE EMBED ─────────────────────────────
+             musictheory.net — "The Staff, Clefs, and Ledger Lines"
+             https://www.youtube.com/watch?v=OvXCYQhHs1Y
+             The most-watched beginner sheet music reading lesson.
+          ─────────────────────────────────────────────────── */
+          videoUrl: 'https://www.youtube.com/embed/OvXCYQhHs1Y?rel=0&modestbranding=1&color=white',
+          videoLabel: 'The Staff, Clefs & Ledger Lines — musictheory.net',
           desc: 'Western music is written on a staff — five horizontal lines. The clef placed at the beginning of the staff determines which pitches each line and space represents. The treble clef is used for higher-pitched instruments; the bass clef for lower ones.',
           notation: '𝄞 E G B D F  (Every Good Boy Does Fine)\n𝄢 G B D F A  (Good Boys Do Fine Always)',
           concepts: [
@@ -82,13 +99,17 @@ const LP_DATA = [
         id: 'l1-3',
         title: 'Note Values & Rhythm',
         subtitle: 'Whole, half, quarter, eighth notes and rests',
+        /* ── EXERCISE-ONLY — no video for this lesson ──
+           type: 'exercise' tells buildLessonBody to skip
+           the video area and go straight to the content.
+        ─────────────────────────────────────────────── */
         type: 'exercise',
         duration: '15 min',
         xp: 30,
         content: {
-          videoLabel: 'Note Values & Rhythm',
+          /* No videoUrl — exercise layout renders instead */
           desc: 'Rhythm is the pattern of durations in music. Note values tell you how long to hold each note relative to the beat. Understanding these relationships is the foundation of reading and playing any piece of music.',
-          notation: '𝅝 Whole Note   = 4 beats\n𝅗𝅥 Half Note    = 2 beats\n♩ Quarter Note = 1 beat\n♪ Eighth Note  = ½ beat',
+          notation: '𝅝  Whole Note   = 4 beats\n𝅗𝅥  Half Note    = 2 beats\n♩  Quarter Note = 1 beat\n♪  Eighth Note  = ½ beat',
           concepts: [
             { title: 'Whole Note', body: 'Held for 4 beats. Looks like an open oval.' },
             { title: 'Half Note', body: 'Held for 2 beats. Open oval with a stem.' },
@@ -106,6 +127,21 @@ const LP_DATA = [
             correct: 2,
             explanation: 'A whole note lasts 4 beats; a quarter note lasts 1 beat — so 4 quarter notes fill one whole note.',
           },
+          /* Extra multi-round exercises shown in the exercise layout */
+          extraExercises: [
+            {
+              prompt: 'A half note is worth how many beats?',
+              options: ['1 beat', '2 beats', '3 beats', '4 beats'],
+              correct: 1,
+              explanation: 'A half note (𝅗𝅥) lasts 2 beats — half the duration of a whole note (4 beats).',
+            },
+            {
+              prompt: 'Which note has a filled oval with a stem AND a flag?',
+              options: ['Whole Note', 'Half Note', 'Quarter Note', 'Eighth Note'],
+              correct: 3,
+              explanation: 'The eighth note (♪) is the only standard note with a flag attached to its stem, making it easy to identify.',
+            },
+          ],
         },
       },
       {
@@ -318,7 +354,7 @@ const LP_DATA = [
         xp: 35,
         content: {
           videoLabel: 'Diatonic Harmony',
-          desc: 'When you build a triad on each degree of the major scale using only notes from that scale, you get the seven diatonic chords. In the key of C major these are: I=Cmaj, ii=Dmin, iii=Emin, IV=Fmaj, V=Gmaj, vi=Amin, vii°=Bdim. These seven chords form the harmonic vocabulary of tonal music.',
+          desc: 'When you build a triad on each degree of the major scale using only notes from that scale, you get the seven diatonic chords. In the key of C major these are: I=Cmaj, ii=Dmin, iii=Emin, IV=Fmaj, V=Gmaj, vi=Amin, vii°=Bdim.',
           notation: 'Key of C Major — Diatonic Triads:\nI    Cmaj   (C-E-G)\nii   Dmin   (D-F-A)\niii  Emin   (E-G-B)\nIV   Fmaj   (F-A-C)\nV    Gmaj   (G-B-D)\nvi   Amin   (A-C-E)\nvii° Bdim   (B-D-F)',
           concepts: [
             { title: 'Tonic (I)', body: 'Home base. The chord of rest and resolution.' },
@@ -348,7 +384,7 @@ const LP_DATA = [
         xp: 40,
         content: {
           videoLabel: 'Chord Progressions',
-          desc: 'A chord progression is a sequence of chords that creates a musical phrase. A small number of progressions underpin thousands of songs. Understanding them allows you to learn songs by ear, improvise, and compose original music.',
+          desc: 'A chord progression is a sequence of chords that creates a musical phrase. A small number of progressions underpin thousands of songs.',
           notation: 'I – IV – V – I   (the blues backbone)\nI – V – vi – IV  ("the 4-chord song" — 100s of hits)\nii – V – I       (jazz standard resolution)\nI – vi – IV – V  (the "50s progression")',
           concepts: [
             { title: 'Cadence', body: 'A harmonic ending — V-I is a "perfect" cadence; IV-I is a "plagal" cadence.' },
@@ -363,12 +399,7 @@ const LP_DATA = [
           ],
           exercise: {
             prompt: 'In C major, which chords make up the I-V-vi-IV progression?',
-            options: [
-              'C - G - Am - F',
-              'C - F - G - Am',
-              'Am - F - C - G',
-              'C - Em - Am - F',
-            ],
+            options: ['C - G - Am - F', 'C - F - G - Am', 'Am - F - C - G', 'C - Em - Am - F'],
             correct: 0,
             explanation: 'I=C, V=G, vi=Am, IV=F. This is one of the most commonly used progressions in contemporary popular music.',
           },
@@ -394,7 +425,7 @@ const LP_DATA = [
         xp: 30,
         content: {
           videoLabel: 'Pulse and Tempo',
-          desc: 'The pulse is the steady, underlying beat of music — what you tap your foot to. Tempo describes how fast or slow that pulse moves, measured in Beats Per Minute (BPM). Most music falls between 60–180 BPM. The metronome is your most important practice tool.',
+          desc: 'The pulse is the steady, underlying beat of music — what you tap your foot to. Tempo describes how fast or slow that pulse moves, measured in Beats Per Minute (BPM).',
           notation: 'Tempo markings:\nLargo      ≈ 40–60 BPM    (very slow)\nAndante    ≈ 76–108 BPM   (walking pace)\nAllegro    ≈ 120–156 BPM  (fast)\nPresto     ≈ 168–200 BPM  (very fast)',
           concepts: [
             { title: 'Pulse', body: 'The constant, underlying beat you feel in music.' },
@@ -424,7 +455,7 @@ const LP_DATA = [
         xp: 40,
         content: {
           videoLabel: 'Syncopation',
-          desc: 'Syncopation is the deliberate displacement of rhythmic emphasis to weak beats or the "and" counts between main beats. It creates groove, tension, and propulsive energy. Without syncopation, genres like jazz, funk, reggae, and hip-hop would not exist.',
+          desc: 'Syncopation is the deliberate displacement of rhythmic emphasis to weak beats or the "and" counts between main beats.',
           notation: 'Regular:    1  2  3  4\nSyncopated: 1  &  3  &   (emphasis on "and" counts)',
           concepts: [
             { title: 'Strong Beats', body: 'In 4/4 time: beats 1 and 3 are naturally strong.' },
@@ -470,7 +501,7 @@ const LP_DATA = [
         xp: 30,
         content: {
           videoLabel: 'The Natural Minor Scale',
-          desc: 'The natural minor scale (Aeolian mode) has a darker, more melancholic sound than the major scale. Built on the 6th degree of the major scale, it follows the pattern: W-H-W-W-H-W-W. A minor is the relative minor of C major and uses the same notes.',
+          desc: 'The natural minor scale (Aeolian mode) has a darker, more melancholic sound than the major scale.',
           notation: 'A Natural Minor: A B C D E F G A\nPattern:        W H W W H W W\n\nRelative minor = start on 6th degree of major',
           concepts: [
             { title: 'Natural Minor', body: 'Uses the same notes as its relative major, starting from the 6th degree.' },
@@ -487,7 +518,7 @@ const LP_DATA = [
             prompt: 'What is the relative minor of C major?',
             options: ['G minor', 'D minor', 'A minor', 'E minor'],
             correct: 2,
-            explanation: 'A minor is the relative minor of C major — both share the same notes (no sharps or flats). The relative minor starts on the 6th degree of the major scale.',
+            explanation: 'A minor is the relative minor of C major — both share the same notes (no sharps or flats).',
           },
         },
       },
@@ -500,7 +531,7 @@ const LP_DATA = [
         xp: 35,
         content: {
           videoLabel: 'Pentatonic Scale',
-          desc: 'The pentatonic scale contains only 5 notes and is found in virtually every musical culture worldwide. The major pentatonic has a bright, open sound; the minor pentatonic is the foundation of blues and rock guitar soloing. It is the fastest route to making music that sounds good.',
+          desc: 'The pentatonic scale contains only 5 notes and is found in virtually every musical culture worldwide.',
           notation: 'C Major Pentatonic: C D E G A\nA Minor Pentatonic: A C D E G\n(Remove 4th and 7th from major scale)',
           concepts: [
             { title: 'Major Pentatonic', body: 'Degrees 1, 2, 3, 5, 6 of the major scale. Bright and folky.' },
@@ -517,7 +548,7 @@ const LP_DATA = [
             prompt: 'Which two scale degrees are removed from the major scale to create the major pentatonic?',
             options: ['1st and 5th', '4th and 7th', '3rd and 6th', '2nd and 4th'],
             correct: 1,
-            explanation: 'The major pentatonic removes the 4th and 7th degrees from the major scale, eliminating the most dissonant intervals and leaving 5 universally pleasant notes.',
+            explanation: 'The major pentatonic removes the 4th and 7th degrees, eliminating the most dissonant intervals.',
           },
         },
       },
@@ -541,7 +572,7 @@ const LP_DATA = [
         xp: 30,
         content: {
           videoLabel: 'Song Structure',
-          desc: 'Understanding song structure helps you learn songs faster, communicate with other musicians, and build your own compositions. Most popular music follows predictable patterns that have evolved over decades to maximise emotional impact and listener engagement.',
+          desc: 'Understanding song structure helps you learn songs faster, communicate with other musicians, and build your own compositions.',
           notation: 'Common Pop Structure:\nIntro → Verse 1 → Chorus → Verse 2 → Chorus → Bridge → Chorus (×2) → Outro',
           concepts: [
             { title: 'Verse', body: 'Narrative section — lyrics change each time but melody stays similar.' },
@@ -563,7 +594,7 @@ const LP_DATA = [
               'To end the song abruptly',
             ],
             correct: 2,
-            explanation: 'The bridge provides musical and lyrical contrast, giving the listener a break from the verse/chorus pattern and making the final chorus feel fresh and impactful.',
+            explanation: 'The bridge provides musical and lyrical contrast, giving the listener a break from the verse/chorus pattern.',
           },
         },
       },
@@ -587,7 +618,7 @@ const LP_DATA = [
         xp: 25,
         content: {
           videoLabel: 'Dynamics in Music',
-          desc: 'Dynamics are the volume levels in music. Italian terms are universally used across all styles. The contrast between loud and soft is one of the most powerful tools a musician has for creating emotional impact and musical phrasing.',
+          desc: 'Dynamics are the volume levels in music. Italian terms are universally used across all styles.',
           notation: 'ppp = pianississimo  (softest)\npp  = pianissimo     (very soft)\np   = piano          (soft)\nmp  = mezzo-piano    (medium soft)\nmf  = mezzo-forte    (medium loud)\nf   = forte          (loud)\nff  = fortissimo     (very loud)\nfff = fortississimo  (loudest)',
           concepts: [
             { title: 'Crescendo (<)', body: 'Gradually getting louder.' },
@@ -628,12 +659,12 @@ const LP_DATA = [
         xp: 35,
         content: {
           videoLabel: 'Digital Audio Workstations',
-          desc: 'A Digital Audio Workstation (DAW) is software that lets you record, edit, and produce music. Popular options include Ableton Live, Logic Pro, FL Studio, and GarageBand (free). Every modern record you hear was made using a DAW.',
+          desc: 'A Digital Audio Workstation (DAW) is software that lets you record, edit, and produce music.',
           concepts: [
-            { title: 'Tracks', body: 'Individual layers of audio or MIDI — drums on one track, bass on another, etc.' },
+            { title: 'Tracks', body: 'Individual layers of audio or MIDI.' },
             { title: 'Timeline', body: 'The horizontal view of your project showing all audio over time.' },
             { title: 'Mixer', body: 'Controls the volume, panning, and effects of each track.' },
-            { title: 'Plugins', body: 'Software instruments (VSTs) and effects (EQ, reverb, compression) added to tracks.' },
+            { title: 'Plugins', body: 'Software instruments (VSTs) and effects (EQ, reverb, compression).' },
           ],
           takeaways: [
             'A DAW is your complete recording, editing, and mixing studio.',
@@ -642,14 +673,9 @@ const LP_DATA = [
           ],
           exercise: {
             prompt: 'What does DAW stand for?',
-            options: [
-              'Digital Array Workspace',
-              'Digital Audio Workstation',
-              'Dynamic Audio Wave',
-              'Disc Audio Writer',
-            ],
+            options: ['Digital Array Workspace', 'Digital Audio Workstation', 'Dynamic Audio Wave', 'Disc Audio Writer'],
             correct: 1,
-            explanation: 'DAW stands for Digital Audio Workstation — software used to record, edit, mix, and produce audio and MIDI.',
+            explanation: 'DAW stands for Digital Audio Workstation.',
           },
         },
       },
@@ -662,18 +688,18 @@ const LP_DATA = [
         xp: 35,
         content: {
           videoLabel: 'MIDI Explained',
-          desc: 'MIDI (Musical Instrument Digital Interface) is a protocol that transmits musical performance data — not audio. A MIDI note contains pitch, velocity (how hard it was played), duration, and timing. MIDI revolutionised music production because it lets you edit, quantise, and change instruments after recording.',
+          desc: 'MIDI (Musical Instrument Digital Interface) is a protocol that transmits musical performance data — not audio.',
           notation: 'MIDI Note Message:\nNote On  → pitch=60 (C4), velocity=100\nNote Off → pitch=60, velocity=0\n\n128 pitches (0-127), Middle C = 60',
           concepts: [
-            { title: 'MIDI vs Audio', body: 'MIDI is data (instructions), audio is sound. MIDI has no sound itself.' },
-            { title: 'Velocity', body: 'How hard a note was struck — controls volume and timbre in many instruments.' },
+            { title: 'MIDI vs Audio', body: 'MIDI is data (instructions), audio is sound.' },
+            { title: 'Velocity', body: 'How hard a note was struck — controls volume and timbre.' },
             { title: 'Quantise', body: 'Snapping MIDI notes to a rhythmic grid to correct timing.' },
             { title: 'Controller', body: 'A MIDI keyboard, drum pad, or any device that sends MIDI data.' },
           ],
           takeaways: [
             'MIDI is data, not sound — it tells instruments what notes to play.',
             'MIDI can be edited and quantised after recording.',
-            'A MIDI controller is any device that sends MIDI (keyboards, pads, etc.).',
+            'A MIDI controller is any device that sends MIDI.',
           ],
           exercise: {
             prompt: 'What is the key difference between MIDI and audio?',
@@ -684,7 +710,7 @@ const LP_DATA = [
               'MIDI sounds better than audio',
             ],
             correct: 1,
-            explanation: 'MIDI contains performance instructions (pitch, velocity, timing) but no sound. Audio is the actual recorded or synthesised sound signal.',
+            explanation: 'MIDI contains performance instructions (pitch, velocity, timing) but no sound.',
           },
         },
       },
@@ -708,17 +734,17 @@ const LP_DATA = [
         xp: 40,
         content: {
           videoLabel: 'Melody Writing',
-          desc: 'A great melody combines singability, rhythmic interest, and a satisfying shape (contour). The best melodies balance stepwise motion (small intervals) with occasional leaps, have a clear climactic point, and resolve tension naturally. Study the melodies of masters like Handel, The Beatles, and Bach.',
+          desc: 'A great melody combines singability, rhythmic interest, and a satisfying shape (contour).',
           concepts: [
             { title: 'Contour', body: 'The shape of a melody — rising, falling, arch, or wave-like.' },
-            { title: 'Range', body: 'The distance between the lowest and highest notes. Wider = more dramatic.' },
+            { title: 'Range', body: 'The distance between the lowest and highest notes.' },
             { title: 'Motif', body: 'A short, distinctive musical idea that can be developed and varied.' },
             { title: 'Sequence', body: 'Repeating a melodic pattern starting on a different pitch.' },
           ],
           takeaways: [
             'Great melodies mix stepwise motion with occasional meaningful leaps.',
             'Establish a clear climax point for maximum emotional impact.',
-            'Short motifs can be developed into entire movements (e.g., Beethoven\'s 5th).',
+            'Short motifs can be developed into entire movements.',
           ],
           exercise: {
             prompt: 'What is a "motif" in music composition?',
@@ -729,7 +755,7 @@ const LP_DATA = [
               'A type of time signature',
             ],
             correct: 2,
-            explanation: 'A motif is a short, distinctive musical fragment — typically 2–8 notes — that serves as the seed for longer musical development. Beethoven\'s da-da-da-DUM is the most famous example.',
+            explanation: 'A motif is a short, distinctive musical fragment that serves as the seed for longer musical development.',
           },
         },
       },
@@ -753,11 +779,11 @@ const LP_DATA = [
         xp: 45,
         content: {
           videoLabel: 'Jazz Harmony Basics',
-          desc: 'Jazz harmony extends basic triads to 7th, 9th, 11th, and 13th chords. The ii-V-I progression is the cornerstone of jazz. Understanding chord-scale theory — which scale to play over each chord — is essential for improvisation.',
+          desc: 'Jazz harmony extends basic triads to 7th, 9th, 11th, and 13th chords. The ii-V-I progression is the cornerstone of jazz.',
           notation: 'Cmaj7   = C E G B\nDm7     = D F A C\nG7      = G B D F\nii-V-I in C: Dm7 → G7 → Cmaj7',
           concepts: [
             { title: '7th Chords', body: 'Four-note chords adding a 7th above the root to the basic triad.' },
-            { title: 'ii-V-I', body: 'The most important progression in jazz — creates strong harmonic motion.' },
+            { title: 'ii-V-I', body: 'The most important progression in jazz.' },
             { title: 'Altered Dominants', body: 'Dominant chords with raised/lowered 5ths and 9ths for tension.' },
             { title: 'Chord-Scale Theory', body: 'Matching specific scales (modes) to each chord in a progression.' },
           ],
@@ -768,14 +794,9 @@ const LP_DATA = [
           ],
           exercise: {
             prompt: 'In the key of C, what are the chords in a ii-V-I progression?',
-            options: [
-              'Cmaj7 - Fmaj7 - Gmaj7',
-              'Am7 - Dm7 - Gmaj7',
-              'Dm7 - G7 - Cmaj7',
-              'Em7 - Am7 - Dmaj7',
-            ],
+            options: ['Cmaj7 - Fmaj7 - Gmaj7', 'Am7 - Dm7 - Gmaj7', 'Dm7 - G7 - Cmaj7', 'Em7 - Am7 - Dmaj7'],
             correct: 2,
-            explanation: 'In C major: ii = Dm7 (D-F-A-C), V = G7 (G-B-D-F), I = Cmaj7 (C-E-G-B). This progression creates strong harmonic motion and resolution.',
+            explanation: 'In C major: ii = Dm7, V = G7, I = Cmaj7.',
           },
         },
       },
@@ -799,12 +820,12 @@ const LP_DATA = [
         xp: 35,
         content: {
           videoLabel: 'African Rhythmic Traditions',
-          desc: 'African music is rhythmically sophisticated in ways that profoundly influenced virtually all Western popular music. Polyrhythm — the simultaneous use of contrasting rhythmic patterns — and the call-and-response form are central concepts that underpin jazz, blues, soul, reggae, and hip-hop.',
+          desc: 'African music is rhythmically sophisticated in ways that profoundly influenced virtually all Western popular music.',
           notation: 'Polyrhythm example — 3 against 2:\nPart A: 1 . . 2 . . 3 . .\nPart B: 1 . . . . 2 . . . .',
           concepts: [
             { title: 'Polyrhythm', body: 'Multiple contrasting rhythms played simultaneously, each in a different meter.' },
             { title: 'Cross-Rhythm', body: 'A rhythm that contradicts the main meter, creating tension.' },
-            { title: 'Call & Response', body: 'Musical conversation between a leader and a group — or soloist and ensemble.' },
+            { title: 'Call & Response', body: 'Musical conversation between a leader and a group.' },
             { title: 'Timeline', body: 'A repeating, rhythmically distinctive pattern that anchors the ensemble.' },
           ],
           takeaways: [
@@ -821,7 +842,7 @@ const LP_DATA = [
               'A type of time signature with many beats',
             ],
             correct: 2,
-            explanation: 'Polyrhythm involves playing two or more contrasting rhythmic patterns at the same time — for example, 3 beats against 2 beats simultaneously.',
+            explanation: 'Polyrhythm involves playing two or more contrasting rhythmic patterns at the same time.',
           },
         },
       },
@@ -845,12 +866,12 @@ const LP_DATA = [
         xp: 50,
         content: {
           videoLabel: 'Your Musical Journey',
-          desc: 'Congratulations on reaching the final module of the Harmonia Learning Path! In this capstone lesson, we bring together everything you have learned and chart a course for your continued musical growth. Music is a lifelong journey — this is not the end; it is the beginning.',
+          desc: 'Congratulations on reaching the final module! In this capstone lesson, we bring together everything you have learned and chart a course for your continued musical growth.',
           concepts: [
             { title: 'Theory → Practice', body: 'All theory must connect to your instrument and to your ears.' },
             { title: 'Deliberate Practice', body: 'Focus on what is difficult, not just what you enjoy playing.' },
             { title: 'Active Listening', body: 'Analyse music you love — identify chords, scales, structure.' },
-            { title: 'Create Regularly', body: 'Write and record your own music, even if imperfect. Start today.' },
+            { title: 'Create Regularly', body: 'Write and record your own music, even if imperfect.' },
           ],
           takeaways: [
             'Theory without application is empty — always connect to real music.',
@@ -866,7 +887,7 @@ const LP_DATA = [
               'Memorising every music theory rule',
             ],
             correct: 2,
-            explanation: 'Regular, deliberate practice — focusing on weaknesses and challenging yourself — combined with active listening to great music is the proven path to musical mastery.',
+            explanation: 'Regular, deliberate practice — focusing on weaknesses — combined with active listening is the proven path to musical mastery.',
           },
         },
       },
@@ -882,8 +903,8 @@ let currentModuleIndex  = 0;
 let currentLessonIndex  = 0;
 let modalOpen           = false;
 let exerciseAnswered    = false;
+let currentExerciseIdx  = 0;   // tracks which extra exercise we're on (l1-3 style)
 
-// Load completed lessons from DB
 function getCompleted() {
   return HarmoniaDB.getProgress()?.learningPath?.completedLessons || [];
 }
@@ -912,17 +933,11 @@ function updateHeroStats() {
   const completedCount = completed.length;
   const overallPct = Math.round((completedCount / totalLessons) * 100);
 
-  // XP / level
-  const lp = snap.levelInfo;
-  setTextSafe('lp-hero-xp', lp.currentXP.toLocaleString() + ' XP');
-  setTextSafe('lp-hero-level', `Level ${lp.level} — ${lp.title}`);
-
-  // Overall progress bar
   setTextSafe('lp-overall-pct', overallPct + '%');
   animateBar('lp-overall-fill', overallPct, 600);
   setTextSafe('lp-stat-lessons', completedCount + ' / ' + totalLessons);
   setTextSafe('lp-stat-streak', (snap.streak.current || 0) + '🔥');
-  setTextSafe('lp-stat-xp', lp.currentXP.toLocaleString());
+  setTextSafe('lp-stat-xp', snap.levelInfo.currentXP.toLocaleString());
 }
 
 function setTextSafe(id, txt) {
@@ -979,7 +994,6 @@ function updateQuickStats() {
   setTextSafe('qs-xp-earned', totalXP + ' XP');
   setTextSafe('qs-streak', (HarmoniaDB.getStreak().current || 0) + ' days');
 
-  // Certificate progress
   const pct = Math.round((completed.length / totalLessons) * 100);
   setTextSafe('cert-progress', `${pct}% complete — ${totalLessons - completed.length} lessons remaining`);
 }
@@ -992,7 +1006,6 @@ function switchModule(idx) {
   currentModuleIndex = idx;
   renderSidebar();
   renderModuleContent(idx);
-  // Scroll content into view on mobile
   const content = document.getElementById('lpContent');
   if (content && window.innerWidth < 800) {
     content.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -1046,7 +1059,6 @@ function renderModuleContent(idx) {
     setTimeout(() => animateBar('modProgressFill', modPct, 0), 100);
   }
 
-  // Module complete banner
   const banner = document.getElementById('lpModuleCompleteBanner');
   if (banner) {
     if (allDone) {
@@ -1058,13 +1070,12 @@ function renderModuleContent(idx) {
     }
   }
 
-  // Render lessons list
   const lessonList = document.getElementById('lpLessonList');
   if (!lessonList) return;
 
   lessonList.innerHTML = mod.lessons.map((lesson, li) => {
     const isDone = completed.includes(lesson.id);
-    const isActive = li === 0 && !isDone; // First incomplete lesson is "active"
+    const isActive = li === 0 && !isDone;
     return buildLessonItem(lesson, li, isDone, isActive);
   }).join('');
 }
@@ -1083,10 +1094,7 @@ function buildLessonItem(lesson, li, isDone, isActive) {
         <h4>${lesson.title}</h4>
         <p>${lesson.subtitle}</p>
       </div>
-      <div class="lp-lesson-tags">
-        ${typeTag}
-        ${lockTag}
-      </div>
+      <div class="lp-lesson-tags">${typeTag}${lockTag}</div>
       <div class="lp-lesson-dur">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="12" height="12">
           <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
@@ -1111,6 +1119,7 @@ function openLesson(modIdx, lessonIdx) {
   currentModuleIndex = modIdx;
   currentLessonIndex = lessonIdx;
   exerciseAnswered   = false;
+  currentExerciseIdx = 0;
 
   const mod    = LP_DATA[modIdx];
   const lesson = mod.lessons[lessonIdx];
@@ -1126,8 +1135,7 @@ function openLesson(modIdx, lessonIdx) {
 }
 
 function closeModal() {
-  const overlay = document.getElementById('lpModalOverlay');
-  overlay.classList.remove('open');
+  document.getElementById('lpModalOverlay').classList.remove('open');
   modalOpen = false;
   document.body.style.overflow = '';
 }
@@ -1136,13 +1144,11 @@ function buildModalContent(mod, lesson, lessonIdx, isDone) {
   const c = lesson.content;
   const totalLessons = mod.lessons.length;
 
-  // Header
   document.getElementById('lp-modal-icon-el').textContent = mod.icon;
   document.getElementById('lp-modal-title-el').textContent = lesson.title;
   document.getElementById('lp-modal-sub-el').textContent   = `${mod.title} · Lesson ${lessonIdx + 1} of ${totalLessons}`;
   document.getElementById('lp-modal-nav-info').textContent = `${lessonIdx + 1} / ${totalLessons}`;
 
-  // Prev / Next buttons
   const prevBtn = document.getElementById('lp-modal-prev');
   const nextBtn = document.getElementById('lp-modal-next');
   prevBtn.disabled = lessonIdx === 0;
@@ -1150,10 +1156,9 @@ function buildModalContent(mod, lesson, lessonIdx, isDone) {
   prevBtn.onclick = () => navigateLesson(-1);
   nextBtn.onclick = () => navigateLesson(1);
 
-  // Footer
   const completeBtn = document.getElementById('lp-complete-btn');
   if (isDone) {
-    completeBtn.textContent = '✓ Completed';
+    completeBtn.innerHTML = '✓ Completed';
     completeBtn.classList.add('done');
     completeBtn.disabled = true;
   } else {
@@ -1171,44 +1176,83 @@ function buildModalContent(mod, lesson, lessonIdx, isDone) {
   document.getElementById('lp-footer-lesson').textContent = `${mod.title} — Lesson ${lessonIdx + 1}`;
   document.getElementById('lp-footer-xp').textContent     = `+${lesson.xp} XP on completion`;
 
-  // Build body
   const bodyEl = document.getElementById('lpLessonBody');
   bodyEl.innerHTML = buildLessonBody(lesson, c);
-
-  // Scroll modal to top
-  const modal = document.getElementById('lpModal');
-  modal.scrollTop = 0;
+  document.getElementById('lpModal').scrollTop = 0;
 }
 
+/* ─────────────────────────────────────────────────────────────
+   buildLessonBody
+   KEY LOGIC:
+   • lesson.type === 'exercise'  → skip video area, show
+     exercise-focused layout with a coloured header banner
+   • lesson.content.videoUrl     → show real <iframe> embed
+   • otherwise                   → show the placeholder play button
+───────────────────────────────────────────────────────────── */
 function buildLessonBody(lesson, c) {
+  const isExerciseOnly = lesson.type === 'exercise';
   let html = '';
 
-  // Video area
-  html += `
-    <div class="lp-video-area">
-      <div class="lp-video-placeholder">
-        <button class="lp-play-btn" aria-label="Play video" onclick="this.parentElement.innerHTML='<div style=\\'padding:20px;color:var(--muted);font-size:0.85rem\\'>▶ Video player would load here in the full app</div>'">
-          <svg viewBox="0 0 24 24" fill="white" width="28" height="28"><polygon points="5 3 19 12 5 21 5 3"/></svg>
-        </button>
-        <span class="lp-video-label">${c.videoLabel || lesson.title}</span>
-        <span class="lp-video-dur">${lesson.duration}</span>
+  /* ── VIDEO AREA ─────────────────────────────────────────── */
+  if (!isExerciseOnly) {
+    if (c.videoUrl) {
+      /* Real YouTube embed */
+      html += `
+        <div class="lp-video-area lp-video-embed">
+          <iframe
+            src="${c.videoUrl}"
+            title="${c.videoLabel || lesson.title}"
+            frameborder="0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            allowfullscreen
+            loading="lazy"
+          ></iframe>
+          <div class="lp-video-caption">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>
+            ${c.videoLabel}
+          </div>
+        </div>
+      `;
+    } else {
+      /* Placeholder play button */
+      html += `
+        <div class="lp-video-area">
+          <div class="lp-video-placeholder">
+            <button class="lp-play-btn" aria-label="Play video"
+              onclick="this.closest('.lp-video-area').innerHTML='<div style=\\'padding:20px;color:var(--muted);font-size:0.85rem;text-align:center\\'>▶ Video player loads here in the full app</div>'">
+              <svg viewBox="0 0 24 24" fill="white" width="28" height="28"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+            </button>
+            <span class="lp-video-label">${c.videoLabel || lesson.title}</span>
+            <span class="lp-video-dur">${lesson.duration}</span>
+          </div>
+        </div>
+      `;
+    }
+  } else {
+    /* Exercise-only banner — replaces the video area visually */
+    html += `
+      <div class="lp-exercise-hero-banner">
+        <div class="lp-exhb-icon">✏️</div>
+        <div class="lp-exhb-text">
+          <h3>${lesson.title}</h3>
+          <p>${lesson.subtitle} — work through the exercises below to complete this lesson</p>
+        </div>
+        <div class="lp-exhb-badge">Exercise Lesson</div>
       </div>
-    </div>
-  `;
+    `;
+  }
 
+  /* ── BODY CONTENT ───────────────────────────────────────── */
   html += `<div class="lp-lesson-body">`;
 
-  // Description
   if (c.desc) {
     html += `<p class="lp-lesson-desc">${c.desc}</p>`;
   }
 
-  // Notation block
   if (c.notation) {
     html += `<div class="lp-notation">${c.notation.replace(/\n/g, '<br>')}</div>`;
   }
 
-  // Key Concepts
   if (c.concepts && c.concepts.length) {
     html += `
       <div class="lp-concepts">
@@ -1225,12 +1269,18 @@ function buildLessonBody(lesson, c) {
     `;
   }
 
-  // Exercise
+  /* Main exercise */
   if (c.exercise) {
-    html += buildExerciseHTML(c.exercise);
+    html += buildExerciseHTML(c.exercise, 'lessonExercise', 0);
   }
 
-  // Takeaways
+  /* Extra exercises (for exercise-only lessons like l1-3) */
+  if (isExerciseOnly && c.extraExercises && c.extraExercises.length) {
+    c.extraExercises.forEach((ex, i) => {
+      html += buildExerciseHTML(ex, `extraExercise_${i}`, i + 1);
+    });
+  }
+
   if (c.takeaways && c.takeaways.length) {
     html += `
       <div class="lp-takeaways">
@@ -1242,39 +1292,46 @@ function buildLessonBody(lesson, c) {
     `;
   }
 
-  html += `</div>`; // close lp-lesson-body
+  html += `</div>`;
   return html;
 }
 
-function buildExerciseHTML(ex) {
+function buildExerciseHTML(ex, containerId, exerciseNum) {
   const opts = ex.options.map((opt, i) => `
-    <button class="lp-ex-option" onclick="answerExercise(this, ${i}, ${ex.correct}, '${ex.explanation.replace(/'/g, "\\'")}')" >
+    <button class="lp-ex-option"
+      onclick="answerExercise(this, ${i}, ${ex.correct}, '${ex.explanation.replace(/'/g, "\\'")}', '${containerId}')">
       ${opt}
     </button>
   `).join('');
 
+  const label = exerciseNum === 0 ? '✏️ Quick Check' : `✏️ Exercise ${exerciseNum + 1}`;
+
   return `
-    <div class="lp-exercise" id="lessonExercise">
+    <div class="lp-exercise" id="${containerId}">
       <h3>
-        ✏️ Quick Check
+        ${label}
         <span class="lp-exercise-badge">Exercise</span>
       </h3>
       <p class="lp-exercise-prompt">${ex.prompt}</p>
-      <div class="lp-exercise-options" id="exerciseOptions">
+      <div class="lp-exercise-options" id="${containerId}_opts">
         ${opts}
       </div>
-      <div class="lp-exercise-feedback" id="exerciseFeedback"></div>
+      <div class="lp-exercise-feedback" id="${containerId}_feedback"></div>
     </div>
   `;
 }
 
-function answerExercise(btn, chosen, correct, explanation) {
-  if (exerciseAnswered) return;
-  exerciseAnswered = true;
+function answerExercise(btn, chosen, correct, explanation, containerId) {
+  const container = document.getElementById(containerId);
+  if (!container) return;
+  const options  = container.querySelectorAll('.lp-ex-option');
+  const feedback = document.getElementById(`${containerId}_feedback`);
 
-  const options  = document.querySelectorAll('.lp-ex-option');
-  const feedback = document.getElementById('exerciseFeedback');
-  const isRight  = chosen === correct;
+  // Prevent double-answering this specific exercise block
+  if (container.dataset.answered) return;
+  container.dataset.answered = 'true';
+
+  const isRight = chosen === correct;
 
   options.forEach((opt, i) => {
     opt.disabled = true;
@@ -1286,6 +1343,9 @@ function answerExercise(btn, chosen, correct, explanation) {
   feedback.textContent = isRight
     ? `✓ Correct! ${explanation}`
     : `✗ Not quite. ${explanation}`;
+
+  // For exercise-only lessons: mark all exercises answered when last one is answered
+  if (containerId === 'lessonExercise') exerciseAnswered = true;
 }
 
 function navigateLesson(direction) {
@@ -1294,6 +1354,7 @@ function navigateLesson(direction) {
   if (newIdx < 0 || newIdx >= mod.lessons.length) return;
   currentLessonIndex = newIdx;
   exerciseAnswered   = false;
+  currentExerciseIdx = 0;
 
   const completed = getCompleted();
   const lesson    = mod.lessons[newIdx];
@@ -1306,46 +1367,29 @@ function navigateLesson(direction) {
    COMPLETE LESSON
    ═══════════════════════════════════════════════════════ */
 function completeLesson(mod, lesson) {
-  // Save to DB
   const xpResult = HarmoniaDB.completeLesson(lesson.id, mod.title);
   HarmoniaDB.checkAndUpdateStreak();
 
-  // Update button
   const btn = document.getElementById('lp-complete-btn');
-  btn.textContent = '✓ Completed';
+  btn.innerHTML = '✓ Completed';
   btn.classList.add('done');
   btn.disabled = true;
 
-  // Show XP toast
   showXPToast(`+${lesson.xp} XP`, `Lesson complete: ${lesson.title}`);
 
-  // Check level-up
   const snap = HarmoniaDB.getSnapshot();
   if (xpResult > 0 && snap.levelInfo.level > 1) {
-    const prevXP = snap.levelInfo.currentXP - xpResult;
+    const prevXP   = snap.levelInfo.currentXP - xpResult;
     const prevLevel = HarmoniaDB.getLevelProgress(prevXP).level;
     if (snap.levelInfo.level > prevLevel) {
       setTimeout(() => showLevelUp(snap.levelInfo.level, snap.levelInfo.title), 1200);
     }
   }
 
-  // Confetti burst
   launchConfetti();
-
-  // Refresh UI
   renderSidebar();
   renderModuleContent(currentModuleIndex);
   updateHeroStats();
-
-  // Re-render lesson item in list
-  const lessonItems = document.querySelectorAll('.lp-lesson-item');
-  const item = lessonItems[currentLessonIndex];
-  if (item) {
-    item.classList.add('completed-lesson');
-    item.classList.remove('active-lesson');
-    const numEl = item.querySelector('.lp-lesson-num');
-    if (numEl) numEl.textContent = '✓';
-  }
 }
 
 
@@ -1364,12 +1408,12 @@ function showXPToast(xpText, label) {
 
 
 /* ═══════════════════════════════════════════════════════
-   LEVEL UP OVERLAY
+   LEVEL UP
    ═══════════════════════════════════════════════════════ */
 function showLevelUp(level, title) {
   const overlay = document.getElementById('lpLevelUpOverlay');
   if (!overlay) return;
-  document.getElementById('lp-levelup-num').textContent = `Level ${level}!`;
+  document.getElementById('lp-levelup-num').textContent   = `Level ${level}!`;
   document.getElementById('lp-levelup-title').textContent = `You are now a ${title}`;
   overlay.classList.add('show');
   launchConfetti(60);
@@ -1415,15 +1459,11 @@ function setupSearch() {
 
   input.addEventListener('input', () => {
     const q = input.value.trim().toLowerCase();
-    if (!q) {
-      renderModuleContent(currentModuleIndex);
-      return;
-    }
+    if (!q) { renderModuleContent(currentModuleIndex); return; }
 
     const lessonList = document.getElementById('lpLessonList');
     const completed  = getCompleted();
     const mod = LP_DATA[currentModuleIndex];
-
     const filtered = mod.lessons.filter(l =>
       l.title.toLowerCase().includes(q) ||
       l.subtitle.toLowerCase().includes(q) ||
@@ -1435,7 +1475,7 @@ function setupSearch() {
       return;
     }
 
-    lessonList.innerHTML = filtered.map((lesson, li) => {
+    lessonList.innerHTML = filtered.map((lesson) => {
       const isDone = completed.includes(lesson.id);
       return buildLessonItem(lesson, mod.lessons.indexOf(lesson), isDone, false);
     }).join('');
@@ -1449,15 +1489,15 @@ function setupSearch() {
 function setupKeyboard() {
   document.addEventListener('keydown', (e) => {
     if (!modalOpen) return;
-    if (e.key === 'Escape')      closeModal();
-    if (e.key === 'ArrowRight')  navigateLesson(1);
-    if (e.key === 'ArrowLeft')   navigateLesson(-1);
+    if (e.key === 'Escape')     closeModal();
+    if (e.key === 'ArrowRight') navigateLesson(1);
+    if (e.key === 'ArrowLeft')  navigateLesson(-1);
   });
 }
 
 
 /* ═══════════════════════════════════════════════════════
-   NEXT MODULE BUTTON
+   NEXT MODULE
    ═══════════════════════════════════════════════════════ */
 function goToNextModule() {
   const next = currentModuleIndex + 1;
