@@ -5,432 +5,202 @@
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
 <title>Lyric Assistant — Harmonia</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,400&family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-
 :root{
-  --bg:#05050f;
-  --surface:#0d0d1e;
-  --surface2:#141428;
-  --surface3:#1a1a34;
-  --border:rgba(255,255,255,0.07);
-  --border-hi:rgba(255,255,255,0.13);
-  --text:#ededff;
-  --muted:#7070a0;
-  --muted2:#4a4a70;
-  --accent:#a78bfa;
-  --accent2:#f472b6;
-  --green:#34d399;
-  --cyan:#22d3ee;
-  --amber:#fbbf24;
-  --red:#f87171;
-  --nav-h:60px;
-  --topbar-h:50px;
-  --panel-w:340px;
-  --font-display:'Syne',sans-serif;
-  --font-body:'DM Sans',sans-serif;
-  --font-lyric:'Playfair Display',serif;
-  --font-mono:'DM Mono',monospace;
+  --bg:#05050f;--surface:#0d0d1e;--surface2:#141428;--surface3:#1a1a34;
+  --border:rgba(255,255,255,0.07);--border-hi:rgba(255,255,255,0.13);
+  --text:#ededff;--muted:#7070a0;--muted2:#4a4a70;
+  --accent:#a78bfa;--accent2:#f472b6;--green:#34d399;--cyan:#22d3ee;--red:#f87171;
+  --nav-h:60px;--topbar-h:50px;--panel-w:330px;
+  --font-display:'Syne',sans-serif;--font-body:'DM Sans',sans-serif;
+  --font-lyric:'Playfair Display',serif;--font-mono:'DM Mono',monospace;
 }
-
-*{-webkit-tap-highlight-color:transparent}
 html,body{height:100%;overflow:hidden}
 body{font-family:var(--font-body);background:var(--bg);color:var(--text);display:flex;flex-direction:column}
+body::after{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.025'/%3E%3C/svg%3E");pointer-events:none;z-index:9999;mix-blend-mode:overlay}
 
-/* Grain overlay */
-body::after{
-  content:'';position:fixed;inset:0;
-  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
-  pointer-events:none;z-index:9998;mix-blend-mode:overlay;
-}
-
-/* ─── NAVBAR ─── */
-.nav{
-  height:var(--nav-h);flex-shrink:0;
-  display:flex;align-items:center;padding:0 24px;gap:0;
-  border-bottom:1px solid var(--border);
-  background:rgba(5,5,15,0.97);backdrop-filter:blur(24px);
-  position:relative;z-index:200;
-}
-.nav-logo{display:flex;align-items:center;gap:10px;text-decoration:none;margin-right:36px}
+/* NAV */
+.nav{height:var(--nav-h);flex-shrink:0;display:flex;align-items:center;padding:0 24px;border-bottom:1px solid var(--border);background:rgba(5,5,15,0.97);backdrop-filter:blur(24px);position:relative;z-index:200}
+.nav-logo{display:flex;align-items:center;gap:10px;text-decoration:none;margin-right:32px}
 .nav-logo-icon{width:32px;height:32px;border-radius:9px;background:linear-gradient(135deg,#7c3aed,#ec4899);display:flex;align-items:center;justify-content:center}
 .nav-logo-text{font-family:var(--font-display);font-size:1.05rem;font-weight:800;background:linear-gradient(135deg,#a78bfa,#ec4899);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-.nav-items{display:flex;gap:4px;list-style:none;flex:1}
-.nav-item{font-size:0.8rem;font-weight:500;color:var(--muted);padding:6px 12px;border-radius:8px;cursor:pointer;transition:all 0.2s;border:1px solid transparent}
+.nav-items{display:flex;gap:3px;list-style:none;flex:1}
+.nav-item{font-size:0.79rem;font-weight:500;color:var(--muted);padding:6px 12px;border-radius:8px;cursor:pointer;transition:all 0.2s;border:1px solid transparent}
 .nav-item:hover{color:var(--text);background:rgba(255,255,255,0.04)}
 .nav-item.active{color:var(--accent);background:rgba(167,139,250,0.08);border-color:rgba(167,139,250,0.2)}
 .nav-right{display:flex;align-items:center;gap:8px;margin-left:auto}
 .nav-pill{font-family:var(--font-body);font-size:0.75rem;font-weight:500;color:var(--muted);padding:6px 12px;border-radius:8px;background:rgba(255,255,255,0.04);border:1px solid var(--border);cursor:pointer;transition:all 0.2s;text-decoration:none;display:flex;align-items:center;gap:5px}
 .nav-pill:hover{color:var(--text);background:rgba(255,255,255,0.07)}
-.nav-avatar{width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,#7c3aed,#ec4899);display:flex;align-items:center;justify-content:center;font-size:0.72rem;font-weight:800;color:white;cursor:pointer;margin-left:4px}
+.nav-av{width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,#7c3aed,#ec4899);display:flex;align-items:center;justify-content:center;font-size:0.72rem;font-weight:800;color:white;cursor:pointer}
 
-/* ─── SONG TOPBAR ─── */
-.topbar{
-  height:var(--topbar-h);flex-shrink:0;
-  display:flex;align-items:center;padding:0 20px;gap:14px;
-  border-bottom:1px solid var(--border);
-  background:rgba(13,13,30,0.95);backdrop-filter:blur(12px);
-  position:relative;z-index:100;
-}
+/* TOPBAR */
+.topbar{height:var(--topbar-h);flex-shrink:0;display:flex;align-items:center;padding:0 20px;gap:12px;border-bottom:1px solid var(--border);background:rgba(13,13,30,0.97);backdrop-filter:blur(12px);position:relative;z-index:100}
 .tb-icon{color:var(--muted);flex-shrink:0}
-.song-title-input{
-  background:none;border:none;outline:none;
-  font-family:var(--font-display);font-size:0.92rem;font-weight:700;
-  color:var(--text);flex:1;min-width:0;
-}
-.song-title-input::placeholder{color:var(--muted2);font-weight:400}
-.tb-sep{width:1px;height:20px;background:var(--border);flex-shrink:0}
-.tb-stat{
-  font-size:0.7rem;color:var(--muted);white-space:nowrap;flex-shrink:0;
-  display:flex;align-items:center;gap:5px;
-}
+.song-title{background:none;border:none;outline:none;font-family:var(--font-display);font-size:0.9rem;font-weight:700;color:var(--text);flex:1;min-width:0}
+.song-title::placeholder{color:var(--muted2);font-weight:400}
+.tb-div{width:1px;height:20px;background:var(--border);flex-shrink:0}
+.tb-stat{font-size:0.69rem;color:var(--muted);white-space:nowrap;flex-shrink:0}
 .tb-stat strong{color:var(--text);font-weight:600}
-.tb-actions{display:flex;gap:6px;margin-left:auto;flex-shrink:0}
-.tb-btn{
-  font-family:var(--font-body);font-size:0.72rem;font-weight:600;
-  padding:6px 12px;border-radius:8px;cursor:pointer;
-  border:1px solid var(--border);background:rgba(255,255,255,0.04);
-  color:var(--muted);transition:all 0.18s;display:flex;align-items:center;gap:5px;
-  text-decoration:none;
-}
+.tb-acts{display:flex;gap:5px;margin-left:auto;flex-shrink:0}
+.tb-btn{font-family:var(--font-body);font-size:0.71rem;font-weight:600;padding:6px 11px;border-radius:7px;cursor:pointer;border:1px solid var(--border);background:rgba(255,255,255,0.04);color:var(--muted);transition:all 0.18s;display:flex;align-items:center;gap:5px;text-decoration:none}
 .tb-btn:hover{background:rgba(255,255,255,0.07);color:var(--text);border-color:var(--border-hi)}
-.tb-btn.primary{
-  background:linear-gradient(135deg,#7c3aed,#ec4899);
-  border-color:transparent;color:white;font-weight:700;
-}
-.tb-btn.primary:hover{opacity:0.88}
+.tb-btn.prim{background:linear-gradient(135deg,#7c3aed,#ec4899);border-color:transparent;color:white;font-weight:700}
+.tb-btn.prim:hover{opacity:0.88}
 
-/* ─── WORKSPACE ─── */
-.workspace{
-  flex:1;display:grid;
-  grid-template-columns:1fr var(--panel-w);
-  overflow:hidden;min-height:0;
-}
+/* WORKSPACE */
+.workspace{flex:1;display:grid;grid-template-columns:1fr var(--panel-w);overflow:hidden;min-height:0}
 
-/* ─── EDITOR SIDE ─── */
-.editor-side{
-  display:flex;flex-direction:column;
-  overflow:hidden;border-right:1px solid var(--border);
-  background:var(--bg);
-}
+/* EDITOR */
+.editor{display:flex;flex-direction:column;overflow:hidden;border-right:1px solid var(--border);background:var(--bg)}
 
-/* Song meta */
-.song-meta{
-  display:flex;align-items:center;gap:10px;
-  padding:10px 20px;border-bottom:1px solid var(--border);
-  flex-shrink:0;flex-wrap:wrap;background:rgba(255,255,255,0.01);
-}
-.meta-sel{
-  background:rgba(255,255,255,0.04);border:1px solid var(--border);
-  color:var(--text);font-family:var(--font-body);font-size:0.75rem;
-  padding:5px 10px;border-radius:8px;outline:none;cursor:pointer;
-  transition:border-color 0.2s;
-}
+.song-meta{display:flex;align-items:center;gap:9px;padding:9px 20px;border-bottom:1px solid var(--border);flex-shrink:0;flex-wrap:wrap;background:rgba(255,255,255,0.01)}
+.meta-sel{background:rgba(255,255,255,0.04);border:1px solid var(--border);color:var(--text);font-family:var(--font-body);font-size:0.73rem;padding:5px 9px;border-radius:7px;outline:none;cursor:pointer;transition:border-color 0.2s}
 .meta-sel:focus{border-color:rgba(167,139,250,0.35)}
-.meta-badge{
-  font-size:0.65rem;font-weight:700;padding:4px 10px;border-radius:99px;
-  background:rgba(167,139,250,0.1);border:1px solid rgba(167,139,250,0.2);
-  color:var(--accent);display:flex;align-items:center;gap:5px;
-}
-.meta-badge::before{content:'';width:5px;height:5px;border-radius:50%;background:var(--green);box-shadow:0 0 5px var(--green);animation:pulse 2s infinite}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.3}}
-.word-count-badge{font-size:0.7rem;color:var(--muted);margin-left:auto}
+.meta-badge{font-size:0.63rem;font-weight:700;padding:4px 9px;border-radius:99px;background:rgba(167,139,250,0.1);border:1px solid rgba(167,139,250,0.2);color:var(--accent);display:flex;align-items:center;gap:5px}
+.meta-badge::before{content:'';width:5px;height:5px;border-radius:50%;background:var(--green);box-shadow:0 0 5px var(--green);animation:lv 2s infinite}
+@keyframes lv{0%,100%{opacity:1}50%{opacity:0.3}}
+.wc-badge{font-size:0.69rem;color:var(--muted);margin-left:auto}
 
 /* Section tabs */
-.section-tabs{
-  display:flex;align-items:center;gap:4px;
-  padding:8px 20px;border-bottom:1px solid var(--border);
-  overflow-x:auto;flex-shrink:0;
-  scrollbar-width:none;background:rgba(255,255,255,0.01);
-}
-.section-tabs::-webkit-scrollbar{display:none}
-.sec-tab{
-  display:flex;align-items:center;gap:7px;
-  padding:6px 14px;border-radius:9px;cursor:pointer;
-  border:1px solid var(--border);background:none;
-  font-family:var(--font-body);font-size:0.75rem;font-weight:600;
-  color:var(--muted);white-space:nowrap;flex-shrink:0;
-  transition:all 0.2s;
-}
+.sec-tabs{display:flex;align-items:center;gap:4px;padding:8px 20px;border-bottom:1px solid var(--border);overflow-x:auto;flex-shrink:0;scrollbar-width:none;background:rgba(255,255,255,0.01)}
+.sec-tabs::-webkit-scrollbar{display:none}
+.sec-tab{display:flex;align-items:center;gap:7px;padding:6px 13px;border-radius:8px;cursor:pointer;border:1px solid var(--border);background:none;font-family:var(--font-body);font-size:0.74rem;font-weight:600;color:var(--muted);white-space:nowrap;flex-shrink:0;transition:all 0.18s}
 .sec-tab:hover{color:var(--text);background:rgba(255,255,255,0.04)}
-.sec-tab.active{
-  background:rgba(167,139,250,0.1);border-color:rgba(167,139,250,0.3);color:var(--accent);
-}
-.sec-type-pill{
-  font-size:0.58rem;font-weight:800;letter-spacing:0.5px;
-  padding:2px 6px;border-radius:5px;text-transform:uppercase;
-}
-.add-sec-btn{
-  display:flex;align-items:center;gap:5px;
-  padding:6px 12px;border-radius:9px;cursor:pointer;
-  border:1px dashed rgba(255,255,255,0.12);background:none;
-  font-family:var(--font-body);font-size:0.72rem;font-weight:600;
-  color:var(--muted2);white-space:nowrap;flex-shrink:0;
-  transition:all 0.2s;
-}
-.add-sec-btn:hover{border-color:rgba(167,139,250,0.3);color:var(--accent)}
+.sec-tab.on{background:rgba(167,139,250,0.1);border-color:rgba(167,139,250,0.3);color:var(--accent)}
+.type-pill{font-size:0.57rem;font-weight:800;letter-spacing:0.5px;padding:2px 5px;border-radius:5px;text-transform:uppercase}
+.add-btn{display:flex;align-items:center;gap:5px;padding:6px 11px;border-radius:8px;cursor:pointer;border:1px dashed rgba(255,255,255,0.12);background:none;font-family:var(--font-body);font-size:0.71rem;font-weight:600;color:var(--muted2);white-space:nowrap;flex-shrink:0;transition:all 0.18s}
+.add-btn:hover{border-color:rgba(167,139,250,0.3);color:var(--accent)}
 
-/* Section content area */
-.section-content{flex:1;overflow-y:auto;padding:28px 36px}
-.section-content::-webkit-scrollbar{width:3px}
-.section-content::-webkit-scrollbar-thumb{background:var(--border);border-radius:99px}
+/* Lyric editor */
+.lyric-area{flex:1;overflow-y:auto;padding:28px 36px}
+.lyric-area::-webkit-scrollbar{width:3px}
+.lyric-area::-webkit-scrollbar-thumb{background:var(--border);border-radius:99px}
 
-.section-block{margin-bottom:32px}
-.sec-header{display:flex;align-items:center;gap:10px;margin-bottom:14px}
-.sec-type-label{
-  font-size:0.62rem;font-weight:800;letter-spacing:2px;text-transform:uppercase;
-  padding:3px 10px;border-radius:6px;
-}
-.sec-num{font-size:0.72rem;color:var(--muted)}
-.sec-actions{margin-left:auto;display:flex;gap:5px}
-.sec-act{
-  background:none;border:none;color:var(--muted);
-  font-size:0.75rem;cursor:pointer;padding:3px 8px;
-  border-radius:6px;transition:all 0.15s;font-family:var(--font-body);
-}
+.sec-block{margin-bottom:30px}
+.sec-hd{display:flex;align-items:center;gap:9px;margin-bottom:12px}
+.sec-lbl{font-size:0.6rem;font-weight:800;letter-spacing:2px;text-transform:uppercase;padding:3px 9px;border-radius:6px}
+.sec-name{font-size:0.71rem;color:var(--muted)}
+.sec-acts{margin-left:auto;display:flex;gap:4px}
+.sec-act{background:none;border:none;color:var(--muted);font-size:0.73rem;cursor:pointer;padding:3px 7px;border-radius:6px;transition:all 0.15s;font-family:var(--font-body)}
 .sec-act:hover{background:rgba(255,255,255,0.06);color:var(--text)}
 .sec-act.del:hover{color:var(--red)}
 
-/* The lyric textarea — the STAR */
-.lyric-ta{
-  width:100%;min-height:90px;
-  background:transparent;border:none;outline:none;
-  color:var(--text);caret-color:var(--accent);
-  font-family:var(--font-lyric);
-  font-size:1.08rem;line-height:2;
-  resize:none;padding:0;
-  transition:none;
-}
-.lyric-ta::placeholder{
-  color:rgba(255,255,255,0.12);
-  font-style:italic;
-  font-family:var(--font-lyric);
-}
+.lyric-ta{width:100%;min-height:88px;background:transparent;border:none;outline:none;color:var(--text);caret-color:var(--accent);font-family:var(--font-lyric);font-size:1.06rem;line-height:2.05;resize:none;padding:0;transition:none}
+.lyric-ta::placeholder{color:rgba(255,255,255,0.11);font-style:italic;font-family:var(--font-lyric)}
 
-/* Line tools */
-.line-tools{display:flex;gap:7px;margin-top:10px;flex-wrap:wrap}
-.line-tool{
-  display:flex;align-items:center;gap:5px;
-  font-size:0.68rem;font-weight:600;color:var(--muted);
-  background:rgba(255,255,255,0.03);border:1px solid var(--border);
-  padding:4px 11px;border-radius:8px;cursor:pointer;
-  transition:all 0.15s;font-family:var(--font-body);
-}
-.line-tool:hover{background:rgba(167,139,250,0.08);border-color:rgba(167,139,250,0.2);color:var(--accent)}
+.line-tools{display:flex;gap:6px;margin-top:9px;flex-wrap:wrap}
+.lt{display:flex;align-items:center;gap:4px;font-size:0.67rem;font-weight:600;color:var(--muted);background:rgba(255,255,255,0.03);border:1px solid var(--border);padding:4px 10px;border-radius:7px;cursor:pointer;transition:all 0.15s;font-family:var(--font-body)}
+.lt:hover{background:rgba(167,139,250,0.08);border-color:rgba(167,139,250,0.2);color:var(--accent)}
 
-/* Quick rhyme chips inline */
 .inline-rhymes{display:flex;gap:5px;flex-wrap:wrap;margin-top:8px;min-height:0}
-.rhyme-chip{
-  font-size:0.72rem;font-weight:600;padding:4px 11px;border-radius:8px;
-  background:rgba(244,114,182,0.08);border:1px solid rgba(244,114,182,0.2);
-  color:var(--accent2);cursor:pointer;transition:all 0.15s;
-}
-.rhyme-chip:hover{background:rgba(244,114,182,0.16);transform:translateY(-1px)}
+.r-chip{font-size:0.71rem;font-weight:600;padding:4px 10px;border-radius:7px;background:rgba(244,114,182,0.08);border:1px solid rgba(244,114,182,0.2);color:var(--accent2);cursor:pointer;transition:all 0.15s}
+.r-chip:hover{background:rgba(244,114,182,0.16);transform:translateY(-1px)}
+.r-chip.ai{background:rgba(167,139,250,0.1);border-color:rgba(167,139,250,0.25);color:var(--accent)}
 
 /* Status bar */
-.status-bar{
-  height:32px;border-top:1px solid var(--border);
-  display:flex;align-items:center;gap:16px;padding:0 20px;
-  font-size:0.68rem;color:var(--muted);flex-shrink:0;
-  background:rgba(255,255,255,0.01);
-}
-.status-live{display:flex;align-items:center;gap:6px}
-.live-dot{width:6px;height:6px;border-radius:50%;background:var(--green);box-shadow:0 0 6px var(--green);flex-shrink:0}
+.status-bar{height:32px;border-top:1px solid var(--border);display:flex;align-items:center;gap:14px;padding:0 20px;font-size:0.67rem;color:var(--muted);flex-shrink:0;background:rgba(255,255,255,0.01)}
+.live-dot{width:6px;height:6px;border-radius:50%;background:var(--green);box-shadow:0 0 5px var(--green);flex-shrink:0;animation:lv 2s infinite}
 
-/* ─── AI PANEL ─── */
-.ai-panel{
-  display:flex;flex-direction:column;overflow:hidden;
-  background:var(--surface);border-left:1px solid var(--border);
-}
+/* AI PANEL */
+.ai-panel{display:flex;flex-direction:column;overflow:hidden;background:var(--surface);border-left:1px solid var(--border)}
 
-/* Tab bar */
 .ai-tabs{display:flex;border-bottom:1px solid var(--border);flex-shrink:0}
-.ai-tab{
-  flex:1;padding:13px 6px;
-  font-size:0.68rem;font-weight:700;letter-spacing:0.3px;
-  text-align:center;cursor:pointer;background:none;border:none;
-  color:var(--muted);font-family:var(--font-body);
-  transition:all 0.18s;border-bottom:2px solid transparent;
-  display:flex;align-items:center;justify-content:center;gap:4px;
-}
+.ai-tab{flex:1;padding:12px 4px;font-size:0.66rem;font-weight:700;letter-spacing:0.3px;text-align:center;cursor:pointer;background:none;border:none;color:var(--muted);font-family:var(--font-body);transition:all 0.18s;border-bottom:2px solid transparent;display:flex;align-items:center;justify-content:center;gap:4px}
 .ai-tab:hover{color:var(--text);background:rgba(255,255,255,0.02)}
-.ai-tab.active{color:var(--accent);border-bottom-color:var(--accent);background:rgba(167,139,250,0.04)}
+.ai-tab.on{color:var(--accent);border-bottom-color:var(--accent);background:rgba(167,139,250,0.04)}
 
-/* Panel content area */
 .ai-body{flex:1;overflow-y:auto}
 .ai-body::-webkit-scrollbar{width:3px}
 .ai-body::-webkit-scrollbar-thumb{background:var(--border);border-radius:99px}
 
-.tab-panel{display:none;padding:18px 16px;flex-direction:column;gap:14px}
-.tab-panel.active{display:flex}
+.tab-pane{display:none;padding:16px;flex-direction:column;gap:13px}
+.tab-pane.on{display:flex}
 
-/* Section label inside panel */
-.p-label{font-size:0.62rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted2)}
+/* Labels & inputs */
+.p-lbl{font-size:0.61rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted2)}
 
-/* Theme chips */
-.theme-chips{display:flex;gap:5px;flex-wrap:wrap;margin-top:6px}
-.theme-chip{
-  font-size:0.72rem;font-weight:600;padding:5px 11px;border-radius:99px;
-  border:1px solid var(--border);background:none;color:var(--muted);
-  cursor:pointer;font-family:var(--font-body);transition:all 0.18s;
-}
-.theme-chip:hover{border-color:rgba(167,139,250,0.3);color:var(--accent);background:rgba(167,139,250,0.06)}
-.theme-chip.on{background:rgba(167,139,250,0.12);border-color:rgba(167,139,250,0.35);color:var(--accent)}
+.theme-wrap{display:flex;gap:5px;flex-wrap:wrap;margin-top:5px}
+.t-chip{font-size:0.71rem;font-weight:600;padding:5px 10px;border-radius:99px;border:1px solid var(--border);background:none;color:var(--muted);cursor:pointer;font-family:var(--font-body);transition:all 0.18s}
+.t-chip:hover{border-color:rgba(167,139,250,0.3);color:var(--accent);background:rgba(167,139,250,0.06)}
+.t-chip.on{background:rgba(167,139,250,0.12);border-color:rgba(167,139,250,0.35);color:var(--accent)}
 
-/* Context textarea in panel */
-.p-textarea{
-  width:100%;background:rgba(255,255,255,0.03);
-  border:1px solid var(--border);border-radius:10px;
-  padding:10px 12px;color:var(--text);
-  font-family:var(--font-body);font-size:0.8rem;line-height:1.6;
-  resize:none;outline:none;min-height:64px;
-  transition:border-color 0.2s;
-}
-.p-textarea:focus{border-color:rgba(167,139,250,0.35)}
-.p-textarea::placeholder{color:rgba(255,255,255,0.18)}
+.p-ta{width:100%;background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:9px;padding:9px 11px;color:var(--text);font-family:var(--font-body);font-size:0.79rem;line-height:1.6;resize:none;outline:none;min-height:60px;transition:border-color 0.2s}
+.p-ta:focus{border-color:rgba(167,139,250,0.35)}
+.p-ta::placeholder{color:rgba(255,255,255,0.17)}
 
-/* AI action buttons */
-.ai-btn{
-  width:100%;padding:12px;
-  font-family:var(--font-display);font-size:0.82rem;font-weight:700;
-  border:none;border-radius:11px;cursor:pointer;color:white;
-  background:linear-gradient(135deg,#7c3aed,#ec4899);
-  display:flex;align-items:center;justify-content:center;gap:7px;
-  transition:opacity 0.2s,transform 0.2s;
-  box-shadow:0 4px 20px rgba(124,58,237,0.2);
-}
+/* AI buttons */
+.ai-btn{width:100%;padding:11px;font-family:var(--font-display);font-size:0.8rem;font-weight:700;border:none;border-radius:10px;cursor:pointer;color:white;background:linear-gradient(135deg,#7c3aed,#ec4899);display:flex;align-items:center;justify-content:center;gap:7px;transition:opacity 0.2s,transform 0.2s;box-shadow:0 4px 18px rgba(124,58,237,0.2)}
 .ai-btn:hover{opacity:0.88;transform:translateY(-1px)}
 .ai-btn:disabled{opacity:0.45;cursor:not-allowed;transform:none;box-shadow:none}
-.ai-btn.cyan{background:linear-gradient(135deg,#0369a1,#22d3ee);box-shadow:0 4px 20px rgba(14,165,233,0.2)}
+.ai-btn.bl{background:linear-gradient(135deg,#0369a1,#22d3ee);box-shadow:0 4px 18px rgba(14,165,233,0.2)}
 
 /* Suggestion cards */
-.sugg-list{display:flex;flex-direction:column;gap:8px}
-.sugg-card{
-  background:rgba(255,255,255,0.03);border:1px solid var(--border);
-  border-radius:11px;padding:13px 14px;cursor:pointer;
-  transition:all 0.2s;
-}
+.sugg-card{background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:10px;padding:12px 13px;cursor:pointer;transition:all 0.2s}
 .sugg-card:hover{border-color:rgba(167,139,250,0.3);background:rgba(167,139,250,0.04)}
-.sugg-text{
-  font-family:var(--font-lyric);font-size:0.9rem;line-height:1.65;
-  color:var(--text);margin-bottom:8px;
-}
+.sugg-text{font-family:var(--font-lyric);font-size:0.88rem;line-height:1.65;color:var(--text);margin-bottom:7px}
 .sugg-meta{display:flex;justify-content:space-between;align-items:center}
-.sugg-note{font-size:0.65rem;color:var(--muted);font-style:italic}
-.sugg-insert{
-  font-size:0.65rem;font-weight:700;
-  background:rgba(167,139,250,0.1);border:1px solid rgba(167,139,250,0.2);
-  color:var(--accent);padding:3px 9px;border-radius:6px;cursor:pointer;
-  transition:background 0.15s;font-family:var(--font-body);
-}
-.sugg-insert:hover{background:rgba(167,139,250,0.2)}
+.sugg-note{font-size:0.63rem;color:var(--muted);font-style:italic}
+.sugg-ins{font-size:0.63rem;font-weight:700;background:rgba(167,139,250,0.1);border:1px solid rgba(167,139,250,0.2);color:var(--accent);padding:3px 8px;border-radius:6px;cursor:pointer;transition:background 0.15s;font-family:var(--font-body)}
+.sugg-ins:hover{background:rgba(167,139,250,0.2)}
 
 /* Rhyme tab */
-.rhyme-search{display:flex;gap:8px}
-.rhyme-input{
-  flex:1;background:rgba(255,255,255,0.04);border:1px solid var(--border);
-  border-radius:9px;padding:9px 12px;outline:none;
-  color:var(--text);font-family:var(--font-body);font-size:0.84rem;
-  transition:border-color 0.2s;
-}
-.rhyme-input:focus{border-color:rgba(244,114,182,0.4)}
-.rhyme-go-btn{
-  background:rgba(244,114,182,0.1);border:1px solid rgba(244,114,182,0.25);
-  color:var(--accent2);padding:9px 14px;border-radius:9px;
-  font-family:var(--font-body);font-size:0.8rem;font-weight:700;cursor:pointer;
-  transition:all 0.18s;
-}
-.rhyme-go-btn:hover{background:rgba(244,114,182,0.18)}
-.rhyme-section{margin-top:4px}
-.rhyme-section-title{font-size:0.62rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--muted2);margin-bottom:7px}
-.rhyme-words{display:flex;flex-wrap:wrap;gap:5px}
-.rw{
-  font-size:0.78rem;font-weight:600;padding:5px 11px;border-radius:8px;
-  border:1px solid var(--border);background:rgba(255,255,255,0.03);
-  color:var(--text);cursor:pointer;transition:all 0.15s;font-family:var(--font-body);
-}
+.rh-row{display:flex;gap:7px}
+.rh-input{flex:1;background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:9px;padding:9px 11px;outline:none;color:var(--text);font-family:var(--font-body);font-size:0.83rem;transition:border-color 0.2s}
+.rh-input:focus{border-color:rgba(244,114,182,0.4)}
+.rh-go{background:rgba(244,114,182,0.1);border:1px solid rgba(244,114,182,0.25);color:var(--accent2);padding:9px 13px;border-radius:9px;font-family:var(--font-body);font-size:0.79rem;font-weight:700;cursor:pointer;transition:all 0.18s}
+.rh-go:hover{background:rgba(244,114,182,0.18)}
+.rh-sec{margin-top:3px}
+.rh-sec-title{font-size:0.6rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--muted2);margin-bottom:6px}
+.rh-words{display:flex;flex-wrap:wrap;gap:5px}
+.rw{font-size:0.77rem;font-weight:600;padding:5px 10px;border-radius:7px;border:1px solid var(--border);background:rgba(255,255,255,0.03);color:var(--text);cursor:pointer;transition:all 0.15s;font-family:var(--font-body)}
 .rw:hover{border-color:rgba(244,114,182,0.35);color:var(--accent2);background:rgba(244,114,182,0.06)}
-.rw.perfect{border-color:rgba(244,114,182,0.2);color:var(--accent2)}
+.rw.p{border-color:rgba(244,114,182,0.2);color:var(--accent2)}
 
 /* Analyze tab */
-.analyze-card{
-  background:rgba(255,255,255,0.03);border:1px solid var(--border);
-  border-radius:11px;padding:14px;
-}
-.ac-title{font-size:0.62rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--muted2);margin-bottom:10px}
-.meter-rows{display:flex;flex-direction:column;gap:7px}
-.meter-row{display:flex;align-items:center;gap:8px}
-.meter-num{font-size:0.68rem;color:var(--muted2);width:14px;flex-shrink:0;font-family:var(--font-mono)}
-.syl-dots{display:flex;gap:3px;flex-wrap:wrap;flex:1}
+.an-card{background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:10px;padding:13px}
+.an-title{font-size:0.6rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--muted2);margin-bottom:9px}
+.m-row{display:flex;align-items:center;gap:8px}
+.m-num{font-size:0.66rem;color:var(--muted2);width:14px;flex-shrink:0;font-family:var(--font-mono)}
+.s-dots{display:flex;gap:3px;flex-wrap:wrap;flex:1}
 .sd{width:7px;height:7px;border-radius:50%;background:rgba(167,139,250,0.25);flex-shrink:0}
 .sd.s{background:var(--accent);box-shadow:0 0 4px rgba(167,139,250,0.4)}
-.meter-count{font-size:0.65rem;color:var(--muted2);font-family:var(--font-mono);flex-shrink:0}
-
-.rhyme-scheme{display:flex;gap:5px;flex-wrap:wrap}
-.rs-letter{
-  width:26px;height:26px;border-radius:7px;
-  display:flex;align-items:center;justify-content:center;
-  font-size:0.75rem;font-weight:800;
-  border:1px solid rgba(255,255,255,0.1);
-}
-
-.mood-bars{display:flex;flex-direction:column;gap:8px}
+.m-count{font-size:0.63rem;color:var(--muted2);font-family:var(--font-mono);flex-shrink:0}
+.rscheme{display:flex;gap:5px;flex-wrap:wrap}
+.rs{width:25px;height:25px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:0.73rem;font-weight:800;border:1px solid rgba(255,255,255,0.1)}
 .mb-row{display:flex;align-items:center;gap:8px}
-.mb-label{font-size:0.68rem;color:var(--muted);width:70px;flex-shrink:0}
+.mb-lbl{font-size:0.67rem;color:var(--muted);width:68px;flex-shrink:0}
 .mb-track{flex:1;height:5px;background:rgba(255,255,255,0.05);border-radius:99px;overflow:hidden}
 .mb-fill{height:100%;border-radius:99px;transition:width 0.9s cubic-bezier(0.4,0,0.2,1)}
-.mb-val{font-size:0.65rem;color:var(--muted2);width:28px;text-align:right;flex-family:var(--font-mono)}
+.mb-val{font-size:0.63rem;color:var(--muted2);width:26px;text-align:right;font-family:var(--font-mono)}
+.refresh-btn{background:rgba(167,139,250,0.08);border:1px solid rgba(167,139,250,0.2);color:var(--accent);font-family:var(--font-body);font-size:0.74rem;font-weight:600;padding:8px;border-radius:9px;cursor:pointer;width:100%;transition:background 0.2s}
+.refresh-btn:hover{background:rgba(167,139,250,0.15)}
 
-/* Rewrite modes */
-.rw-modes{display:grid;grid-template-columns:1fr 1fr;gap:6px}
-.rw-mode{
-  border:1px solid var(--border);border-radius:10px;padding:10px;
-  cursor:pointer;background:none;text-align:left;font-family:var(--font-body);
-  transition:all 0.18s;
-}
+/* Rewrite tab */
+.rw-modes{display:grid;grid-template-columns:1fr 1fr;gap:5px}
+.rw-mode{border:1px solid var(--border);border-radius:9px;padding:9px;cursor:pointer;background:none;text-align:left;font-family:var(--font-body);transition:all 0.18s}
 .rw-mode:hover{border-color:rgba(167,139,250,0.25);background:rgba(167,139,250,0.04)}
 .rw-mode.on{border-color:rgba(167,139,250,0.4);background:rgba(167,139,250,0.08)}
-.rw-mode-icon{font-size:1.05rem;margin-bottom:4px}
-.rw-mode-name{font-size:0.73rem;font-weight:700;color:var(--text)}
-.rw-mode-desc{font-size:0.63rem;color:var(--muted);margin-top:2px;line-height:1.4}
-
-.rewrite-result{
-  background:rgba(255,255,255,0.03);border:1px solid rgba(0,212,255,0.2);
-  border-radius:11px;padding:14px;
-  font-family:var(--font-lyric);font-size:0.9rem;line-height:1.7;
-  color:var(--text);display:none;white-space:pre-wrap;
-}
-.rewrite-result.show{display:block}
-.rewrite-acts{display:flex;gap:7px;flex-wrap:wrap}
-.ra-btn{
-  font-size:0.7rem;font-weight:600;padding:6px 12px;
-  border-radius:8px;cursor:pointer;border:1px solid var(--border);
-  background:rgba(255,255,255,0.04);color:var(--muted);
-  font-family:var(--font-body);transition:all 0.15s;
-}
-.ra-btn:hover{background:rgba(255,255,255,0.08);color:var(--text)}
+.rw-icon{font-size:1rem;margin-bottom:4px}
+.rw-name{font-size:0.72rem;font-weight:700;color:var(--text)}
+.rw-desc{font-size:0.62rem;color:var(--muted);margin-top:2px;line-height:1.4}
+.rw-result{background:rgba(255,255,255,0.03);border:1px solid rgba(34,211,238,0.2);border-radius:10px;padding:13px;font-family:var(--font-lyric);font-size:0.88rem;line-height:1.72;color:var(--text);display:none;white-space:pre-wrap}
+.rw-result.show{display:block}
+.rw-acts{display:flex;gap:6px;flex-wrap:wrap}
+.ra{font-size:0.69rem;font-weight:600;padding:6px 11px;border-radius:7px;cursor:pointer;border:1px solid var(--border);background:rgba(255,255,255,0.04);color:var(--muted);font-family:var(--font-body);transition:all 0.15s}
+.ra:hover{background:rgba(255,255,255,0.08);color:var(--text)}
 
 /* Streaming */
-.la-stream::after{content:'▋';color:var(--accent);animation:blink 0.7s step-end infinite}
+.stream::after{content:'▋';color:var(--accent);animation:blink 0.7s step-end infinite}
 @keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
 
 /* Spinner */
-.spin{width:16px;height:16px;border-radius:50%;border:2px solid rgba(255,255,255,0.2);border-top-color:white;animation:sp 0.75s linear infinite;flex-shrink:0}
+.spin{width:15px;height:15px;border-radius:50%;border:2px solid rgba(255,255,255,0.2);border-top-color:white;animation:sp 0.75s linear infinite;flex-shrink:0;display:inline-block}
 @keyframes sp{to{transform:rotate(360deg)}}
 
 /* Toast */
-.la-toast{
-  position:fixed;bottom:22px;left:50%;
-  transform:translateX(-50%) translateY(65px);
-  background:var(--surface2);border:1px solid var(--border-hi);
-  border-radius:11px;padding:10px 18px;
-  display:flex;align-items:center;gap:7px;
-  font-size:0.8rem;font-weight:500;
-  box-shadow:0 14px 40px rgba(0,0,0,0.6);
-  z-index:9999;transition:transform 0.35s cubic-bezier(0.34,1.56,0.64,1);
-  white-space:nowrap;pointer-events:none;
-}
+.la-toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%) translateY(64px);background:var(--surface2);border:1px solid var(--border-hi);border-radius:10px;padding:9px 17px;display:flex;align-items:center;gap:6px;font-size:0.79rem;font-weight:500;box-shadow:0 14px 40px rgba(0,0,0,0.6);z-index:9999;transition:transform 0.35s cubic-bezier(0.34,1.56,0.64,1);white-space:nowrap;pointer-events:none}
 .la-toast.show{transform:translateX(-50%) translateY(0)}
 
 ::-webkit-scrollbar{width:3px;height:3px}
@@ -440,8 +210,8 @@ body::after{
 @media(max-width:860px){
   html,body{overflow:auto;height:auto}
   .workspace{grid-template-columns:1fr;height:auto;overflow:visible}
-  .ai-panel{height:600px;border-top:1px solid var(--border)}
-  .editor-side{min-height:500px}
+  .ai-panel{height:580px;border-top:1px solid var(--border)}
+  .editor{min-height:480px}
 }
 </style>
 </head>
@@ -465,28 +235,28 @@ body::after{
   </ul>
   <div class="nav-right">
     <a href="style-transfer.html" class="nav-pill">🎨 Style Transfer</a>
-    <div class="nav-avatar">S</div>
+    <div class="nav-av">S</div>
   </div>
 </nav>
 
 <!-- SONG TOPBAR -->
 <div class="topbar">
-  <svg class="tb-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5z"/></svg>
-  <input class="song-title-input" id="songTitle" placeholder="Untitled Song" maxlength="60"/>
-  <div class="tb-sep"></div>
-  <div class="tb-stat" id="tbStats"><strong>0</strong> words · <strong>0</strong> lines · <strong>4</strong> sections</div>
-  <div class="tb-actions">
+  <svg class="tb-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4z"/></svg>
+  <input class="song-title" id="songTitle" placeholder="Untitled Song" maxlength="60"/>
+  <div class="tb-div"></div>
+  <div class="tb-stat" id="tbStat"><strong>0</strong> words · <strong>0</strong> lines · <strong>4</strong> sections</div>
+  <div class="tb-acts">
     <button class="tb-btn" onclick="copyAll()">📋 Copy All</button>
     <button class="tb-btn" onclick="exportTxt()">💾 Export</button>
-    <button class="tb-btn primary" onclick="getSuggestions()">✨ AI Suggest</button>
+    <button class="tb-btn prim" onclick="getSuggestions()">✨ AI Suggest</button>
   </div>
 </div>
 
 <!-- WORKSPACE -->
 <div class="workspace">
 
-  <!-- ══ EDITOR ══ -->
-  <div class="editor-side">
+  <!-- EDITOR -->
+  <div class="editor">
     <div class="song-meta">
       <select class="meta-sel" id="genreSel">
         <option value="">Genre</option>
@@ -506,249 +276,255 @@ body::after{
         <option>Slow / Ballad</option><option>Mid-tempo</option><option>Fast</option>
       </select>
       <div class="meta-badge">AI-Assisted</div>
-      <div class="word-count-badge" id="wordBadge">0 words</div>
+      <div class="wc-badge" id="wcBadge">0 words</div>
     </div>
-    <div class="section-tabs" id="secTabs"></div>
-    <div class="section-content" id="secContent"></div>
+    <div class="sec-tabs" id="secTabs"></div>
+    <div class="lyric-area" id="lyricArea"></div>
     <div class="status-bar">
-      <div class="status-live"><div class="live-dot"></div>Live · AI Ready</div>
-      <span>·</span><span>Lyrics are auto-saved locally</span>
-      <span>·</span><span>✨ Use the AI panel → for suggestions</span>
+      <div class="live-dot"></div>
+      <span>Live · AI Ready</span>
+      <span>·</span>
+      <span>Lyrics auto-saved locally</span>
+      <span>·</span>
+      <span>Use the AI panel → for suggestions</span>
     </div>
   </div>
 
-  <!-- ══ AI PANEL ══ -->
+  <!-- AI PANEL -->
   <div class="ai-panel">
     <div class="ai-tabs">
-      <button class="ai-tab active" data-tab="suggest" onclick="switchTab('suggest')">✨ Suggest</button>
-      <button class="ai-tab" data-tab="rhyme" onclick="switchTab('rhyme')">🔤 Rhyme</button>
+      <button class="ai-tab on" data-tab="suggest" onclick="switchTab('suggest')">✨ Suggest</button>
+      <button class="ai-tab" data-tab="rhyme"   onclick="switchTab('rhyme')">🔤 Rhyme</button>
       <button class="ai-tab" data-tab="analyze" onclick="switchTab('analyze')">📊 Analyze</button>
       <button class="ai-tab" data-tab="rewrite" onclick="switchTab('rewrite')">✏️ Rewrite</button>
     </div>
     <div class="ai-body">
 
       <!-- SUGGEST -->
-      <div class="tab-panel active" id="panel-suggest">
+      <div class="tab-pane on" id="pane-suggest">
         <div>
-          <div class="p-label">Themes to weave in</div>
-          <div class="theme-chips" id="themeChips"></div>
+          <div class="p-lbl">Themes to weave in</div>
+          <div class="theme-wrap" id="themeWrap"></div>
         </div>
         <div>
-          <div class="p-label" style="margin-bottom:6px">Extra context <span style="color:var(--muted2);font-size:0.6rem;font-weight:400;text-transform:none;letter-spacing:0">(optional)</span></div>
-          <textarea class="p-textarea" id="ctxInput" rows="3"
-            placeholder="e.g. 'sung at the end of a road trip' or 'from the perspective of someone leaving home'…"></textarea>
+          <div class="p-lbl" style="margin-bottom:6px">Extra context <span style="color:var(--muted2);font-size:0.59rem;font-weight:400;text-transform:none;letter-spacing:0">(optional)</span></div>
+          <textarea class="p-ta" id="ctxIn" rows="3" placeholder="e.g. 'sung at the end of a road trip' or 'from the perspective of someone leaving home'…"></textarea>
         </div>
         <button class="ai-btn" id="suggestBtn" onclick="getSuggestions()">✨ Generate Suggestions</button>
-        <div id="suggList"><div style="text-align:center;padding:20px 0;color:var(--muted2)">
-          <div style="font-size:1.4rem;margin-bottom:8px">✨</div>
-          <div style="font-size:0.82rem;font-weight:600;color:var(--muted);margin-bottom:4px">AI Co-Writer</div>
-          <div style="font-size:0.73rem;line-height:1.55">Pick themes, add context,<br>click Generate.</div>
-        </div></div>
+        <div id="suggWrap">
+          <div style="text-align:center;padding:20px 0;color:var(--muted2)">
+            <div style="font-size:1.4rem;margin-bottom:8px">✨</div>
+            <div style="font-size:0.8rem;font-weight:600;color:var(--muted);margin-bottom:4px">AI Co-Writer</div>
+            <div style="font-size:0.72rem;line-height:1.55">Pick themes, add context,<br>click Generate.</div>
+          </div>
+        </div>
       </div>
 
       <!-- RHYME -->
-      <div class="tab-panel" id="panel-rhyme">
+      <div class="tab-pane" id="pane-rhyme">
         <div>
-          <div class="p-label" style="margin-bottom:8px">Find rhymes for a word</div>
-          <div class="rhyme-search">
-            <input class="rhyme-input" id="rhymeWord" placeholder="e.g. night, fire, away…"
-              onkeydown="if(event.key==='Enter')findRhymes()"/>
-            <button class="rhyme-go-btn" onclick="findRhymes()">Find</button>
+          <div class="p-lbl" style="margin-bottom:7px">Find rhymes for a word</div>
+          <div class="rh-row">
+            <input class="rh-input" id="rhymeWord" placeholder="e.g. night, fire, away…" onkeydown="if(event.key==='Enter')findRhymes()"/>
+            <button class="rh-go" onclick="findRhymes()">Find</button>
           </div>
         </div>
-        <div style="display:flex;gap:6px;flex-wrap:wrap">
-          <span style="font-size:0.65rem;color:var(--muted2);align-self:center">Quick:</span>
-          <span class="rw perfect" onclick="preRhyme('night')" style="font-size:0.7rem;padding:3px 9px">night</span>
-          <span class="rw perfect" onclick="preRhyme('love')" style="font-size:0.7rem;padding:3px 9px">love</span>
-          <span class="rw perfect" onclick="preRhyme('heart')" style="font-size:0.7rem;padding:3px 9px">heart</span>
-          <span class="rw perfect" onclick="preRhyme('fire')" style="font-size:0.7rem;padding:3px 9px">fire</span>
-          <span class="rw perfect" onclick="preRhyme('rain')" style="font-size:0.7rem;padding:3px 9px">rain</span>
-          <span class="rw perfect" onclick="preRhyme('time')" style="font-size:0.7rem;padding:3px 9px">time</span>
-          <span class="rw perfect" onclick="preRhyme('home')" style="font-size:0.7rem;padding:3px 9px">home</span>
+        <div style="display:flex;gap:5px;flex-wrap:wrap;align-items:center">
+          <span style="font-size:0.63rem;color:var(--muted2)">Quick:</span>
+          <span class="rw p" style="font-size:0.69rem;padding:3px 8px;cursor:pointer" onclick="preRhyme('night')">night</span>
+          <span class="rw p" style="font-size:0.69rem;padding:3px 8px;cursor:pointer" onclick="preRhyme('love')">love</span>
+          <span class="rw p" style="font-size:0.69rem;padding:3px 8px;cursor:pointer" onclick="preRhyme('heart')">heart</span>
+          <span class="rw p" style="font-size:0.69rem;padding:3px 8px;cursor:pointer" onclick="preRhyme('fire')">fire</span>
+          <span class="rw p" style="font-size:0.69rem;padding:3px 8px;cursor:pointer" onclick="preRhyme('rain')">rain</span>
+          <span class="rw p" style="font-size:0.69rem;padding:3px 8px;cursor:pointer" onclick="preRhyme('time')">time</span>
+          <span class="rw p" style="font-size:0.69rem;padding:3px 8px;cursor:pointer" onclick="preRhyme('home')">home</span>
         </div>
-        <div id="rhymeResults"><div style="color:var(--muted2);font-size:0.78rem;text-align:center;padding:12px 0">Enter a word above</div></div>
+        <div id="rhymeResults"><div style="color:var(--muted2);font-size:0.77rem;text-align:center;padding:10px 0">Enter a word above</div></div>
       </div>
 
       <!-- ANALYZE -->
-      <div class="tab-panel" id="panel-analyze">
-        <div class="analyze-card">
-          <div class="ac-title">Syllable Meter</div>
-          <div class="meter-rows" id="meterRows"><div style="color:var(--muted2);font-size:0.76rem">Write lyrics to see meter</div></div>
+      <div class="tab-pane" id="pane-analyze">
+        <div class="an-card">
+          <div class="an-title">Syllable Meter</div>
+          <div style="display:flex;flex-direction:column;gap:7px" id="meterEl"><div style="color:var(--muted2);font-size:0.74rem">Write lyrics to see meter</div></div>
         </div>
-        <div class="analyze-card">
-          <div class="ac-title">Rhyme Scheme</div>
-          <div class="rhyme-scheme" id="rhymeScheme"><div style="color:var(--muted2);font-size:0.76rem">Needs 2+ lines</div></div>
+        <div class="an-card">
+          <div class="an-title">Rhyme Scheme</div>
+          <div class="rscheme" id="schemeEl"><div style="color:var(--muted2);font-size:0.74rem">Needs 2+ lines</div></div>
         </div>
-        <div class="analyze-card">
-          <div class="ac-title">Mood Profile</div>
-          <div class="mood-bars" id="moodBars"><div style="color:var(--muted2);font-size:0.76rem">Write to see mood</div></div>
+        <div class="an-card">
+          <div class="an-title">Mood Profile</div>
+          <div style="display:flex;flex-direction:column;gap:7px" id="moodEl"><div style="color:var(--muted2);font-size:0.74rem">Write to see mood</div></div>
         </div>
-        <button onclick="runAnalyze()" style="background:rgba(167,139,250,0.08);border:1px solid rgba(167,139,250,0.2);color:var(--accent);font-family:var(--font-body);font-size:0.76rem;font-weight:600;padding:9px;border-radius:10px;cursor:pointer;width:100%;transition:background 0.2s" onmouseover="this.style.background='rgba(167,139,250,0.14)'" onmouseout="this.style.background='rgba(167,139,250,0.08)'">↺ Refresh Analysis</button>
+        <button class="refresh-btn" onclick="runAnalyze()">↺ Refresh Analysis</button>
       </div>
 
       <!-- REWRITE -->
-      <div class="tab-panel" id="panel-rewrite">
+      <div class="tab-pane" id="pane-rewrite">
         <div>
-          <div class="p-label" style="margin-bottom:8px">Rewrite mode</div>
+          <div class="p-lbl" style="margin-bottom:7px">Rewrite mode</div>
           <div class="rw-modes" id="rwModes"></div>
         </div>
-        <button class="ai-btn cyan" id="rwBtn" onclick="doRewrite()">↺ Rewrite Active Section</button>
-        <div class="rewrite-result" id="rwResult"></div>
-        <div class="rewrite-acts" id="rwActs"></div>
-        <div style="background:rgba(255,255,255,0.02);border:1px solid var(--border);border-radius:10px;padding:12px">
-          <div style="font-size:0.62rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--muted2);margin-bottom:6px">ℹ️ How it works</div>
-          <div style="font-size:0.73rem;color:var(--muted);line-height:1.55">The currently active section tab gets rewritten. Accept the result or regenerate.</div>
+        <button class="ai-btn bl" id="rwBtn" onclick="doRewrite()">↺ Rewrite Active Section</button>
+        <div class="rw-result" id="rwResult"></div>
+        <div class="rw-acts" id="rwActs"></div>
+        <div style="background:rgba(255,255,255,0.02);border:1px solid var(--border);border-radius:9px;padding:11px">
+          <div style="font-size:0.6rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--muted2);margin-bottom:5px">ℹ️ How it works</div>
+          <div style="font-size:0.72rem;color:var(--muted);line-height:1.55">The active section (highlighted tab above) will be rewritten. Accept or regenerate.</div>
         </div>
       </div>
+
     </div>
   </div>
 </div>
 
-<div class="la-toast" id="laToast"><span id="toastText"></span></div>
+<div class="la-toast" id="laToast"><span id="toastTxt"></span></div>
 
 <script>
-/* ═══════════════════════════════════
-   xAI / Grok config
-   ═══════════════════════════════════ */
-const XAI_KEY = 'xai-Qe70VqSGQl6hir1VMvh4ZHWJMX8hqBs5Iv4xQvO7Bp4NtuccFTlyDqNs2ejEKOUGByOX9tsi1qbB7GAC'; // ← paste your key
-const XAI_URL = 'https://api.x.ai/v1/chat/completions';
-const XAI_MDL = 'grok-3-latest';
+// ═══════════════════════════════════
+// CONFIGURATION — paste your xAI key
+// ═══════════════════════════════════
+const XAI_KEY   = 'YOUR_XAI_API_KEY_HERE';
+const XAI_URL   = 'https://api.x.ai/v1/chat/completions';
+const XAI_MODEL = 'grok-3-latest';
 
-async function callGrok(system, user, maxTokens = 900, temp = 0.85) {
-  if (!XAI_KEY || XAI_KEY === 'YOUR_XAI_API_KEY_HERE') return null; // demo mode
+async function callGrok(system, user, maxTok, temp) {
+  if (!XAI_KEY || XAI_KEY === 'YOUR_XAI_API_KEY_HERE') return null;
   const resp = await fetch(XAI_URL, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${XAI_KEY}` },
-    body: JSON.stringify({
-      model: XAI_MDL,
-      messages: [{ role: 'system', content: system }, { role: 'user', content: user }],
-      max_tokens: maxTokens,
-      temperature: temp,
-    }),
+    method:'POST',
+    headers:{'Content-Type':'application/json','Authorization':'Bearer '+XAI_KEY},
+    body:JSON.stringify({model:XAI_MODEL,messages:[{role:'system',content:system},{role:'user',content:user}],max_tokens:maxTok||900,temperature:temp||0.85}),
   });
-  if (!resp.ok) throw new Error(`API ${resp.status}: ${resp.statusText}`);
+  if (!resp.ok) {
+    const err = await resp.json().catch(()=>({error:{message:'HTTP '+resp.status}}));
+    throw new Error(err.error?.message || 'API error '+resp.status);
+  }
   const d = await resp.json();
   return d.choices?.[0]?.message?.content || '';
 }
 
-/* ═══════════════════════════════════
-   STATE
-   ═══════════════════════════════════ */
-const SEC_COLORS = {
-  verse:'#7c3aed',chorus:'#ec4899',bridge:'#0ea5e9',
-  outro:'#10b981',intro:'#d97706',prechorus:'#f97316',
-};
+// ═══════════════════════════════════
+// CONSTANTS
+// ═══════════════════════════════════
+const SEC_COL = {verse:'#7c3aed',chorus:'#ec4899',bridge:'#0ea5e9',outro:'#10b981',intro:'#d97706',prechorus:'#f97316'};
 
-let sections = [
-  { id:'v1', type:'verse', num:1, label:'Verse 1',   content:'',
-    placeholder:'Write your first verse here…\nTell your story. Set the scene. Introduce the world of the song.' },
-  { id:'ch1', type:'chorus', num:1, label:'Chorus',  content:'',
-    placeholder:'Your chorus — the emotional peak.\nThe hook that sticks. The line they remember.' },
-  { id:'v2', type:'verse', num:2, label:'Verse 2',   content:'',
-    placeholder:'Deepen the story. New detail, same world.\nPush the narrative forward…' },
-  { id:'br1', type:'bridge', num:1, label:'Bridge',  content:'',
-    placeholder:'The bridge — a shift in perspective.\nContrast. Revelation. The emotional turn.' },
-];
-let activeId = 'v1';
-let activeAITab = 'suggest';
-let selectedThemes = new Set(['longing','night']);
-let rwMode = 'elevate';
-let pendingRewrite = '';
-
-const THEMES = ['longing','night','freedom','heartbreak','hope','city','nature',
-                'nostalgia','rebellion','love','loss','journey','memory','distance'];
+const THEMES = ['longing','night','freedom','heartbreak','hope','city','nature','nostalgia','rebellion','love','loss','journey','memory','distance'];
 
 const RW_MODES = [
-  {id:'elevate',  icon:'✨', name:'Elevate',    desc:'Upgrade imagery & word choice'},
-  {id:'simplify', icon:'◽', name:'Simplify',   desc:'Strip to essential truth'},
-  {id:'rhyme',    icon:'🔤', name:'Add Rhyme',  desc:'Introduce rhyme scheme'},
-  {id:'rhythm',   icon:'🥁', name:'Fix Rhythm', desc:'Balance syllable stress'},
-  {id:'darker',   icon:'🌑', name:'Darker',     desc:'Shift tone toward shadow'},
-  {id:'hopeful',  icon:'🌅', name:'Hopeful',    desc:'Find the light in the words'},
+  {id:'elevate',  icon:'✨',name:'Elevate',  desc:'Upgrade imagery & word choice'},
+  {id:'simplify', icon:'◽',name:'Simplify',  desc:'Strip to essential truth'},
+  {id:'rhyme',    icon:'🔤',name:'Add Rhyme', desc:'Introduce rhyme scheme'},
+  {id:'rhythm',   icon:'🥁',name:'Fix Rhythm',desc:'Balance syllable stress'},
+  {id:'darker',   icon:'🌑',name:'Darker',   desc:'Shift tone toward shadow'},
+  {id:'hopeful',  icon:'🌅',name:'Hopeful',  desc:'Find the light in the words'},
 ];
 
 const RHYME_DB = {
-  night:{perfect:['light','might','right','sight','white','bright','fight','flight','write','tight','quite','delight'],near:['mine','wine','line','fine','shine','kind','mind','find','time','vine'],family:['midnight','moonlight','starlight','twilight','daylight','tonight','overnight']},
-  love:{perfect:['above','dove','of','shove'],near:['move','groove','prove','you\'ve','enough','tough','rough'],family:['beloved','lovely','loveless','heartfelt','devoted','darling']},
-  heart:{perfect:['art','part','start','apart','smart','dart'],near:['hurt','burn','turn','learn','yearn','earn','return'],family:['heartache','heartbreak','heartbeat','sweetheart','wholehearted']},
-  rain:{perfect:['pain','gain','plain','train','brain','main','vain','chain','remain','again','explain','refrain'],near:['name','same','fame','game','flame','shame','claim','aim'],family:['rainfall','raindrops','rainstorm','rainbow','hurricane']},
-  fire:{perfect:['desire','higher','wire','tire','hire','entire','inspire','admire','expire'],near:['feel','real','steal','heal','reveal','appeal','deal'],family:['firelight','wildfire','campfire','hellfire','backfire']},
-  time:{perfect:['rhyme','climb','lime','chime','crime','prime','mime'],near:['mind','find','kind','blind','behind','remind'],family:['lifetime','sometime','overtime','bedtime','daytime','pastime','nighttime']},
-  home:{perfect:['foam','roam','dome','comb','gnome','chrome','poem','Rome'],near:['alone','stone','bone','phone','tone','zone','grown','known','shown'],family:['hometown','homeward','homesick','homemade','homeland']},
-  away:{perfect:['day','stay','say','play','way','lay','pay','sway','stray','grey','fray','pray'],near:['came','name','same','game','flame','claim'],family:['faraway','getaway','runaway','anyway','yesterday','someday']},
+  night:{p:['light','might','right','sight','white','bright','fight','flight','write','tight','delight'],n:['mine','wine','line','fine','shine','kind','mind','find'],f:['midnight','moonlight','starlight','twilight','daylight','tonight']},
+  love:{p:['above','dove','shove'],n:['move','groove','prove','enough','tough','rough'],f:['beloved','lovely','loveless','heartfelt','devoted']},
+  heart:{p:['art','part','start','apart','smart','dart'],n:['hurt','burn','turn','learn','yearn','return'],f:['heartache','heartbreak','heartbeat','sweetheart']},
+  rain:{p:['pain','gain','plain','train','brain','main','vain','chain','remain','again','explain','refrain'],n:['name','same','fame','game','flame','shame'],f:['rainfall','raindrops','rainstorm','rainbow']},
+  fire:{p:['desire','higher','wire','tire','hire','entire','inspire','admire','expire'],n:['feel','real','steal','heal','reveal','deal'],f:['firelight','wildfire','campfire','hellfire']},
+  time:{p:['rhyme','climb','lime','chime','crime','prime'],n:['mind','find','kind','blind','behind','remind'],f:['lifetime','sometime','overtime','bedtime','pastime']},
+  home:{p:['foam','roam','dome','comb','Rome'],n:['alone','stone','bone','phone','tone','zone','grown','known'],f:['hometown','homeward','homesick','homeland']},
+  away:{p:['day','stay','say','play','way','lay','pay','sway','stray','grey','pray'],n:['came','name','same','game','flame'],f:['faraway','getaway','runaway','yesterday']},
 };
 
-/* ═══════════════════════════════════
-   INIT
-   ═══════════════════════════════════ */
+// ═══════════════════════════════════
+// STATE
+// ═══════════════════════════════════
+let sections = [
+  {id:'v1', type:'verse',  num:1,label:'Verse 1', content:'', ph:'Write your first verse here…\nTell your story. Set the scene. Introduce the world of the song.'},
+  {id:'ch1',type:'chorus', num:1,label:'Chorus',  content:'', ph:'Your chorus — the emotional peak.\nThe hook that sticks. The line they remember.'},
+  {id:'v2', type:'verse',  num:2,label:'Verse 2', content:'', ph:'Deepen the story. New detail, same world.\nPush the narrative forward…'},
+  {id:'br1',type:'bridge', num:1,label:'Bridge',  content:'', ph:'The bridge — a shift in perspective.\nContrast. Revelation. The emotional turn.'},
+];
+let activeId   = 'v1';
+let activeTab  = 'suggest';
+let themes     = new Set(['longing','night']);
+let rwMode     = 'elevate';
+let pendRewrite= '';
+// Use a map to store suggestion texts safely (avoids HTML escape issues)
+let suggMap    = {};
+let suggIdx    = 0;
+
+// ═══════════════════════════════════
+// INIT
+// ═══════════════════════════════════
 document.addEventListener('DOMContentLoaded', () => {
-  const seed = localStorage.getItem('harmonia_lyric_seed');
-  if (seed) { sections[0].content = seed; localStorage.removeItem('harmonia_lyric_seed'); }
+  // Load seed from Style Transfer if available
+  try {
+    const seed = localStorage.getItem('harmonia_lyric_seed');
+    if (seed) { sections[0].content = seed; localStorage.removeItem('harmonia_lyric_seed'); }
+  } catch(e){}
   renderTabs();
   renderContent();
-  renderThemeChips();
+  renderThemes();
   renderRwModes();
   updateStats();
 });
 
-/* ═══════════════════════════════════
-   TABS
-   ═══════════════════════════════════ */
+// ═══════════════════════════════════
+// SECTION TABS
+// ═══════════════════════════════════
 function renderTabs() {
-  const el = document.getElementById('secTabs');
-  el.innerHTML = sections.map(s => {
-    const c = SEC_COLORS[s.type] || '#7c3aed';
-    return `<button class="sec-tab${s.id===activeId?' active':''}" onclick="switchSection('${s.id}')">
-      ${s.label}
-      <span class="sec-type-pill" style="background:rgba(${hex2rgb(c)},0.15);color:${c}">${s.type}</span>
-    </button>`;
-  }).join('') + `<button class="add-sec-btn" onclick="addSectionMenu()">+ Add</button>`;
+  document.getElementById('secTabs').innerHTML =
+    sections.map(s => {
+      const c = SEC_COL[s.type] || '#7c3aed';
+      return `<button class="sec-tab${s.id===activeId?' on':''}" onclick="switchSec('${s.id}')">
+        ${s.label}
+        <span class="type-pill" style="background:rgba(${h2r(c)},0.15);color:${c}">${s.type}</span>
+      </button>`;
+    }).join('') +
+    `<button class="add-btn" onclick="showAddMenu(event)">+ Add</button>`;
 }
 
-function switchSection(id) {
-  saveCurrentContent();
+function switchSec(id) {
+  saveCurrent();
   activeId = id;
   renderTabs();
   renderContent();
 }
 
-function saveCurrentContent() {
-  const ta = document.getElementById(`ta-${activeId}`);
+function saveCurrent() {
+  const ta = document.getElementById('ta-'+activeId);
   if (ta) { const s = sections.find(x=>x.id===activeId); if(s) s.content = ta.value; }
 }
 
-/* ═══════════════════════════════════
-   CONTENT RENDER
-   ═══════════════════════════════════ */
+// ═══════════════════════════════════
+// SECTION CONTENT
+// ═══════════════════════════════════
 function renderContent() {
-  const sec = sections.find(s => s.id === activeId);
+  const sec = sections.find(s=>s.id===activeId);
   if (!sec) return;
-  const c = SEC_COLORS[sec.type] || '#7c3aed';
-  document.getElementById('secContent').innerHTML = `
-    <div class="section-block">
-      <div class="sec-header">
-        <div class="sec-type-label" style="background:rgba(${hex2rgb(c)},0.12);color:${c};border:1px solid rgba(${hex2rgb(c)},0.2)">${sec.type.toUpperCase()}</div>
-        <div class="sec-num">${sec.label}</div>
-        <div class="sec-actions">
-          <button class="sec-act" onclick="duplicateSec('${sec.id}')" title="Duplicate">⧉ Duplicate</button>
-          ${sections.length>1?`<button class="sec-act del" onclick="deleteSec('${sec.id}')">✕ Delete</button>`:''}
+  const c = SEC_COL[sec.type] || '#7c3aed';
+  document.getElementById('lyricArea').innerHTML = `
+    <div class="sec-block">
+      <div class="sec-hd">
+        <div class="sec-lbl" style="background:rgba(${h2r(c)},0.12);color:${c};border:1px solid rgba(${h2r(c)},0.2)">${sec.type.toUpperCase()}</div>
+        <div class="sec-name">${sec.label}</div>
+        <div class="sec-acts">
+          <button class="sec-act" onclick="dupSec('${sec.id}')">⧉ Duplicate</button>
+          ${sections.length>1?`<button class="sec-act del" onclick="delSec('${sec.id}')">✕ Delete</button>`:''}
         </div>
       </div>
-      <textarea class="lyric-ta" id="ta-${sec.id}"
-        placeholder="${sec.placeholder}"
-        oninput="onTAInput(this)">${sec.content}</textarea>
+      <textarea class="lyric-ta" id="ta-${sec.id}" placeholder="${sec.ph.replace(/"/g,'&quot;')}" oninput="onInput(this)">${escHtml(sec.content)}</textarea>
       <div class="line-tools">
-        <button class="line-tool" onclick="quickRhyme()">🔤 Rhyme last word</button>
-        <button class="line-tool" onclick="runAnalyze()">📊 Analyze</button>
-        <button class="line-tool" onclick="continueLine()">✨ Continue line</button>
+        <button class="lt" onclick="quickRhyme()">🔤 Rhyme last word</button>
+        <button class="lt" onclick="runAnalyze()">📊 Analyze</button>
+        <button class="lt" onclick="continueLine()">✨ Continue line</button>
       </div>
       <div class="inline-rhymes" id="inlineRhymes"></div>
     </div>`;
-  autoH(document.getElementById(`ta-${sec.id}`));
+  autoH(document.getElementById('ta-'+sec.id));
 }
 
-function onTAInput(ta) {
-  saveCurrentContent();
+function escHtml(s) {
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function onInput(ta) {
+  saveCurrent();
   autoH(ta);
   updateStats();
 }
@@ -756,236 +532,237 @@ function onTAInput(ta) {
 function autoH(ta) {
   if (!ta) return;
   ta.style.height = 'auto';
-  ta.style.height = Math.max(90, ta.scrollHeight) + 'px';
+  ta.style.height = Math.max(88, ta.scrollHeight) + 'px';
 }
 
-/* ═══════════════════════════════════
-   STATS
-   ═══════════════════════════════════ */
+// ═══════════════════════════════════
+// STATS
+// ═══════════════════════════════════
 function updateStats() {
-  const all = sections.map(s => {
-    const ta = document.getElementById(`ta-${s.id}`);
-    return ta ? ta.value : s.content;
-  }).join(' ');
+  const all = sections.map(s=>{const ta=document.getElementById('ta-'+s.id);return ta?ta.value:s.content;}).join(' ');
   const words = all.trim() ? all.trim().split(/\s+/).length : 0;
-  const lines = all.split('\n').filter(l=>l.trim()).length;
-  document.getElementById('tbStats').innerHTML = `<strong>${words}</strong> words · <strong>${lines}</strong> lines · <strong>${sections.length}</strong> sections`;
-  document.getElementById('wordBadge').textContent = `${words} words`;
+  const lines  = all.split('\n').filter(l=>l.trim()).length;
+  document.getElementById('tbStat').innerHTML = `<strong>${words}</strong> words · <strong>${lines}</strong> lines · <strong>${sections.length}</strong> sections`;
+  document.getElementById('wcBadge').textContent = words+' words';
 }
 
-/* ═══════════════════════════════════
-   ADD SECTION MENU
-   ═══════════════════════════════════ */
-function addSectionMenu() {
-  const types = ['verse','chorus','bridge','outro','intro','prechorus'];
+// ═══════════════════════════════════
+// ADD SECTION MENU
+// ═══════════════════════════════════
+function showAddMenu(event) {
   const existing = document.getElementById('_addMenu');
   if (existing) { existing.remove(); return; }
-
+  const types = ['verse','chorus','bridge','outro','intro','prechorus'];
   const menu = document.createElement('div');
   menu.id = '_addMenu';
-  menu.style.cssText = 'position:fixed;background:var(--surface2);border:1px solid var(--border-hi);border-radius:12px;padding:8px;z-index:500;box-shadow:0 20px 50px rgba(0,0,0,0.6);min-width:150px;';
-
+  menu.style.cssText = 'position:fixed;background:var(--surface2);border:1px solid var(--border-hi);border-radius:11px;padding:7px;z-index:500;box-shadow:0 20px 50px rgba(0,0,0,0.6);min-width:148px;';
   types.forEach(type => {
-    const c = SEC_COLORS[type]||'#7c3aed';
-    const count = sections.filter(s=>s.type===type).length + 1;
-    const label = type==='chorus'||type==='bridge'||type==='outro'||type==='intro'
-      ? type.charAt(0).toUpperCase()+type.slice(1)
-      : `${type.charAt(0).toUpperCase()+type.slice(1)} ${count}`;
-    const b = document.createElement('button');
-    b.style.cssText = 'display:flex;align-items:center;gap:8px;width:100%;background:none;border:none;color:var(--text);font-family:var(--font-body);font-size:0.8rem;padding:8px 12px;border-radius:8px;cursor:pointer;text-align:left;transition:background 0.15s;';
+    const cnt   = sections.filter(s=>s.type===type).length + 1;
+    const label = (type==='chorus'||type==='outro'||type==='intro') ? type.charAt(0).toUpperCase()+type.slice(1) : type.charAt(0).toUpperCase()+type.slice(1)+' '+cnt;
+    const c     = SEC_COL[type]||'#7c3aed';
+    const b     = document.createElement('button');
+    b.style.cssText = 'display:flex;align-items:center;gap:8px;width:100%;background:none;border:none;color:var(--text);font-family:var(--font-body);font-size:0.79rem;padding:8px 11px;border-radius:7px;cursor:pointer;text-align:left;transition:background 0.15s;';
     b.innerHTML = `<span style="width:9px;height:9px;border-radius:3px;background:${c};display:inline-block;flex-shrink:0"></span>${label}`;
-    b.onmouseenter=()=>b.style.background='rgba(255,255,255,0.06)';
-    b.onmouseleave=()=>b.style.background='none';
-    b.onclick=()=>{ addSection(type,label,count); menu.remove(); };
+    b.onmouseenter = ()=> b.style.background = 'rgba(255,255,255,0.07)';
+    b.onmouseleave = ()=> b.style.background = 'none';
+    b.onclick = () => { addSec(type,label); menu.remove(); };
     menu.appendChild(b);
   });
-
-  const btn = document.querySelector('.add-sec-btn');
-  const r = btn.getBoundingClientRect();
-  menu.style.top=(r.bottom+6)+'px';
-  menu.style.left=r.left+'px';
+  // Position near the Add button
+  const r = event.target.getBoundingClientRect();
+  menu.style.top  = (r.bottom+5) + 'px';
+  menu.style.left = r.left + 'px';
   document.body.appendChild(menu);
-  setTimeout(()=>document.addEventListener('click',()=>menu.remove(),{once:true}),10);
+  // Close when clicking anywhere else
+  setTimeout(() => {
+    document.addEventListener('click', function closer(e) {
+      if (!menu.contains(e.target)) { menu.remove(); document.removeEventListener('click',closer); }
+    });
+  }, 10);
 }
 
-function addSection(type,label,count) {
-  const id = `${type.slice(0,2)}${count}_${Date.now()}`;
-  const placeholders = {
-    verse:'Continue the story…',chorus:'The hook that rings…',
-    bridge:'A shift, a revelation…',outro:'Fade out — resolution or mystery…',
-    intro:'Set the scene before the first word…',prechorus:'Build the tension…',
-  };
-  sections.push({id,type,num:count,label:label||`${type} ${count}`,content:'',placeholder:placeholders[type]||'Write here…'});
-  switchSection(id);
+function addSec(type, label) {
+  const cnt = sections.filter(s=>s.type===type).length + 1;
+  const id  = type.slice(0,2)+'_'+Date.now();
+  const phs = {verse:'Continue the story…',chorus:'The hook that rings…',bridge:'A shift, a revelation…',outro:'Fade out — resolution or mystery…',intro:'Set the scene…',prechorus:'Build the tension…'};
+  sections.push({id,type,num:cnt,label:label||type+' '+cnt,content:'',ph:phs[type]||'Write here…'});
+  switchSec(id);
 }
 
-function duplicateSec(id) {
+function dupSec(id) {
+  saveCurrent();
   const s = sections.find(x=>x.id===id);
   if (!s) return;
-  const ta = document.getElementById(`ta-${id}`);
-  const content = ta ? ta.value : s.content;
-  const newId = `${s.type.slice(0,2)}_d${Date.now()}`;
-  const idx = sections.findIndex(x=>x.id===id);
-  sections.splice(idx+1,0,{...s,id:newId,content});
-  switchSection(newId);
+  const newId = s.type.slice(0,2)+'_d'+Date.now();
+  const idx   = sections.findIndex(x=>x.id===id);
+  sections.splice(idx+1, 0, {...s, id:newId, content:s.content});
+  switchSec(newId);
 }
 
-function deleteSec(id) {
+function delSec(id) {
   const idx = sections.findIndex(s=>s.id===id);
-  sections.splice(idx,1);
-  switchSection(sections[Math.max(0,idx-1)].id);
+  sections.splice(idx, 1);
+  switchSec(sections[Math.max(0,idx-1)].id);
 }
 
-/* ═══════════════════════════════════
-   AI TABS
-   ═══════════════════════════════════ */
+// ═══════════════════════════════════
+// AI TAB SWITCHING
+// ═══════════════════════════════════
 function switchTab(tab) {
-  activeAITab = tab;
-  document.querySelectorAll('.ai-tab').forEach(t=>t.classList.toggle('active',t.dataset.tab===tab));
-  document.querySelectorAll('.tab-panel').forEach(p=>p.classList.toggle('active',p.id===`panel-${tab}`));
+  activeTab = tab;
+  document.querySelectorAll('.ai-tab').forEach(t => t.classList.toggle('on', t.dataset.tab===tab));
+  document.querySelectorAll('.tab-pane').forEach(p => p.classList.toggle('on', p.id==='pane-'+tab));
   if (tab==='analyze') runAnalyze();
 }
 
-/* ═══════════════════════════════════
-   THEME CHIPS
-   ═══════════════════════════════════ */
-function renderThemeChips() {
-  document.getElementById('themeChips').innerHTML = THEMES.map(t=>
-    `<button class="theme-chip${selectedThemes.has(t)?' on':''}" onclick="toggleTheme('${t}')">${t}</button>`
+// ═══════════════════════════════════
+// THEME CHIPS
+// ═══════════════════════════════════
+function renderThemes() {
+  document.getElementById('themeWrap').innerHTML = THEMES.map(t =>
+    `<button class="t-chip${themes.has(t)?' on':''}" onclick="toggleTheme('${t}')">${t}</button>`
   ).join('');
 }
 function toggleTheme(t) {
-  if(selectedThemes.has(t)) selectedThemes.delete(t); else selectedThemes.add(t);
-  renderThemeChips();
+  if (themes.has(t)) themes.delete(t); else themes.add(t);
+  renderThemes();
 }
 
-/* ═══════════════════════════════════
-   REWRITE MODES
-   ═══════════════════════════════════ */
+// ═══════════════════════════════════
+// REWRITE MODES
+// ═══════════════════════════════════
 function renderRwModes() {
-  document.getElementById('rwModes').innerHTML = RW_MODES.map(m=>
-    `<button class="rw-mode${m.id===rwMode?' on':''}" onclick="selectRwMode('${m.id}')">
-      <div class="rw-mode-icon">${m.icon}</div>
-      <div class="rw-mode-name">${m.name}</div>
-      <div class="rw-mode-desc">${m.desc}</div>
+  document.getElementById('rwModes').innerHTML = RW_MODES.map(m =>
+    `<button class="rw-mode${m.id===rwMode?' on':''}" onclick="setRwMode('${m.id}')">
+      <div class="rw-icon">${m.icon}</div>
+      <div class="rw-name">${m.name}</div>
+      <div class="rw-desc">${m.desc}</div>
     </button>`
   ).join('');
 }
-function selectRwMode(id) { rwMode=id; renderRwModes(); }
+function setRwMode(id) { rwMode = id; renderRwModes(); }
 
-/* ═══════════════════════════════════
-   SUGGEST — Grok API
-   ═══════════════════════════════════ */
+// ═══════════════════════════════════
+// SUGGEST (Grok API)
+// ═══════════════════════════════════
 async function getSuggestions() {
-  const btn = document.getElementById('suggestBtn');
-  const list = document.getElementById('suggList');
-  const ctx  = document.getElementById('ctxInput')?.value || '';
-  saveCurrentContent();
-  const sec = sections.find(s=>s.id===activeId);
+  const btn  = document.getElementById('suggestBtn');
+  const wrap = document.getElementById('suggWrap');
+  saveCurrent();
+  const sec     = sections.find(s=>s.id===activeId);
   const current = sec?.content || '';
-  const themes = [...selectedThemes].join(', ');
-  const allLyrics = sections.map(s=>{const ta=document.getElementById(`ta-${s.id}`);const c=ta?ta.value:s.content;return c?`[${s.label}]\n${c}`:null}).filter(Boolean).join('\n\n');
+  const themeStr= [...themes].join(', ');
+  const ctx     = document.getElementById('ctxIn')?.value || '';
+  const allLyrics = sections.map(s=>{
+    const ta=document.getElementById('ta-'+s.id);
+    const c=ta?ta.value:s.content;
+    return c ? '['+s.label+']\n'+c : null;
+  }).filter(Boolean).join('\n\n');
 
-  btn.disabled=true;
-  btn.innerHTML='<div class="spin"></div> Writing…';
-  list.innerHTML='<div style="color:var(--muted);font-size:0.8rem;padding:8px 0">Generating ideas…</div>';
+  btn.disabled = true;
+  btn.innerHTML = '<div class="spin"></div> Writing…';
+  wrap.innerHTML = '<div style="color:var(--muted);font-size:0.79rem;padding:8px 0">Generating ideas…</div>';
 
-  const systemPrompt = `You are an empathetic, skilled lyricist. Suggest 3 distinct lyric options for a "${sec?.type||'verse'}" section.
-
+  const sys = `You are an empathetic, skilled lyricist and songwriting collaborator.
+Suggest 3 distinct lyric options for a "${sec?.type||'verse'}" section.
 Rules:
-- Each suggestion: 1-4 lines max
-- Authentic, specific — avoid clichés and generic phrases  
-- Themes to incorporate: ${themes||'any'}
-- Vary the approaches: try concrete imagery, abstract emotion, narrative, etc.
-- ${ctx ? `Writer's context: "${ctx}"` : ''}
-- Return ONLY valid JSON (no markdown, no backticks):
-[{"text":"line1\\nline2","note":"brief stylistic description"},{"text":"...","note":"..."},{"text":"...","note":"..."}]`;
+- Each suggestion: 1-4 lines
+- Authentic, specific — avoid cliches
+- Themes to weave in: ${themeStr||'any'}
+- Vary approaches: try concrete imagery, abstract emotion, and narrative
+${ctx ? '- Writer context: "'+ctx+'"' : ''}
+- Return ONLY valid JSON array (no markdown backticks):
+[{"text":"line1\\nline2","note":"brief style note"},{"text":"...","note":"..."},{"text":"...","note":"..."}]`;
 
-  const userMsg = `Existing song:\n${allLyrics||'(blank canvas)'}\n\nSection to write: [${sec?.label}]\n${current||'(empty — suggest opening lines)'}`;
+  const usr = `Song so far:\n${allLyrics||'(blank canvas)'}\n\nSection: [${sec?.label}]\n${current||'(empty — suggest opening lines)'}`;
 
   try {
-    let raw = '';
-    const result = await callGrok(systemPrompt, userMsg, 900, 0.88);
-
+    let suggestions;
+    const result = await callGrok(sys, usr, 900, 0.88);
     if (result) {
-      raw = result.replace(/```json|```/g,'').trim();
+      const cleaned = result.replace(/```json|```/g,'').trim();
+      suggestions = JSON.parse(cleaned);
     } else {
-      // Demo fallback
-      raw = getDemoSuggestions(sec?.type, themes);
+      suggestions = getDemoSuggestions(sec?.type);
     }
+    // Store in map to avoid inline HTML escaping issues
+    suggMap = {};
+    suggestions.forEach((s, i) => { suggMap[i] = s.text; });
 
-    const suggestions = JSON.parse(raw);
-    list.innerHTML = `<div class="sugg-list">${suggestions.map((s,i)=>`
+    wrap.innerHTML = suggestions.map((s,i) => `
       <div class="sugg-card">
-        <div class="sugg-text">${s.text.replace(/\n/g,'<br>')}</div>
+        <div class="sugg-text">${escHtml(s.text).replace(/\n/g,'<br>')}</div>
         <div class="sugg-meta">
-          <span class="sugg-note">${s.note}</span>
-          <button class="sugg-insert" onclick="insertSugg(\`${esc(s.text)}\`)">Insert →</button>
+          <span class="sugg-note">${escHtml(s.note||'')}</span>
+          <button class="sugg-ins" onclick="insertSugg(${i})">Insert →</button>
         </div>
-      </div>`).join('')}</div>`;
+      </div>`).join('');
   } catch(e) {
-    list.innerHTML = `<div style="color:var(--red);font-size:0.78rem;padding:8px 0">⚠️ ${e.message}</div>`;
+    wrap.innerHTML = `<div style="color:var(--red);font-size:0.77rem;padding:8px 0">⚠️ ${escHtml(e.message)}</div>`;
   } finally {
-    btn.disabled=false; btn.innerHTML='✨ Generate Suggestions';
+    btn.disabled = false;
+    btn.innerHTML = '✨ Generate Suggestions';
   }
 }
 
-function getDemoSuggestions(type, themes) {
+function getDemoSuggestions(type) {
   const demos = {
-    verse: [
+    verse:[
       {text:"The city light turns amber then gold,\neverything we said dissolving into cold.\nI kept the window open just in case,\nbut winter moved into your empty space.",note:"Concrete imagery with emotional subtext"},
       {text:"I learned your name from a song I can't recall,\nsome late-night station on the FM dial.\nNow every frequency sounds like you.",note:"Indirect, atmospheric approach"},
       {text:"The keys were on the counter when I woke,\nno note, no noise — just everything we broke.",note:"Sparse, direct — let the image carry the weight"},
     ],
-    chorus: [
+    chorus:[
       {text:"Tell me where the light goes when it's gone,\ntell me how a song forgets its words.\nI'm still standing in the space you left —\na door left open for a world that never comes.",note:"Rhetorical questions building to a confession"},
       {text:"This is the part where I should let you go.\nThis is the part I never learned.",note:"Minimal, devastating — the unresolved admission"},
       {text:"We were fire once, we were smoke,\nnow just ash and open road.",note:"Compressed narrative arc — rise and fall in 8 words"},
     ],
-    bridge: [
+    bridge:[
       {text:"Maybe I'm the one who kept the door unlocked,\nleft the porch light burning past the time we'd talked.",note:"Self-implicating turn — shifts perspective"},
       {text:"Strange how the ordinary holds the weight —\nan unwashed mug, a half-read book, your handwriting on a date.",note:"Domestic detail as emotional devastation"},
+      {text:"I thought time would do what time is supposed to do.\nBut here it is again — the same hour, the same you.",note:"Circular structure mirrors emotional loop"},
     ],
   };
-  const arr = demos[type] || demos.verse;
-  return JSON.stringify(arr);
+  return demos[type] || demos.verse;
 }
 
-function insertSugg(text) {
-  const ta = document.getElementById(`ta-${activeId}`);
+function insertSugg(i) {
+  const text = suggMap[i];
+  if (text === undefined) return;
+  const ta = document.getElementById('ta-'+activeId);
   if (!ta) return;
   const cur = ta.value;
-  ta.value = cur ? cur+'\n'+text : text;
-  ta.dispatchEvent(new Event('input'));
-  onTAInput(ta);
+  ta.value  = cur ? cur + '\n' + text : text;
+  onInput(ta);
   toast('✓ Lines inserted');
 }
 
-/* ═══════════════════════════════════
-   RHYME FINDER
-   ═══════════════════════════════════ */
+// ═══════════════════════════════════
+// RHYME FINDER
+// ═══════════════════════════════════
 async function findRhymes() {
   const word = (document.getElementById('rhymeWord')?.value||'').trim().toLowerCase().replace(/[^a-z]/g,'');
   if (!word) return;
   const res = document.getElementById('rhymeResults');
-  res.innerHTML = '<div style="color:var(--muted);font-size:0.76rem">Finding…</div>';
+  res.innerHTML = '<div style="color:var(--muted);font-size:0.74rem">Finding…</div>';
 
   const local = RHYME_DB[word];
-  if (local) { renderRhymeResults(word, local, res); return; }
-
+  if (local) {
+    renderRhymes({perfect:local.p, near:local.n, family:local.f}, res);
+    return;
+  }
   try {
-    const result = await callGrok(
-      'You are a rhyme dictionary. Return ONLY valid JSON (no markdown): {"perfect":["w1","w2"],"near":["w1","w2"],"family":["compound1"]}. Each array 6-10 words. Perfect=identical ending. Near=slant rhymes. Family=compounds with the word.',
-      `Rhymes for: "${word}"`
+    const r = await callGrok(
+      'You are a rhyme dictionary. Return ONLY valid JSON (no markdown): {"perfect":["w1","w2"],"near":["w1","w2"],"family":["compound1"]}. Each array 6-10 words.',
+      'Rhymes for: "'+word+'"'
     );
-    if (result) {
-      const data = JSON.parse(result.replace(/```json|```/g,'').trim());
-      renderRhymeResults(word, data, res);
+    if (r) {
+      renderRhymes(JSON.parse(r.replace(/```json|```/g,'').trim()), res);
     } else {
-      res.innerHTML = '<div style="color:var(--muted);font-size:0.76rem">No results — try another word</div>';
+      res.innerHTML = '<div style="color:var(--muted2);font-size:0.74rem">Add your xAI API key for AI rhyme finding</div>';
     }
   } catch(e) {
-    res.innerHTML = '<div style="color:var(--red);font-size:0.76rem">⚠️ Could not find rhymes</div>';
+    res.innerHTML = `<div style="color:var(--red);font-size:0.74rem">⚠️ ${escHtml(e.message)}</div>`;
   }
 }
 
@@ -994,273 +771,289 @@ function preRhyme(word) {
   findRhymes();
 }
 
-function renderRhymeResults(word, data, container) {
-  container.innerHTML = `
-    ${data.perfect?.length ? `<div class="rhyme-section"><div class="rhyme-section-title">Perfect rhymes for "${word}"</div><div class="rhyme-words">${data.perfect.map(w=>`<span class="rw perfect" onclick="useRhyme('${w}')">${w}</span>`).join('')}</div></div>` : ''}
-    ${data.near?.length ? `<div class="rhyme-section" style="margin-top:10px"><div class="rhyme-section-title">Near / slant rhymes</div><div class="rhyme-words">${data.near.map(w=>`<span class="rw" onclick="useRhyme('${w}')">${w}</span>`).join('')}</div></div>` : ''}
-    ${data.family?.length ? `<div class="rhyme-section" style="margin-top:10px"><div class="rhyme-section-title">Word family</div><div class="rhyme-words">${data.family.map(w=>`<span class="rw" style="font-size:0.72rem;padding:3px 8px" onclick="useRhyme('${w}')">${w}</span>`).join('')}</div></div>` : ''}
-  `;
+function renderRhymes(data, el) {
+  el.innerHTML = [
+    data.perfect?.length  ? `<div class="rh-sec"><div class="rh-sec-title">Perfect rhymes</div><div class="rh-words">${data.perfect.map(w=>`<span class="rw p" onclick="useRhyme('${w}')">${w}</span>`).join('')}</div></div>` : '',
+    data.near?.length     ? `<div class="rh-sec"><div class="rh-sec-title">Near / slant</div><div class="rh-words">${data.near.map(w=>`<span class="rw" onclick="useRhyme('${w}')">${w}</span>`).join('')}</div></div>` : '',
+    data.family?.length   ? `<div class="rh-sec"><div class="rh-sec-title">Word family</div><div class="rh-words">${data.family.map(w=>`<span class="rw" style="font-size:0.71rem;padding:3px 7px" onclick="useRhyme('${w}')">${w}</span>`).join('')}</div></div>` : '',
+  ].join('');
 }
 
 function useRhyme(word) {
-  const ta = document.getElementById(`ta-${activeId}`);
+  const ta = document.getElementById('ta-'+activeId);
   if (!ta) return;
   const pos = ta.selectionStart;
-  ta.value = ta.value.slice(0,pos)+word+ta.value.slice(pos);
-  ta.selectionStart = ta.selectionEnd = pos+word.length;
+  ta.value  = ta.value.slice(0,pos) + word + ta.value.slice(pos);
+  ta.selectionStart = ta.selectionEnd = pos + word.length;
   ta.focus();
-  onTAInput(ta);
-  toast(`✓ "${word}" inserted`);
+  onInput(ta);
+  toast('✓ "'+word+'" inserted');
 }
 
-/* ═══════════════════════════════════
-   QUICK RHYME (inline)
-   ═══════════════════════════════════ */
+// ═══════════════════════════════════
+// QUICK RHYME (inline chips)
+// ═══════════════════════════════════
 async function quickRhyme() {
-  const ta = document.getElementById(`ta-${activeId}`);
+  const ta = document.getElementById('ta-'+activeId);
   if (!ta || !ta.value.trim()) return;
-  const lines = ta.value.split('\n').filter(l=>l.trim());
+  const lines    = ta.value.split('\n').filter(l=>l.trim());
   if (!lines.length) return;
   const lastWord = lines[lines.length-1].trim().split(/\s+/).pop().toLowerCase().replace(/[^a-z]/g,'');
-  const el = document.getElementById('inlineRhymes');
-  el.innerHTML = '<span style="font-size:0.68rem;color:var(--muted2)">Finding…</span>';
+  const el       = document.getElementById('inlineRhymes');
+  if (!el) return;
+  el.innerHTML   = '<span style="font-size:0.66rem;color:var(--muted2)">Finding…</span>';
 
   const local = RHYME_DB[lastWord];
-  let words = [];
+  let words   = [];
   if (local) {
-    words = [...(local.perfect||[]).slice(0,6), ...(local.near||[]).slice(0,3)];
+    words = [...(local.p||[]).slice(0,6), ...(local.n||[]).slice(0,3)];
   } else {
     try {
-      const r = await callGrok(
-        'Return ONLY valid JSON array of 8 rhyme words: ["word1","word2",...]. Mix perfect and slant rhymes.',
-        `8 rhymes for: "${lastWord}"`
-      );
-      words = r ? JSON.parse(r.replace(/```json|```/g,'').trim()) : [];
-    } catch(e) { words = []; }
+      const r = await callGrok('Return ONLY a JSON array of 8 rhyme words: ["w1","w2",...]. Mix perfect and slant.', '8 rhymes for: "'+lastWord+'"');
+      words   = r ? JSON.parse(r.replace(/```json|```/g,'').trim()) : [];
+    } catch(e){ words = []; }
   }
 
   if (words.length) {
-    el.innerHTML = `<span style="font-size:0.65rem;color:var(--muted2);align-self:center">"${lastWord}" →</span>` +
-      words.map(w=>`<span class="rhyme-chip" onclick="useRhyme('${w}')">${w}</span>`).join('');
+    el.innerHTML = `<span style="font-size:0.63rem;color:var(--muted2);align-self:center">"${escHtml(lastWord)}" →</span>` +
+      words.map(w => `<span class="r-chip" onclick="useRhyme('${w}')">${w}</span>`).join('');
   } else {
-    el.innerHTML = `<span style="font-size:0.72rem;color:var(--muted2)">No rhymes found — try the Rhyme tab</span>`;
+    el.innerHTML = `<span style="font-size:0.7rem;color:var(--muted2)">No rhymes found — try the Rhyme tab</span>`;
   }
 }
 
-/* ═══════════════════════════════════
-   CONTINUE LINE
-   ═══════════════════════════════════ */
+// ═══════════════════════════════════
+// CONTINUE LINE
+// ═══════════════════════════════════
 async function continueLine() {
-  const ta = document.getElementById(`ta-${activeId}`);
-  if (!ta||!ta.value.trim()) { toast('⚠️ Write something first'); return; }
+  const ta = document.getElementById('ta-'+activeId);
+  if (!ta || !ta.value.trim()) { toast('⚠️ Write something first'); return; }
   const el = document.getElementById('inlineRhymes');
-  el.innerHTML = '<span style="font-size:0.68rem;color:var(--muted2)">✨ Getting ideas…</span>';
-
+  if (!el) return;
+  el.innerHTML = '<span style="font-size:0.66rem;color:var(--muted2)">✨ Getting ideas…</span>';
   try {
-    const result = await callGrok(
+    const r = await callGrok(
       'Suggest 2 natural next lines for these lyrics. Return ONLY JSON: [{"line":"..."},{"line":"..."}]',
-      `Continue these lyrics:\n${ta.value}`
+      'Continue these lyrics:\n'+ta.value
     );
-    if (result) {
-      const lines = JSON.parse(result.replace(/```json|```/g,'').trim());
-      el.innerHTML = `<span style="font-size:0.65rem;color:var(--muted2);align-self:center">Next line:</span>` +
-        lines.map(l=>`<span class="rhyme-chip" onclick="insertSugg('${esc(l.line)}')" style="background:rgba(167,139,250,0.1);border-color:rgba(167,139,250,0.25);color:var(--accent)">${l.line}</span>`).join('');
+    if (r) {
+      const lines = JSON.parse(r.replace(/```json|```/g,'').trim());
+      // Store in a local map to avoid escaping issues
+      const cmap = {};
+      lines.forEach((l,i) => { cmap[i] = l.line; });
+      window._cmap = cmap;
+      el.innerHTML = `<span style="font-size:0.63rem;color:var(--muted2);align-self:center">Next line:</span>` +
+        lines.map((_,i) => `<span class="r-chip ai" onclick="insertFromCmap(${i})">${escHtml(lines[i].line)}</span>`).join('');
     } else {
-      el.innerHTML = '<span style="font-size:0.72rem;color:var(--muted2)">Add your API key for AI continuations</span>';
+      el.innerHTML = '<span style="font-size:0.7rem;color:var(--muted2)">Add your API key for AI continuations</span>';
     }
   } catch(e) {
-    el.innerHTML = `<span style="font-size:0.72rem;color:var(--red)">⚠️ Error: ${e.message}</span>`;
+    el.innerHTML = `<span style="font-size:0.7rem;color:var(--red)">⚠️ ${escHtml(e.message)}</span>`;
   }
 }
 
-/* ═══════════════════════════════════
-   ANALYZE
-   ═══════════════════════════════════ */
+function insertFromCmap(i) {
+  const text = (window._cmap||{})[i];
+  if (text === undefined) return;
+  const ta = document.getElementById('ta-'+activeId);
+  if (!ta) return;
+  const cur = ta.value;
+  ta.value  = cur ? cur + '\n' + text : text;
+  onInput(ta);
+  toast('✓ Line inserted');
+}
+
+// ═══════════════════════════════════
+// ANALYZE
+// ═══════════════════════════════════
 function runAnalyze() {
-  switchTab('analyze');
-  const ta = document.getElementById(`ta-${activeId}`);
+  if (activeTab !== 'analyze') switchTab('analyze');
+  const ta   = document.getElementById('ta-'+activeId);
   const text = ta ? ta.value : '';
-  const lines = text.split('\n').filter(l=>l.trim());
+  const lines= text.split('\n').filter(l=>l.trim());
 
   // Meter
-  const meterEl = document.getElementById('meterRows');
+  const mEl = document.getElementById('meterEl');
   if (lines.length) {
-    meterEl.innerHTML = lines.slice(0,5).map((line,idx)=>{
-      const syls = countSyl(line);
-      const dots = Array.from({length:Math.min(syls,18)},(_,i)=>
+    mEl.innerHTML = lines.slice(0,5).map((line,idx) => {
+      const n   = countSyl(line);
+      const dots= Array.from({length:Math.min(n,18)},(_,i)=>
         `<div class="sd${i%2===0?' s':''}"></div>`).join('');
-      return `<div class="meter-row"><div class="meter-num">${idx+1}</div><div class="syl-dots">${dots}</div><div class="meter-count">${syls}</div></div>`;
+      return `<div class="m-row"><div class="m-num">${idx+1}</div><div class="s-dots">${dots}</div><div class="m-count">${n}</div></div>`;
     }).join('');
-  } else meterEl.innerHTML='<div style="color:var(--muted2);font-size:0.76rem">Write lyrics to see meter</div>';
+  } else mEl.innerHTML = '<div style="color:var(--muted2);font-size:0.74rem">Write lyrics to see meter</div>';
 
   // Rhyme scheme
-  const schemeEl = document.getElementById('rhymeScheme');
+  const sEl = document.getElementById('schemeEl');
   if (lines.length >= 2) {
-    const scheme = detectScheme(lines);
-    const colors = ['#7c3aed','#ec4899','#0ea5e9','#10b981','#d97706','#dc2626'];
-    const map = {};let idx=0;
-    schemeEl.innerHTML = scheme.map(letter=>{
-      if(!map[letter]){map[letter]={c:colors[idx%colors.length]};idx++;}
-      const c=map[letter].c;
-      return `<div class="rs-letter" style="background:rgba(${hex2rgb(c)},0.15);color:${c};border-color:rgba(${hex2rgb(c)},0.25)">${letter}</div>`;
+    const scheme= detectScheme(lines);
+    const cols  = ['#7c3aed','#ec4899','#0ea5e9','#10b981','#d97706','#dc2626'];
+    const map   = {}; let ni=0;
+    sEl.innerHTML = scheme.map(letter => {
+      if (!map[letter]) { map[letter] = cols[ni%cols.length]; ni++; }
+      const c = map[letter];
+      return `<div class="rs" style="background:rgba(${h2r(c)},0.15);color:${c};border-color:rgba(${h2r(c)},0.25)">${letter}</div>`;
     }).join('');
-  } else schemeEl.innerHTML='<div style="color:var(--muted2);font-size:0.76rem">Needs 2+ lines</div>';
+  } else sEl.innerHTML = '<div style="color:var(--muted2);font-size:0.74rem">Needs 2+ lines</div>';
 
   // Mood
-  const moodEl = document.getElementById('moodBars');
+  const mdEl = document.getElementById('moodEl');
   if (text.trim()) {
     const moods = analyzeMood(text);
-    const moodColors = {dark:'#818cf8',uplifting:'#34d399',romantic:'#f472b6',melancholy:'#22d3ee',energetic:'#f59e0b'};
-    moodEl.innerHTML = Object.entries(moods).map(([m,v])=>`
+    const moodCols = {dark:'#818cf8',uplifting:'#34d399',romantic:'#f472b6',melancholy:'#22d3ee',energetic:'#fbbf24'};
+    mdEl.innerHTML = Object.entries(moods).map(([m,v]) => `
       <div class="mb-row">
-        <div class="mb-label">${m}</div>
-        <div class="mb-track"><div class="mb-fill" style="width:${v}%;background:${moodColors[m]||'#a78bfa'}"></div></div>
+        <div class="mb-lbl">${m}</div>
+        <div class="mb-track"><div class="mb-fill" style="width:${v}%;background:${moodCols[m]||'#a78bfa'}"></div></div>
         <div class="mb-val">${v}%</div>
       </div>`).join('');
-  } else moodEl.innerHTML='<div style="color:var(--muted2);font-size:0.76rem">Write to see mood</div>';
+  } else mdEl.innerHTML = '<div style="color:var(--muted2);font-size:0.74rem">Write to see mood</div>';
 }
 
 function countSyl(line) {
   return Math.max(1, (line.toLowerCase().replace(/[^a-z]/g,'').match(/[aeiouy]+/g)||[]).length);
 }
 function detectScheme(lines) {
-  const endings=lines.map(l=>{const ws=l.trim().split(/\s+/);return ws[ws.length-1].toLowerCase().replace(/[^a-z]/g,'').slice(-3)});
+  const ends = lines.map(l => { const ws=l.trim().split(/\s+/); return ws[ws.length-1].toLowerCase().replace(/[^a-z]/g,'').slice(-3); });
   const map={};let next=65;
-  return endings.map(e=>{if(!e)return'X';for(const[k,v] of Object.entries(map)){if(k.slice(-2)===e.slice(-2))return v;}const l=String.fromCharCode(next++);map[e]=l;return l;});
+  return ends.map(e => { if(!e) return 'X'; for(const[k,v] of Object.entries(map)){if(k.slice(-2)===e.slice(-2))return v;} const l=String.fromCharCode(next++); map[e]=l; return l; });
 }
 function analyzeMood(t) {
-  const l=t.toLowerCase();
-  const scores={
-    dark:(l.match(/dark|shadow|alone|cold|empty|lost|dead|pain|cry|tear|bleed|hollow|void|night|black/g)||[]).length,
-    uplifting:(l.match(/light|sun|hope|rise|free|dream|bright|joy|dance|smile|fly|soar|open|golden/g)||[]).length,
-    romantic:(l.match(/love|heart|kiss|hold|touch|warm|close|tender|beautiful|you|arms|eyes|skin|lips/g)||[]).length,
-    melancholy:(l.match(/gone|miss|remember|past|fade|away|leave|never|rain|grey|ghost|echo|memory|once/g)||[]).length,
+  const l = t.toLowerCase();
+  const sc = {
+    dark:     (l.match(/dark|shadow|alone|cold|empty|lost|dead|pain|cry|tear|bleed|hollow|night|black|grey/g)||[]).length,
+    uplifting:(l.match(/light|sun|hope|rise|free|dream|bright|joy|dance|smile|fly|soar|golden|open/g)||[]).length,
+    romantic: (l.match(/love|heart|kiss|hold|touch|warm|close|tender|beautiful|you|arms|eyes|lips/g)||[]).length,
+    melancholy:(l.match(/gone|miss|remember|past|fade|away|leave|never|rain|echo|memory|once|ghost/g)||[]).length,
     energetic:(l.match(/run|fire|burn|fight|move|shake|power|strong|now|alive|rage|loud|break|crash/g)||[]).length,
   };
-  const total=Math.max(Object.values(scores).reduce((a,b)=>a+b,0),1);
-  return Object.fromEntries(Object.entries(scores).map(([k,v])=>[k,Math.min(99,Math.round(v/total*100*2.5+(v>0?18:5)))]));
+  const total = Math.max(Object.values(sc).reduce((a,b)=>a+b,0),1);
+  return Object.fromEntries(Object.entries(sc).map(([k,v])=>[k,Math.min(98,Math.round(v/total*100*2.5+(v>0?16:5)))]));
 }
 
-/* ═══════════════════════════════════
-   REWRITE — Grok API
-   ═══════════════════════════════════ */
+// ═══════════════════════════════════
+// REWRITE (Grok API)
+// ═══════════════════════════════════
 async function doRewrite() {
-  saveCurrentContent();
+  saveCurrent();
   const sec = sections.find(s=>s.id===activeId);
-  const ta = document.getElementById(`ta-${activeId}`);
-  if (!ta||!ta.value.trim()) { toast('⚠️ Write some lyrics first'); return; }
+  const ta  = document.getElementById('ta-'+activeId);
+  if (!ta || !ta.value.trim()) { toast('⚠️ Write some lyrics first'); return; }
 
-  const btn=document.getElementById('rwBtn');
-  const resultEl=document.getElementById('rwResult');
-  const mode=RW_MODES.find(m=>m.id===rwMode);
+  const btn    = document.getElementById('rwBtn');
+  const resEl  = document.getElementById('rwResult');
+  const mode   = RW_MODES.find(m=>m.id===rwMode);
+  const rwActs = document.getElementById('rwActs');
 
-  btn.disabled=true; btn.innerHTML='<div class="spin"></div> Rewriting…';
-  resultEl.className='rewrite-result';
-  document.getElementById('rwActs').innerHTML='';
+  btn.disabled = true;
+  btn.innerHTML= '<div class="spin"></div> Rewriting…';
+  resEl.className = 'rw-result';
+  rwActs.innerHTML= '';
 
-  const modeInstructions={
-    elevate:'Improve word choice, imagery, metaphors. Make every word earn its place. Elevate poetic quality without losing meaning.',
-    simplify:'Strip to essential truth. Remove all excess. What is the bare, honest core of this?',
-    rhyme:'Introduce a clear rhyme scheme (ABAB or AABB or ABCB) while preserving meaning. Keep rhymes natural.',
-    rhythm:'Fix the rhythmic flow so lines have natural stress patterns for singing. Consistent syllable counts.',
-    darker:'Shift the emotional tone darker — more shadow, more weight, more difficult truth.',
-    hopeful:'Find hope or light in these words. Shift the emotional register toward something more healing and forward-looking.',
+  const instructions = {
+    elevate:  'Improve word choice, imagery, metaphors. Make every word earn its place. Elevate poetic quality without losing meaning.',
+    simplify: 'Strip to essential truth. Remove all excess words. What is the bare, honest core?',
+    rhyme:    'Introduce a clear rhyme scheme (ABAB or AABB or ABCB) while preserving meaning. Keep rhymes natural, not forced.',
+    rhythm:   'Fix the rhythmic flow so lines have natural stress patterns for singing. Aim for consistent syllable counts.',
+    darker:   'Shift the emotional tone darker — more shadow, more weight, more difficult truth. Same story, harder edge.',
+    hopeful:  'Find hope or light in these words. Shift the emotional register toward something more healing and forward-looking.',
   };
 
   try {
-    const result = await callGrok(
-      `You are a collaborative lyricist. Rewrite these lyrics: ${modeInstructions[rwMode]}\n\nReturn ONLY the rewritten lyrics — no preamble, no explanation. Just the lines.`,
-      `Rewrite:\n${ta.value}`
+    const r = await callGrok(
+      `You are a collaborative lyricist and editor. Rewrite these lyrics with this approach: ${instructions[rwMode]}\n\nReturn ONLY the rewritten lyrics — no preamble, no explanation, no quotation marks. Just the lines.`,
+      'Rewrite:\n'+ta.value,
+      700, 0.82
     );
+    const output = r || getDemoRewrite(rwMode);
+    pendRewrite  = output;
 
-    const output = result || getDemoRewrite(rwMode, ta.value);
-    pendingRewrite = output;
-
-    resultEl.className='rewrite-result show la-stream';
-    resultEl.textContent='';
-    const chars=output.split('');
-    let i=0;
-    const spd=Math.max(8,Math.round(1800/chars.length));
-    const type=()=>{if(i<chars.length){resultEl.textContent+=chars[i++];setTimeout(type,spd);}else resultEl.classList.remove('la-stream');};
+    resEl.className = 'rw-result show stream';
+    resEl.textContent = '';
+    const chars = output.split('');
+    const spd   = Math.max(7, Math.round(1800/chars.length));
+    let i = 0;
+    function type() { if(i<chars.length){resEl.textContent+=chars[i++];setTimeout(type,spd);}else resEl.classList.remove('stream'); }
     type();
 
-    document.getElementById('rwActs').innerHTML=`
-      <button class="ra-btn" style="background:rgba(52,211,153,0.1);border-color:rgba(52,211,153,0.25);color:var(--green)" onclick="acceptRewrite()">✓ Use this</button>
-      <button class="ra-btn" onclick="doRewrite()">↺ Try again</button>`;
+    rwActs.innerHTML = `
+      <button class="ra" style="background:rgba(52,211,153,0.1);border-color:rgba(52,211,153,0.25);color:var(--green)" onclick="acceptRewrite()">✓ Use this</button>
+      <button class="ra" onclick="doRewrite()">↺ Try again</button>`;
   } catch(e) {
-    resultEl.className='rewrite-result show';
-    resultEl.style.color='var(--red)';
-    resultEl.textContent='⚠️ '+e.message;
+    resEl.className = 'rw-result show';
+    resEl.style.color = 'var(--red)';
+    resEl.textContent = '⚠️ '+e.message;
   } finally {
-    btn.disabled=false; btn.innerHTML=`${mode.icon} Rewrite: ${mode.name}`;
+    btn.disabled = false;
+    btn.innerHTML= (mode ? mode.icon+' Rewrite: '+mode.name : '↺ Rewrite Active Section');
     renderRwModes();
   }
 }
 
-function getDemoRewrite(mode, original) {
-  const starters={
-    elevate:'Every syllable is deliberate now, carved from the weight of what wasn\'t said.',
-    simplify:'You left. I stayed. The silence filled the space.',
-    rhyme:'The room remembers every word we spoke,\neach photograph a wound that won\'t unhook.\nI keep returning to the moment broke,\nbut can\'t unwrite the lines inside this book.',
-    rhythm:'The walls still hold the shape of everything,\nevery silence has a melody to sing.',
-    darker:'Something died here slowly, in the in-between — not with thunder but with rooms going cold one degree at a time.',
-    hopeful:'Even in this the light is somewhere finding its way back, the way morning always manages to return.',
+function getDemoRewrite(mode) {
+  const d = {
+    elevate:  'Every syllable arrives with intention now — carved from the weight of what was left unspoken, deliberate as a room that holds its last breath.',
+    simplify: 'You left. I stayed. The silence filled the space between.',
+    rhyme:    'The room remembers every word we spoke,\neach photograph a wound that will not unhook.\nI keep returning to the moment that broke,\nbut cannot unwrite the lines inside this book.',
+    rhythm:   'The walls still hold the shape of everything,\nevery silence has its own melody to sing.',
+    darker:   'Something died here slowly in the in-between — not with thunder but with rooms going cold one degree at a time, the light leaving things quietly, like a tide that simply stops returning.',
+    hopeful:  'Even in this the light is somewhere finding its way back — the way morning always manages to return, the way a held breath eventually becomes breathing again.',
   };
-  return starters[mode] || 'The rewrite would appear here with your API key connected.';
+  return d[mode] || d.elevate;
 }
 
 function acceptRewrite() {
-  const ta=document.getElementById(`ta-${activeId}`);
-  if(ta&&pendingRewrite){
-    ta.value=pendingRewrite;
-    onTAInput(ta);
+  const ta = document.getElementById('ta-'+activeId);
+  if (ta && pendRewrite) {
+    ta.value = pendRewrite;
+    onInput(ta);
     toast('✓ Rewrite applied');
-    document.getElementById('rwResult').className='rewrite-result';
-    document.getElementById('rwActs').innerHTML='';
-    pendingRewrite='';
+    document.getElementById('rwResult').className = 'rw-result';
+    document.getElementById('rwActs').innerHTML   = '';
+    pendRewrite = '';
   }
 }
 
-/* ═══════════════════════════════════
-   EXPORT / COPY
-   ═══════════════════════════════════ */
-function getAllLyrics() {
-  saveCurrentContent();
-  const title=document.getElementById('songTitle')?.value||'Untitled Song';
-  let out=`${title}\n${'─'.repeat(Math.min(title.length,40))}\n\n`;
-  sections.forEach(s=>{
-    const ta=document.getElementById(`ta-${s.id}`);
-    const c=ta?ta.value:s.content;
-    if(c.trim()) out+=`[${s.label}]\n${c}\n\n`;
+// ═══════════════════════════════════
+// EXPORT / COPY
+// ═══════════════════════════════════
+function getAllText() {
+  saveCurrent();
+  const title = document.getElementById('songTitle')?.value || 'Untitled Song';
+  let out = title + '\n' + '─'.repeat(Math.min(title.length,40)) + '\n\n';
+  sections.forEach(s => {
+    const ta = document.getElementById('ta-'+s.id);
+    const c  = ta ? ta.value : s.content;
+    if (c.trim()) out += '['+s.label+']\n'+c+'\n\n';
   });
   return out.trim();
 }
 function copyAll() {
-  navigator.clipboard.writeText(getAllLyrics()).then(()=>toast('✓ All lyrics copied'));
+  navigator.clipboard.writeText(getAllText()).then(() => toast('✓ All lyrics copied'));
 }
 function exportTxt() {
-  const title=document.getElementById('songTitle')?.value||'Untitled Song';
-  const blob=new Blob([getAllLyrics()],{type:'text/plain'});
-  const a=document.createElement('a');
-  a.href=URL.createObjectURL(blob);
-  a.download=title.replace(/\s+/g,'-').toLowerCase()+'.txt';
+  const title = document.getElementById('songTitle')?.value || 'Untitled Song';
+  const blob  = new Blob([getAllText()], {type:'text/plain'});
+  const a     = document.createElement('a');
+  a.href      = URL.createObjectURL(blob);
+  a.download  = title.toLowerCase().replace(/\s+/g,'-').replace(/[^a-z0-9-]/g,'') + '.txt';
   a.click();
-  toast('✓ Exported');
+  toast('✓ Exported as '+a.download);
 }
 
-/* ═══════════════════════════════════
-   UTILITY
-   ═══════════════════════════════════ */
-function hex2rgb(hex){
-  if(!hex||hex.length<7) return '167,139,250';
-  return `${parseInt(hex.slice(1,3),16)},${parseInt(hex.slice(3,5),16)},${parseInt(hex.slice(5,7),16)}`;
+// ═══════════════════════════════════
+// UTILITIES
+// ═══════════════════════════════════
+function h2r(hex) {
+  if (!hex || hex.length < 7) return '167,139,250';
+  return parseInt(hex.slice(1,3),16)+','+parseInt(hex.slice(3,5),16)+','+parseInt(hex.slice(5,7),16);
 }
-function esc(s){return s.replace(/\\/g,'\\\\').replace(/`/g,'\\`').replace(/\$/g,'\\$')}
-function toast(msg){
-  const t=document.getElementById('laToast');
-  document.getElementById('toastText').textContent=msg;
+
+function toast(msg) {
+  document.getElementById('toastTxt').textContent = msg;
+  const t = document.getElementById('laToast');
   t.classList.add('show');
-  setTimeout(()=>t.classList.remove('show'),2400);
+  setTimeout(() => t.classList.remove('show'), 2400);
 }
 </script>
 </body>
