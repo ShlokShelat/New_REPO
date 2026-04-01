@@ -445,3 +445,103 @@ main.auth-wrapper {
 @media (max-width: 420px) {
   .auth-card { padding: 28px 20px 24px; }
 }
+
+/* ===== ADD THESE STYLES TO YOUR auth.css ===== */
+
+/* Toast */
+.toast {
+  position: fixed;
+  bottom: 32px;
+  left: 50%;
+  transform: translateX(-50%) translateY(20px);
+  background: var(--surface, #1a1a2e);
+  border: 1px solid rgba(255,255,255,0.1);
+  color: #e2e8f0;
+  padding: 12px 24px;
+  border-radius: 12px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s, transform 0.3s;
+  z-index: 9999;
+  white-space: nowrap;
+}
+.toast.show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+.toast-success { border-color: rgba(34,197,94,0.4); color: #86efac; }
+.toast-error   { border-color: rgba(239,68,68,0.4);  color: #fca5a5; }
+.toast-warn    { border-color: rgba(234,179,8,0.4);   color: #fde047; }
+
+/* Auth toggle indicator */
+.auth-toggle {
+  position: relative;
+  display: flex;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 12px;
+  padding: 4px;
+  margin-bottom: 28px;
+}
+.toggle-btn {
+  flex: 1;
+  background: none;
+  border: none;
+  color: #64748b;
+  font-size: 0.875rem;
+  font-weight: 600;
+  padding: 9px 16px;
+  border-radius: 9px;
+  cursor: pointer;
+  position: relative;
+  z-index: 1;
+  transition: color 0.2s;
+  font-family: inherit;
+}
+.toggle-btn.active { color: #e2e8f0; }
+.toggle-indicator {
+  position: absolute;
+  top: 4px; left: 4px;
+  width: calc(50% - 4px);
+  height: calc(100% - 8px);
+  background: linear-gradient(135deg, #7c3aed, #db2777);
+  border-radius: 8px;
+  transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1);
+}
+
+/* Hidden form */
+.auth-form.hidden { display: none; }
+
+/* Strength bar */
+.strength-bar {
+  height: 4px;
+  background: rgba(255,255,255,0.08);
+  border-radius: 99px;
+  margin-top: 6px;
+  overflow: hidden;
+}
+.strength-fill {
+  height: 100%;
+  width: 0;
+  border-radius: 99px;
+  transition: width 0.3s, background 0.3s;
+}
+.strength-label {
+  font-size: 0.72rem;
+  font-weight: 600;
+  margin-top: 4px;
+  display: block;
+}
+
+/* Btn loader spin */
+.btn-loader svg {
+  animation: spin 0.8s linear infinite;
+  width: 20px;
+  height: 20px;
+}
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
