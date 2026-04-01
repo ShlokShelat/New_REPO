@@ -302,12 +302,13 @@ input[type=range]::-webkit-slider-thumb:active{transform:scale(1.3)}
 <div class="toast" id="toast"><span id="toastMsg"></span></div>
 
 <script>
-// ═══════════════════════════════════
-// CONFIGURATION — paste your xAI key
-// ═══════════════════════════════════
-const XAI_KEY   = 'xai-Qe70VqSGQl6hir1VMvh4ZHWJMX8hqBs5Iv4xQvO7Bp4NtuccFTlyDqNs2ejEKOUGByOX9tsi1qbB7GAC';
-const XAI_URL   = 'https://api.x.ai/v1/chat/completions';
-const XAI_MODEL = 'grok-3-latest';
+// ═══════════════════════════════════════════════════════
+// xAI PROXY CONFIG
+// Calls local proxy.js which forwards to api.x.ai
+// Run: node proxy.js   (in the harmonia folder)
+// ═══════════════════════════════════════════════════════
+const PROXY_URL  = 'http://localhost:3579/chat';
+const XAI_MODEL  = 'grok-3-latest';
 
 // ═══════════════════════════════════
 // STYLE PRESETS
@@ -480,28 +481,27 @@ async function doTransfer() {
 
   let output = '';
   try {
-    if (XAI_KEY && XAI_KEY !== 'YOUR_XAI_API_KEY_HERE') {
-      const resp = await fetch(XAI_URL, {
-        method:'POST',
-        headers:{'Content-Type':'application/json','Authorization':'Bearer '+XAI_KEY},
-        body:JSON.stringify({
-          model: XAI_MODEL,
-          messages:[
-            {role:'system', content:sysProm},
-            {role:'user',   content:'Transform this text:\n\n"'+ta.value.trim()+'"'}
+    try {
+      const resp = await fetch(PROXY_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          model:       XAI_MODEL,
+          messages:    [
+            { role: 'system', content: sysProm },
+            { role: 'user',   content: 'Transform this text:\n\n"' + ta.value.trim() + '"' },
           ],
-          max_tokens:900,
-          temperature: Math.round(c/100*1.4*10)/10,
+          max_tokens:  900,
+          temperature: Math.round(c / 100 * 1.4 * 10) / 10,
         }),
       });
-      if (!resp.ok) {
-        const err = await resp.json().catch(()=>({error:{message:'HTTP '+resp.status}}));
-        throw new Error(err.error?.message || 'API error '+resp.status);
-      }
+      if (!resp.ok) throw new Error('Proxy error ' + resp.status);
       const d = await resp.json();
-      output = d.choices?.[0]?.message?.content || 'Empty response from API.';
-    } else {
-      await new Promise(r => setTimeout(r, 1200));
+      output = d.choices?.[0]?.message?.content || '';
+      if (!output) throw new Error('Empty response');
+    } catch(proxyErr) {
+      console.warn('Proxy unavailable, using demo:', proxyErr.message);
+      await new Promise(r => setTimeout(r, 900));
       output = DEMO_OUT[active.id] || DEMO_OUT.jazz;
     }
     showResult(output);
