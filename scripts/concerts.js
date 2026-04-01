@@ -345,7 +345,7 @@ const ARTISTS_SPOTLIGHT = [
   { id: 'a004', name: 'The Midnight Accord', genre: 'Neo Soul', emoji: '🎷', gradFrom: '#db2777', gradTo: '#f97316', followers: '15.7K', upcoming: 1, rating: '4.9' },
 ];
 
-// ─── State ──────────────────────────────────────────────────────────────────
+// ─── State ───────────────────────────────────────────────────────────────────
 let state = {
   activeTab: 'all',
   viewMode: 'grid',
@@ -379,7 +379,7 @@ document.addEventListener('DOMContentLoaded', () => {
   updateMyTicketsCount();
 });
 
-// ─── Hero particles ───────────────────────────────────────────────────────────
+// ─── Hero particles ──────────────────────────────────────────────────────────
 function spawnParticles() {
   const container = document.getElementById('concertParticles');
   if (!container) return;
@@ -410,7 +410,9 @@ function initHero() {
   }
   document.getElementById('totalConcertsCount').textContent = CONCERTS_DATA.length + '+';
   document.getElementById('citiesCount').textContent = [...new Set(CONCERTS_DATA.map(c => c.city).filter(c => c !== 'Online'))].length;
-  document.getElementById('liveNowCount').textContent = LIVE_STREAMS.length;
+  // Only update the first liveNowCount element (hero has a duplicate id)
+  const liveCountEls = document.querySelectorAll('#liveNowCount');
+  liveCountEls.forEach(el => { el.textContent = LIVE_STREAMS.length; });
 }
 
 // ─── Featured Concert ────────────────────────────────────────────────────────
@@ -433,7 +435,7 @@ function renderFeaturedConcert() {
 
   const firstAvailable = fc.tiers.find(t => t.available);
   if (firstAvailable) {
-    document.getElementById('fcPriceFrom').textContent = firstAvailable.price === 0 ? 'FREE' : `₹${firstAvailable.price.toLocaleString()}`;
+    document.getElementById('fcPriceFrom').textContent = firstAvailable.price === 0 ? 'FREE' : `\u20B9${firstAvailable.price.toLocaleString()}`;
   }
 
   // Render ticket options
@@ -448,7 +450,7 @@ function renderFeaturedConcert() {
         <strong class="to-name">${tier.name}</strong>
         <span class="to-desc">${tier.desc}</span>
       </div>
-      <span class="to-price">${tier.soldOut ? 'Sold Out' : (tier.price === 0 ? 'Free' : '₹' + tier.price.toLocaleString())}</span>
+      <span class="to-price">${tier.soldOut ? 'Sold Out' : (tier.price === 0 ? 'Free' : '\u20B9' + tier.price.toLocaleString())}</span>
       <div class="to-radio"></div>
     `;
     if (!tier.soldOut) {
@@ -474,20 +476,36 @@ function renderFeaturedConcert() {
 function initFeaturedTicketPanel() {
   const qtyMinus = document.getElementById('fcQtyMinus');
   const qtyPlus  = document.getElementById('fcQtyPlus');
-  if (qtyMinus) qtyMinus.addEventListener('click', () => { if (state.featuredQty > 1) { state.featuredQty--; document.getElementById('fcQtyValue').textContent = state.featuredQty; updateFeaturedTotal(); }});
-  if (qtyPlus)  qtyPlus.addEventListener('click', () => { if (state.featuredQty < 8) { state.featuredQty++; document.getElementById('fcQtyValue').textContent = state.featuredQty; updateFeaturedTotal(); }});
+  if (qtyMinus) {
+    qtyMinus.addEventListener('click', () => {
+      if (state.featuredQty > 1) {
+        state.featuredQty--;
+        document.getElementById('fcQtyValue').textContent = state.featuredQty;
+        updateFeaturedTotal();
+      }
+    });
+  }
+  if (qtyPlus) {
+    qtyPlus.addEventListener('click', () => {
+      if (state.featuredQty < 8) {
+        state.featuredQty++;
+        document.getElementById('fcQtyValue').textContent = state.featuredQty;
+        updateFeaturedTotal();
+      }
+    });
+  }
 }
 
+// FIX: Removed the broken duplicate line with the invalid `·` operator
 function updateFeaturedTotal() {
   const btn = document.getElementById('fcGetTicketsBtn');
   if (!state.featuredTier || !btn) return;
   const total = state.featuredTier.price * state.featuredQty;
-  btn.textContent = total === 0
-    ? `🎟️ Reserve Free Ticket${state.featuredQty > 1 ? 's' : ''}`
-    : `🎟️ Get ${state.featuredQty} Ticket${state.featuredQty > 1 ? 's' · '' : ''}— ₹${total.toLocaleString()}`;
-  btn.textContent = total === 0
-    ? `🎟️ Reserve${state.featuredQty > 1 ? ' ' + state.featuredQty + ' ' : ' '}Free Ticket${state.featuredQty > 1 ? 's' : ''}`
-    : `🎟️ ${state.featuredQty} Ticket${state.featuredQty > 1 ? 's' : ''} · ₹${total.toLocaleString()}`;
+  if (total === 0) {
+    btn.textContent = `\uD83C\uDFAB Reserve${state.featuredQty > 1 ? ' ' + state.featuredQty + ' ' : ' '}Free Ticket${state.featuredQty > 1 ? 's' : ''}`;
+  } else {
+    btn.textContent = `\uD83C\uDFAB ${state.featuredQty} Ticket${state.featuredQty > 1 ? 's' : ''} \u00B7 \u20B9${total.toLocaleString()}`;
+  }
 }
 
 document.addEventListener('click', (e) => {
@@ -497,7 +515,7 @@ document.addEventListener('click', (e) => {
   }
 });
 
-// ─── Live Streams ─────────────────────────────────────────────────────────────
+// ─── Live Streams ────────────────────────────────────────────────────────────
 function renderLiveStreams() {
   const container = document.getElementById('liveStreamCards');
   if (!container) return;
@@ -509,14 +527,14 @@ function renderLiveStreams() {
       <div class="ls-thumb">
         <div class="ls-thumb-bg" style="background: linear-gradient(135deg, ${ls.gradFrom}, ${ls.gradTo})"></div>
         <div class="ls-live-pill"><span class="live-dot"></span>LIVE</div>
-        <div class="ls-viewers">👁 ${ls.viewers}</div>
+        <div class="ls-viewers">\uD83D\uDC41 ${ls.viewers}</div>
         <span style="position:relative;z-index:1;font-size:3rem">${ls.emoji}</span>
       </div>
       <div class="ls-body">
         <div class="ls-artist">${ls.artist}</div>
         <div class="ls-info">
           <span>${ls.show}</span>
-          <span>·</span>
+          <span>&middot;</span>
           <span style="color:var(--accent1)">${ls.genre}</span>
         </div>
       </div>
@@ -526,7 +544,7 @@ function renderLiveStreams() {
   });
 }
 
-// ─── Concerts Grid ────────────────────────────────────────────────────────────
+// ─── Concerts Grid ───────────────────────────────────────────────────────────
 function getFilteredConcerts() {
   let list = [...CONCERTS_DATA];
 
@@ -539,8 +557,8 @@ function getFilteredConcerts() {
   // Genre
   if (state.genre !== 'all') list = list.filter(c => c.genreTag === state.genre);
 
-  // City
-  if (state.city !== 'all') list = list.filter(c => c.city.toLowerCase().includes(state.city));
+  // FIX: Added .toLowerCase() to state.city for case-insensitive matching
+  if (state.city !== 'all') list = list.filter(c => c.city.toLowerCase().includes(state.city.toLowerCase()));
 
   // Search
   if (state.searchQuery.trim()) {
@@ -567,7 +585,7 @@ function renderConcertsGrid() {
   if (!grid) return;
 
   const list = getFilteredConcerts();
-  countEl.textContent = `${list.length} event${list.length !== 1 ? 's' : ''}`;
+  if (countEl) countEl.textContent = `${list.length} event${list.length !== 1 ? 's' : ''}`;
 
   grid.innerHTML = '';
   grid.className = `concerts-grid ${state.viewMode === 'list' ? 'view-list' : ''}`;
@@ -602,11 +620,11 @@ function createConcertCard(concert) {
   const available = concert.tiers.some(t => t.available && !t.soldOut);
 
   const statusBadge = {
-    sold:     `<span class="cc-badge cc-badge-sold">Sold Out</span>`,
-    few:      `<span class="cc-badge cc-badge-few">Few Left</span>`,
-    available:`<span class="cc-badge cc-badge-avail">Available</span>`,
-    stream:   `<span class="cc-badge cc-badge-stream">🎬 Stream</span>`,
-    free:     `<span class="cc-badge cc-badge-free">Free</span>`,
+    sold:      `<span class="cc-badge cc-badge-sold">Sold Out</span>`,
+    few:       `<span class="cc-badge cc-badge-few">Few Left</span>`,
+    available: `<span class="cc-badge cc-badge-avail">Available</span>`,
+    stream:    `<span class="cc-badge cc-badge-stream">\uD83C\uDFA6 Stream</span>`,
+    free:      `<span class="cc-badge cc-badge-free">Free</span>`,
   }[concert.status] || '';
 
   const div = document.createElement('div');
@@ -652,11 +670,11 @@ function createConcertCard(concert) {
       <div class="cc-price-block">
         ${concert.status === 'free' || minPrice === 0
           ? '<div class="cc-price-free">FREE</div>'
-          : `<span class="cc-from">From</span><div class="cc-price">₹${minPrice.toLocaleString()}</div>`
+          : `<span class="cc-from">From</span><div class="cc-price">\u20B9${minPrice.toLocaleString()}</div>`
         }
       </div>
       <button class="btn-card-tickets" ${concert.status === 'sold' ? 'disabled' : ''} onclick="openModal('${concert.id}')">
-        ${concert.status === 'sold' ? 'Sold Out' : concert.isStreaming ? '▶ Watch' : '🎟 Tickets'}
+        ${concert.status === 'sold' ? 'Sold Out' : concert.isStreaming ? '\u25B6 Watch' : '\uD83C\uDFAB Tickets'}
       </button>
     </div>
   `;
@@ -673,7 +691,7 @@ function createConcertCard(concert) {
   return div;
 }
 
-// ─── Bookmark ─────────────────────────────────────────────────────────────────
+// ─── Bookmark ────────────────────────────────────────────────────────────────
 function toggleBookmark(e, id) {
   e.stopPropagation();
   const idx = state.bookmarks.indexOf(id);
@@ -688,7 +706,7 @@ function toggleBookmark(e, id) {
   renderConcertsGrid();
 }
 
-// ─── Concert Modal ────────────────────────────────────────────────────────────
+// ─── Concert Modal ───────────────────────────────────────────────────────────
 function openModal(id) {
   const concert = CONCERTS_DATA.find(c => c.id === id);
   if (!concert) return;
@@ -706,7 +724,7 @@ function openModal(id) {
   document.getElementById('cmGenreBadge').textContent = concert.genre;
 
   // Details
-  document.getElementById('cmDate').innerHTML = `<strong>${concert.dateDisplay} · ${concert.timeDisplay}</strong><span>${concert.duration}</span>`;
+  document.getElementById('cmDate').innerHTML = `<strong>${concert.dateDisplay} \u00B7 ${concert.timeDisplay}</strong><span>${concert.duration}</span>`;
   document.getElementById('cmVenue').innerHTML = `<strong>${concert.venue}</strong><span>${concert.city}</span>`;
   document.getElementById('cmStatus').innerHTML = `<strong>${getStatusText(concert.status)}</strong><span>${getAvailabilityText(concert)}</span>`;
   document.getElementById('cmXP').innerHTML = `<strong>+${concert.xpReward} XP</strong><span>Earned when you attend</span>`;
@@ -738,7 +756,7 @@ function openModal(id) {
   renderModalTiers(concert);
 
   // XP note
-  document.getElementById('cmXpNote').textContent = `🌟 Attending earns you +${concert.xpReward} XP on Harmonia!`;
+  document.getElementById('cmXpNote').textContent = `\uD83C\uDF1F Attending earns you +${concert.xpReward} XP on Harmonia!`;
 
   updateModalTotal();
 
@@ -755,7 +773,7 @@ function renderModalTiers(concert) {
     div.innerHTML = `
       <div class="cm-tier-header">
         <span class="cm-tier-name">${tier.name}</span>
-        <span class="cm-tier-price">${tier.price === 0 ? 'FREE' : '₹' + tier.price.toLocaleString()}</span>
+        <span class="cm-tier-price">${tier.price === 0 ? 'FREE' : '\u20B9' + tier.price.toLocaleString()}</span>
       </div>
       <div class="cm-tier-desc">${tier.desc}</div>
       ${tier.soldOut ? '<div class="cm-tier-sold">SOLD OUT</div>' : ''}
@@ -789,8 +807,20 @@ document.addEventListener('click', e => {
 
 // Modal qty
 document.addEventListener('click', e => {
-  if (e.target.id === 'cmQtyMinus') { if (state.qty > 1) { state.qty--; document.getElementById('cmQtyValue').textContent = state.qty; updateModalTotal(); }}
-  if (e.target.id === 'cmQtyPlus')  { if (state.qty < 8) { state.qty++; document.getElementById('cmQtyValue').textContent = state.qty; updateModalTotal(); }}
+  if (e.target.id === 'cmQtyMinus') {
+    if (state.qty > 1) {
+      state.qty--;
+      document.getElementById('cmQtyValue').textContent = state.qty;
+      updateModalTotal();
+    }
+  }
+  if (e.target.id === 'cmQtyPlus') {
+    if (state.qty < 8) {
+      state.qty++;
+      document.getElementById('cmQtyValue').textContent = state.qty;
+      updateModalTotal();
+    }
+  }
 });
 
 function updateModalTotal() {
@@ -798,15 +828,17 @@ function updateModalTotal() {
   const btn = document.getElementById('cmBuyBtn');
   if (!totalEl) return;
   if (!state.selectedTier) {
-    totalEl.textContent = '—';
+    totalEl.textContent = '\u2014';
     return;
   }
   const total = state.selectedTier.price * state.qty;
-  totalEl.textContent = total === 0 ? 'FREE' : `₹${total.toLocaleString()}`;
+  totalEl.textContent = total === 0 ? 'FREE' : `\u20B9${total.toLocaleString()}`;
   if (btn) {
-    btn.textContent = total === 0
-      ? `🎟️ Reserve ${state.qty > 1 ? state.qty + ' ' : ''}Free Ticket${state.qty > 1 ? 's' : ''}`
-      : `🎟️ Buy ${state.qty} Ticket${state.qty > 1 ? 's' : ''} · ₹${total.toLocaleString()}`;
+    if (total === 0) {
+      btn.textContent = `\uD83C\uDFAB Reserve ${state.qty > 1 ? state.qty + ' ' : ''}Free Ticket${state.qty > 1 ? 's' : ''}`;
+    } else {
+      btn.textContent = `\uD83C\uDFAB Buy ${state.qty} Ticket${state.qty > 1 ? 's' : ''} \u00B7 \u20B9${total.toLocaleString()}`;
+    }
   }
 }
 
@@ -849,12 +881,12 @@ function purchaseTicket(concert, tier, qty) {
   renderMyTickets();
   updateMyTicketsCount();
 
-  const totalStr = tier.price === 0 ? 'Free' : `₹${(tier.price * qty).toLocaleString()}`;
-  showToast('🎟️', 'Ticket Booked!', `${concert.artist} · ${tier.name} · ${totalStr}`, 'success');
-  setTimeout(() => showToast('⭐', `+${concert.xpReward} XP Earned!`, 'Concert ticket added to your profile.', 'xp'), 1200);
+  const totalStr = tier.price === 0 ? 'Free' : `\u20B9${(tier.price * qty).toLocaleString()}`;
+  showToast('🎟️', 'Ticket Booked!', `${concert.artist} \u00B7 ${tier.name} \u00B7 ${totalStr}`, 'success');
+  setTimeout(() => showToast('\u2B50', `+${concert.xpReward} XP Earned!`, 'Concert ticket added to your profile.', 'xp'), 1200);
 }
 
-// ─── Calendar ─────────────────────────────────────────────────────────────────
+// ─── Calendar ────────────────────────────────────────────────────────────────
 function renderCalendar() {
   const now = new Date();
   const targetDate = new Date(now.getFullYear(), now.getMonth() + state.calMonthOffset, 1);
@@ -886,7 +918,15 @@ function renderCalendar() {
     return d.getFullYear() === year && d.getMonth() === month;
   });
 
-  const eventColors = { 'indie': '#0ea5e9', 'neo-soul': '#db2777', 'electronic': '#a78bfa', 'classical': '#f97316', 'folk': '#84cc16', 'jazz': '#fbbf24', 'hiphop': '#ec4899' };
+  const eventColors = {
+    'indie': '#0ea5e9',
+    'neo-soul': '#db2777',
+    'electronic': '#a78bfa',
+    'classical': '#f97316',
+    'folk': '#84cc16',
+    'jazz': '#fbbf24',
+    'hiphop': '#ec4899'
+  };
 
   for (let d = 1; d <= daysInMonth; d++) {
     const dayEl = document.createElement('div');
@@ -920,8 +960,11 @@ function renderCalendar() {
     if (dayConcerts.length > 0) {
       dayEl.style.cursor = 'pointer';
       dayEl.addEventListener('click', () => {
-        if (dayConcerts.length === 1) openModal(dayConcerts[0].id);
-        else showToast('📅', `${dayConcerts.length} Events`, `Multiple concerts on ${monthNames[month]} ${d}. Browse below.`, 'success');
+        if (dayConcerts.length === 1) {
+          openModal(dayConcerts[0].id);
+        } else {
+          showToast('📅', `${dayConcerts.length} Events`, `Multiple concerts on ${monthNames[month]} ${d}. Browse below.`, 'success');
+        }
       });
     }
 
@@ -934,7 +977,7 @@ document.addEventListener('click', e => {
   if (e.target.id === 'calNext') { state.calMonthOffset++; renderCalendar(); }
 });
 
-// ─── Artist Spotlight ─────────────────────────────────────────────────────────
+// ─── Artist Spotlight ────────────────────────────────────────────────────────
 function renderArtistSpotlight() {
   const container = document.getElementById('artistSpotlightGrid');
   if (!container) return;
@@ -954,17 +997,17 @@ function renderArtistSpotlight() {
         <div class="as-card-stats">
           <div class="as-stat"><strong>${artist.followers}</strong><span>Followers</span></div>
           <div class="as-stat"><strong>${artist.upcoming}</strong><span>Upcoming</span></div>
-          <div class="as-stat"><strong>${artist.rating}★</strong><span>Rating</span></div>
+          <div class="as-stat"><strong>${artist.rating}\u2605</strong><span>Rating</span></div>
         </div>
         <button class="btn-follow ${following ? 'following' : 'not-following'}" data-id="${artist.id}">
-          ${following ? '✓ Following' : '+ Follow'}
+          ${following ? '\u2713 Following' : '+ Follow'}
         </button>
       </div>
     `;
     div.querySelector('.btn-follow').addEventListener('click', e => { e.stopPropagation(); toggleFollow(artist.id); });
     div.addEventListener('click', e => {
       if (!e.target.closest('.btn-follow')) {
-        showToast('🎤', artist.name, `View artist page — coming soon!`, 'success');
+        showToast('🎤', artist.name, `View artist page \u2014 coming soon!`, 'success');
       }
     });
     container.appendChild(div);
@@ -976,17 +1019,17 @@ function toggleFollow(id) {
   const artist = ARTISTS_SPOTLIGHT.find(a => a.id === id);
   if (idx >= 0) {
     state.following.splice(idx, 1);
-    showToast('👤', 'Unfollowed', `You unfollowed ${artist?.name}.`, 'error');
+    showToast('👤', 'Unfollowed', `You unfollowed ${artist ? artist.name : ''}.`, 'error');
   } else {
     state.following.push(id);
-    showToast('🔔', 'Following!', `You'll get notified when ${artist?.name} has new events.`, 'success');
-    if (typeof HarmoniaDB !== 'undefined') HarmoniaDB.addXP(10, `Followed artist: ${artist?.name}`);
+    showToast('🔔', 'Following!', `You'll get notified when ${artist ? artist.name : ''} has new events.`, 'success');
+    if (typeof HarmoniaDB !== 'undefined') HarmoniaDB.addXP(10, `Followed artist: ${artist ? artist.name : ''}`);
   }
   localStorage.setItem('harmonia_artist_follows', JSON.stringify(state.following));
   renderArtistSpotlight();
 }
 
-// ─── My Tickets ───────────────────────────────────────────────────────────────
+// ─── My Tickets ──────────────────────────────────────────────────────────────
 function renderMyTickets() {
   const section = document.getElementById('myTicketsSection');
   const list = document.getElementById('ticketsList');
@@ -994,11 +1037,11 @@ function renderMyTickets() {
   if (!list) return;
 
   if (!state.myTickets.length) {
-    section.style.display = 'none';
+    if (section) section.style.display = 'none';
     return;
   }
-  section.style.display = 'block';
-  emptyEl && (emptyEl.style.display = 'none');
+  if (section) section.style.display = 'block';
+  if (emptyEl) emptyEl.style.display = 'none';
 
   list.innerHTML = '';
   [...state.myTickets].reverse().forEach(ticket => {
@@ -1011,17 +1054,17 @@ function renderMyTickets() {
         <div class="ts-info">
           <div class="ts-artist">${ticket.artist}</div>
           <div class="ts-details">
-            <span>📍 ${ticket.venue}</span>
-            <span>📅 ${ticket.dateDisplay}</span>
-            <span>🕐 ${ticket.timeDisplay}</span>
+            <span>\uD83D\uDCCD ${ticket.venue}</span>
+            <span>\uD83D\uDCC5 ${ticket.dateDisplay}</span>
+            <span>\uD83D\uDD50 ${ticket.timeDisplay}</span>
           </div>
-          <span class="ts-tier">${ticket.tier} · ${ticket.qty > 1 ? ticket.qty + 'x' : ''}</span>
+          <span class="ts-tier">${ticket.tier} \u00B7 ${ticket.qty > 1 ? ticket.qty + 'x' : ''}</span>
         </div>
       </div>
       <div class="ts-right">
-        <div class="ts-price">${ticket.price === 0 ? 'FREE' : '₹' + ticket.price.toLocaleString()}</div>
-        <div class="ts-qr">▣</div>
-        <div class="ts-status ${ticket.upcoming ? 'upcoming' : 'past'}">${ticket.upcoming ? '✓ Upcoming' : '✓ Past'}</div>
+        <div class="ts-price">${ticket.price === 0 ? 'FREE' : '\u20B9' + ticket.price.toLocaleString()}</div>
+        <div class="ts-qr">\u25A3</div>
+        <div class="ts-status ${ticket.upcoming ? 'upcoming' : 'past'}">${ticket.upcoming ? '\u2713 Upcoming' : '\u2713 Past'}</div>
       </div>
     `;
     list.appendChild(div);
@@ -1035,7 +1078,7 @@ function updateMyTicketsCount() {
   if (tabSaved) tabSaved.textContent = state.bookmarks.length;
 }
 
-// ─── Filters ──────────────────────────────────────────────────────────────────
+// ─── Filters ─────────────────────────────────────────────────────────────────
 function initFilterListeners() {
   // Tabs
   document.querySelectorAll('.cf-tab').forEach(btn => {
@@ -1047,13 +1090,13 @@ function initFilterListeners() {
     });
   });
 
-  // Genre & City selects
+  // Genre & City & Sort selects
   const genreSelect = document.getElementById('cfGenre');
-  const citySelect = document.getElementById('cfCity');
-  const sortSelect = document.getElementById('cfSort');
+  const citySelect  = document.getElementById('cfCity');
+  const sortSelect  = document.getElementById('cfSort');
   if (genreSelect) genreSelect.addEventListener('change', () => { state.genre = genreSelect.value; renderConcertsGrid(); });
-  if (citySelect) citySelect.addEventListener('change', () => { state.city = citySelect.value; renderConcertsGrid(); });
-  if (sortSelect) sortSelect.addEventListener('change', () => { state.sortBy = sortSelect.value; renderConcertsGrid(); });
+  if (citySelect)  citySelect.addEventListener('change',  () => { state.city  = citySelect.value;  renderConcertsGrid(); });
+  if (sortSelect)  sortSelect.addEventListener('change',  () => { state.sortBy = sortSelect.value; renderConcertsGrid(); });
 
   // Search
   const searchInput = document.getElementById('cfSearch');
@@ -1084,14 +1127,21 @@ function initFilterListeners() {
   }
 }
 
-// ─── Helpers ──────────────────────────────────────────────────────────────────
+// ─── Helpers ─────────────────────────────────────────────────────────────────
 function getStatusText(status) {
-  return { available: 'Tickets Available', few: 'Few Seats Left', sold: 'Sold Out', stream: 'Streaming Event', free: 'Free Entry' }[status] || 'Available';
+  return {
+    available: 'Tickets Available',
+    few:       'Few Seats Left',
+    sold:      'Sold Out',
+    stream:    'Streaming Event',
+    free:      'Free Entry'
+  }[status] || 'Available';
 }
+
 function getAvailabilityText(c) {
-  if (c.status === 'sold') return 'No seats remaining';
-  if (c.status === 'stream') return 'Online event — unlimited access';
-  if (c.status === 'free') return 'Free entry — registration required';
+  if (c.status === 'sold')   return 'No seats remaining';
+  if (c.status === 'stream') return 'Online event \u2014 unlimited access';
+  if (c.status === 'free')   return 'Free entry \u2014 registration required';
   return `~${c.availability}% seats available`;
 }
 
@@ -1110,6 +1160,7 @@ function showToast(icon, title, msg, type = 'success') {
 
 document.addEventListener('click', e => {
   if (e.target.closest('.ct-close')) {
-    document.getElementById('concertToast')?.classList.remove('show');
+    const toast = document.getElementById('concertToast');
+    if (toast) toast.classList.remove('show');
   }
 });
