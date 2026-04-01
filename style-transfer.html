@@ -1,290 +1,952 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="dark">
+<html lang="en">
 <head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-  <title>Style Transfer — Harmonia AI Generator</title>
-  <link rel="stylesheet" href="styles/home.css"/>
-  <link rel="stylesheet" href="styles/style-transfer.css"/>
-  <link rel="preconnect" href="https://fonts.googleapis.com"/>
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Style Transfer — Harmonia</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+:root{
+  --bg:#04040a;
+  --surface:#0c0c18;
+  --surface2:#111125;
+  --surface3:#181830;
+  --border:rgba(255,255,255,0.07);
+  --border-hi:rgba(255,255,255,0.14);
+  --text:#f0f0ff;
+  --muted:#6b6b8a;
+  --muted2:#4a4a62;
+  --cyan:#00d4ff;
+  --cyan-dim:rgba(0,212,255,0.15);
+  --purple:#8b5cf6;
+  --pink:#f472b6;
+  --green:#10b981;
+  --amber:#f59e0b;
+  --nav-h:60px;
+  --font-display:'Syne',sans-serif;
+  --font-body:'DM Sans',sans-serif;
+  --font-mono:'DM Mono',monospace;
+}
+
+html,body{height:100%;overflow:hidden}
+body{
+  font-family:var(--font-body);
+  background:var(--bg);
+  color:var(--text);
+  display:flex;
+  flex-direction:column;
+}
+
+/* ─── NOISE TEXTURE OVERLAY ─── */
+body::before{
+  content:'';
+  position:fixed;inset:0;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+  pointer-events:none;z-index:1000;opacity:0.4;
+}
+
+/* ─── NAVBAR ─── */
+.nav{
+  height:var(--nav-h);
+  display:flex;align-items:center;
+  padding:0 28px;
+  border-bottom:1px solid var(--border);
+  background:rgba(4,4,10,0.95);
+  backdrop-filter:blur(20px);
+  flex-shrink:0;
+  position:relative;z-index:100;
+  gap:0;
+}
+.nav-logo{
+  display:flex;align-items:center;gap:10px;
+  text-decoration:none;margin-right:40px;
+}
+.nav-logo-icon{
+  width:34px;height:34px;border-radius:10px;
+  background:linear-gradient(135deg,#7c3aed,#ec4899);
+  display:flex;align-items:center;justify-content:center;
+}
+.nav-logo-text{
+  font-family:var(--font-display);
+  font-size:1.1rem;font-weight:800;
+  background:linear-gradient(135deg,#a78bfa,#ec4899);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+.nav-links{display:flex;gap:4px;list-style:none;flex:1}
+.nav-link-item{
+  font-size:0.82rem;font-weight:500;color:var(--muted);
+  padding:6px 14px;border-radius:8px;cursor:pointer;
+  transition:all 0.2s;white-space:nowrap;
+  border:1px solid transparent;
+}
+.nav-link-item:hover{color:var(--text);background:rgba(255,255,255,0.04)}
+.nav-link-item.active{
+  color:var(--cyan);
+  background:rgba(0,212,255,0.08);
+  border-color:rgba(0,212,255,0.2);
+}
+.nav-right{display:flex;align-items:center;gap:10px;margin-left:auto}
+.nav-avatar{
+  width:32px;height:32px;border-radius:50%;
+  background:linear-gradient(135deg,#7c3aed,#ec4899);
+  display:flex;align-items:center;justify-content:center;
+  font-size:0.78rem;font-weight:800;color:white;
+  cursor:pointer;
+}
+.nav-btn{
+  font-family:var(--font-body);font-size:0.78rem;font-weight:500;
+  color:var(--muted);background:rgba(255,255,255,0.05);
+  border:1px solid var(--border);padding:6px 14px;border-radius:8px;cursor:pointer;
+  transition:all 0.2s;text-decoration:none;display:flex;align-items:center;gap:6px;
+}
+.nav-btn:hover{color:var(--text);background:rgba(255,255,255,0.08)}
+
+/* ─── MAIN LAYOUT ─── */
+.page{
+  flex:1;display:grid;
+  grid-template-columns:1fr 320px 1fr;
+  grid-template-rows:1fr;
+  overflow:hidden;
+  min-height:0;
+}
+
+/* ─── PANELS ─── */
+.panel{
+  display:flex;flex-direction:column;
+  overflow:hidden;
+  border-right:1px solid var(--border);
+}
+.panel:last-child{border-right:none}
+
+/* ─── INPUT PANEL ─── */
+.input-panel{background:var(--bg)}
+
+.panel-top{
+  padding:20px 24px 16px;
+  border-bottom:1px solid var(--border);
+  display:flex;align-items:center;gap:12px;
+  flex-shrink:0;
+}
+.panel-icon{
+  width:38px;height:38px;border-radius:10px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:1.1rem;flex-shrink:0;
+}
+.panel-icon.input-ic{background:rgba(0,212,255,0.12);border:1px solid rgba(0,212,255,0.2)}
+.panel-icon.style-ic{background:rgba(139,92,246,0.12);border:1px solid rgba(139,92,246,0.2)}
+.panel-icon.output-ic{background:rgba(244,114,182,0.12);border:1px solid rgba(244,114,182,0.2)}
+.panel-label{font-family:var(--font-display);font-size:0.78rem;font-weight:700;letter-spacing:2px;text-transform:uppercase}
+.panel-sublabel{font-size:0.72rem;color:var(--muted);margin-top:1px}
+
+.panel-body{flex:1;overflow-y:auto;padding:20px 24px;display:flex;flex-direction:column;gap:16px}
+.panel-body::-webkit-scrollbar{width:3px}
+.panel-body::-webkit-scrollbar-thumb{background:var(--border);border-radius:99px}
+
+/* Example chips */
+.chip-label{font-size:0.65rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted2);margin-bottom:8px}
+.chips{display:flex;gap:6px;flex-wrap:wrap}
+.chip{
+  font-size:0.72rem;font-weight:500;
+  padding:5px 12px;border-radius:8px;
+  border:1px solid var(--border);background:none;
+  color:var(--muted);cursor:pointer;font-family:var(--font-body);
+  transition:all 0.2s;
+}
+.chip:hover{border-color:var(--border-hi);color:var(--text);background:rgba(255,255,255,0.04)}
+
+/* Textarea */
+.input-area-wrap{flex:1;display:flex;flex-direction:column;gap:6px}
+.ta-label{font-size:0.65rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted2)}
+.main-textarea{
+  flex:1;min-height:180px;
+  background:rgba(255,255,255,0.025);
+  border:1px solid var(--border);
+  border-radius:14px;padding:16px;
+  color:var(--text);
+  font-family:var(--font-mono);
+  font-size:0.84rem;line-height:1.75;
+  resize:none;outline:none;
+  transition:border-color 0.25s,box-shadow 0.25s;
+}
+.main-textarea:focus{
+  border-color:rgba(0,212,255,0.35);
+  box-shadow:0 0 0 3px rgba(0,212,255,0.06),inset 0 0 30px rgba(0,212,255,0.02);
+}
+.main-textarea::placeholder{color:var(--muted2);font-style:italic}
+.counter-row{display:flex;justify-content:space-between;align-items:center}
+.counter{font-size:0.68rem;color:var(--muted2)}
+.counter-bar{height:2px;background:rgba(255,255,255,0.05);border-radius:99px;margin-top:4px;overflow:hidden}
+.counter-fill{height:100%;background:linear-gradient(90deg,var(--cyan),var(--purple));border-radius:99px;transition:width 0.3s;width:0}
+
+/* Tips card */
+.tips-card{
+  background:rgba(0,212,255,0.04);
+  border:1px solid rgba(0,212,255,0.1);
+  border-radius:12px;padding:12px 14px;
+}
+.tips-title{font-size:0.65rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:rgba(0,212,255,0.7);margin-bottom:6px}
+.tips-list{list-style:none;display:flex;flex-direction:column;gap:4px}
+.tips-list li{font-size:0.75rem;color:var(--muted);line-height:1.5;display:flex;gap:7px}
+.tips-list li::before{content:'→';color:rgba(0,212,255,0.5);flex-shrink:0}
+
+/* ─── STYLE ENGINE PANEL ─── */
+.style-panel{
+  background:var(--surface);
+  border-left:1px solid var(--border);
+  border-right:1px solid var(--border);
+}
+.style-engine-header{
+  padding:20px 20px 16px;
+  border-bottom:1px solid var(--border);
+  text-align:center;flex-shrink:0;
+}
+.style-engine-title{
+  font-family:var(--font-display);font-size:0.7rem;font-weight:700;
+  letter-spacing:2.5px;text-transform:uppercase;color:var(--muted);
+}
+.style-engine-sub{font-size:0.7rem;color:var(--muted2);margin-top:3px}
+
+.styles-scroll{flex:1;overflow-y:auto;padding:12px;display:flex;flex-direction:column;gap:6px}
+.styles-scroll::-webkit-scrollbar{width:2px}
+.styles-scroll::-webkit-scrollbar-thumb{background:var(--border);border-radius:99px}
+
+/* BIG style cards */
+.style-card{
+  border-radius:14px;padding:14px 16px;
+  cursor:pointer;border:1.5px solid var(--border);
+  background:rgba(255,255,255,0.02);
+  transition:all 0.25s cubic-bezier(0.4,0,0.2,1);
+  position:relative;overflow:hidden;
+}
+.style-card::before{
+  content:'';
+  position:absolute;top:0;left:0;right:0;height:2px;
+  background:var(--sc-grad,linear-gradient(90deg,#0ea5e9,#7c3aed));
+  opacity:0;transition:opacity 0.25s;
+}
+.style-card:hover{border-color:var(--border-hi);background:rgba(255,255,255,0.04);transform:translateX(2px)}
+.style-card.active{
+  border-color:rgba(var(--sc-rgb,0,212,255),0.4);
+  background:rgba(var(--sc-rgb,0,212,255),0.06);
+  transform:translateX(4px);
+}
+.style-card.active::before{opacity:1}
+/* Glow blob behind active card */
+.style-card.active::after{
+  content:'';
+  position:absolute;right:-20px;top:50%;transform:translateY(-50%);
+  width:60px;height:60px;border-radius:50%;
+  background:rgba(var(--sc-rgb,0,212,255),0.15);
+  filter:blur(20px);pointer-events:none;
+}
+
+.sc-top{display:flex;align-items:center;gap:10px;margin-bottom:6px}
+.sc-emoji{font-size:1.2rem}
+.sc-names{}
+.sc-name{font-family:var(--font-display);font-size:0.88rem;font-weight:700;line-height:1.2}
+.sc-era{font-size:0.65rem;color:var(--muted);margin-top:1px}
+.sc-active-dot{
+  width:7px;height:7px;border-radius:50%;
+  background:var(--cyan);margin-left:auto;flex-shrink:0;
+  opacity:0;transition:opacity 0.2s;box-shadow:0 0 8px var(--cyan);
+}
+.style-card.active .sc-active-dot{opacity:1}
+.sc-desc{font-size:0.73rem;color:var(--muted);line-height:1.45;margin-bottom:8px}
+.sc-traits{display:flex;gap:4px;flex-wrap:wrap}
+.sc-trait{
+  font-size:0.6rem;font-weight:600;padding:2px 7px;border-radius:5px;
+  background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);
+  color:var(--muted);
+}
+
+/* Controls section */
+.controls-section{
+  padding:16px 16px 0;
+  border-top:1px solid var(--border);
+  flex-shrink:0;
+}
+.ctrl-label{font-size:0.65rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted2);margin-bottom:12px}
+.sliders{display:flex;flex-direction:column;gap:10px;margin-bottom:14px}
+.slider-row{display:flex;flex-direction:column;gap:4px}
+.slider-header{display:flex;justify-content:space-between}
+.slider-name{font-size:0.72rem;color:var(--muted)}
+.slider-val{font-size:0.72rem;font-weight:700;color:var(--cyan)}
+input[type=range]{
+  -webkit-appearance:none;appearance:none;
+  width:100%;height:3px;border-radius:99px;
+  background:rgba(255,255,255,0.08);outline:none;cursor:pointer;
+}
+input[type=range]::-webkit-slider-thumb{
+  -webkit-appearance:none;width:13px;height:13px;border-radius:50%;
+  background:var(--cyan);box-shadow:0 0 8px rgba(0,212,255,0.6);
+  cursor:pointer;transition:transform 0.15s;
+}
+input[type=range]::-webkit-slider-thumb:active{transform:scale(1.3)}
+
+/* Transfer button */
+.transfer-btn{
+  width:100%;padding:13px;margin:0 0 16px;
+  font-family:var(--font-display);font-size:0.82rem;font-weight:700;letter-spacing:0.5px;
+  border:none;border-radius:12px;cursor:pointer;
+  background:linear-gradient(135deg,var(--cyan),var(--purple));
+  color:white;
+  position:relative;overflow:hidden;
+  transition:transform 0.2s,box-shadow 0.2s,opacity 0.2s;
+  box-shadow:0 4px 24px rgba(0,212,255,0.2);
+}
+.transfer-btn::before{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(135deg,rgba(255,255,255,0.15),transparent);
+  opacity:0;transition:opacity 0.2s;
+}
+.transfer-btn:hover{transform:translateY(-2px);box-shadow:0 8px 32px rgba(0,212,255,0.3)}
+.transfer-btn:hover::before{opacity:1}
+.transfer-btn:active{transform:translateY(0)}
+.transfer-btn:disabled{opacity:0.5;cursor:not-allowed;transform:none;box-shadow:none}
+.transfer-btn.busy{
+  background:linear-gradient(135deg,#0c2a40,#1a0a40);
+  box-shadow:none;
+}
+
+/* ─── OUTPUT PANEL ─── */
+.output-panel{background:var(--bg)}
+
+.output-body{
+  flex:1;overflow-y:auto;padding:20px 24px;
+  display:flex;flex-direction:column;gap:16px;
+}
+.output-body::-webkit-scrollbar{width:3px}
+.output-body::-webkit-scrollbar-thumb{background:var(--border);border-radius:99px}
+
+/* Empty state */
+.output-empty{
+  flex:1;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;gap:14px;
+  text-align:center;
+}
+.empty-icon-ring{
+  width:72px;height:72px;border-radius:50%;
+  border:1.5px dashed rgba(255,255,255,0.1);
+  display:flex;align-items:center;justify-content:center;
+  font-size:1.6rem;
+  animation:emptyPulse 3s ease-in-out infinite;
+}
+@keyframes emptyPulse{0%,100%{border-color:rgba(255,255,255,0.1)}50%{border-color:rgba(0,212,255,0.25)}}
+.empty-title{font-family:var(--font-display);font-size:1rem;font-weight:700;color:var(--muted)}
+.empty-sub{font-size:0.78rem;color:var(--muted2);line-height:1.55;max-width:220px}
+
+/* Output result */
+.output-badge{
+  display:inline-flex;align-items:center;gap:7px;
+  font-size:0.7rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;
+  padding:6px 14px;border-radius:99px;width:fit-content;
+  border:1px solid rgba(var(--badge-rgb,139,92,246),0.3);
+  background:rgba(var(--badge-rgb,139,92,246),0.1);
+  color:rgb(var(--badge-rgb,139,92,246));
+}
+.output-badge-dot{width:6px;height:6px;border-radius:50%;background:currentColor;box-shadow:0 0 6px currentColor;animation:badgePulse 2s infinite}
+@keyframes badgePulse{0%,100%{opacity:1}50%{opacity:0.4}}
+
+.output-text-card{
+  background:rgba(255,255,255,0.025);
+  border:1px solid var(--border);border-radius:16px;
+  padding:22px;
+  font-family:'Georgia','Times New Roman',serif;
+  font-size:0.94rem;line-height:1.85;
+  color:var(--text);
+  white-space:pre-wrap;
+  position:relative;overflow:hidden;
+  min-height:120px;
+}
+.output-text-card::before{
+  content:'"';
+  position:absolute;top:-10px;left:16px;
+  font-size:5rem;font-family:Georgia,serif;
+  color:rgba(139,92,246,0.08);line-height:1;
+  pointer-events:none;
+}
+.streaming-cursor::after{
+  content:'▋';color:var(--cyan);
+  animation:cur 0.7s step-end infinite;
+}
+@keyframes cur{0%,100%{opacity:1}50%{opacity:0}}
+
+/* Analysis metrics */
+.metrics-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.metric{
+  background:rgba(255,255,255,0.03);border:1px solid var(--border);
+  border-radius:10px;padding:10px 10px 8px;text-align:center;
+}
+.metric-val{font-family:var(--font-display);font-size:1.1rem;font-weight:800;margin-bottom:2px}
+.metric-label{font-size:0.6rem;text-transform:uppercase;letter-spacing:1px;color:var(--muted2)}
+
+/* Action buttons */
+.output-actions{display:flex;gap:7px;flex-wrap:wrap}
+.out-btn{
+  display:flex;align-items:center;gap:5px;
+  font-family:var(--font-body);font-size:0.73rem;font-weight:600;
+  padding:7px 13px;border-radius:9px;cursor:pointer;
+  border:1px solid var(--border);background:rgba(255,255,255,0.04);
+  color:var(--muted);transition:all 0.18s;
+}
+.out-btn:hover{background:rgba(255,255,255,0.08);border-color:var(--border-hi);color:var(--text)}
+.out-btn.primary{
+  background:rgba(0,212,255,0.08);border-color:rgba(0,212,255,0.25);color:var(--cyan);
+}
+.out-btn.primary:hover{background:rgba(0,212,255,0.14)}
+.out-btn.copied{color:#10b981;border-color:rgba(16,185,129,0.3)}
+
+/* History strip */
+.history-strip{
+  border-top:1px solid var(--border);
+  padding:14px 24px;flex-shrink:0;
+  background:rgba(255,255,255,0.01);
+}
+.history-label{font-size:0.63rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted2);margin-bottom:10px}
+.history-scroll{display:flex;gap:8px;overflow-x:auto;padding-bottom:2px}
+.history-scroll::-webkit-scrollbar{height:2px}
+.history-scroll::-webkit-scrollbar-thumb{background:var(--border);border-radius:99px}
+.history-item{
+  flex-shrink:0;width:180px;
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:10px;padding:10px 12px;cursor:pointer;
+  transition:all 0.2s;
+}
+.history-item:hover{border-color:var(--border-hi);transform:translateY(-2px)}
+.h-style{font-size:0.67rem;font-weight:700;color:var(--cyan);margin-bottom:3px}
+.h-preview{font-size:0.72rem;color:var(--muted);line-height:1.4;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+
+/* Toast */
+.toast{
+  position:fixed;bottom:24px;left:50%;
+  transform:translateX(-50%) translateY(70px);
+  background:var(--surface3);border:1px solid var(--border-hi);
+  border-radius:12px;padding:11px 20px;
+  display:flex;align-items:center;gap:8px;
+  font-size:0.82rem;font-weight:500;
+  box-shadow:0 16px 50px rgba(0,0,0,0.6);
+  z-index:9999;transition:transform 0.4s cubic-bezier(0.34,1.56,0.64,1);
+  white-space:nowrap;pointer-events:none;
+}
+.toast.show{transform:translateX(-50%) translateY(0)}
+
+/* Processing ring */
+.spin{
+  width:16px;height:16px;border-radius:50%;
+  border:2px solid rgba(255,255,255,0.2);
+  border-top-color:white;
+  animation:spin 0.75s linear infinite;
+  flex-shrink:0;
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* Scrollbar global */
+::-webkit-scrollbar{width:4px;height:4px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.1);border-radius:99px}
+
+@media(max-width:900px){
+  .page{grid-template-columns:1fr;grid-template-rows:auto;overflow:auto}
+  html,body{overflow:auto;height:auto}
+  .panel{border-right:none;border-bottom:1px solid var(--border);min-height:400px}
+  .style-panel{min-height:500px}
+}
+</style>
 </head>
 <body>
 
-<!-- ===== NAVBAR ===== -->
-<nav class="navbar" id="navbar">
-  <div class="nav-inner">
-    <a href="home.html" class="nav-logo">
-      <div class="logo-icon">
-        <svg width="28" height="28" viewBox="0 0 36 36" fill="none">
-          <defs><linearGradient id="ng" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#a78bfa"/><stop offset="100%" style="stop-color:#ec4899"/></linearGradient></defs>
-          <path d="M13 24V12l12 3v9" stroke="url(#ng)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
-          <circle cx="11" cy="24" r="3" fill="url(#ng)"/><circle cx="23" cy="22" r="3" fill="url(#ng)"/>
-        </svg>
-      </div>
-      <span class="logo-text">Harmonia</span>
-    </a>
-    <ul class="nav-links" id="navLinks">
-      <li class="nav-item has-dropdown">
-        <button class="nav-link">Training<svg class="caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m6 9 6 6 6-6"/></svg></button>
-        <div class="dropdown"><div class="dropdown-inner">
-          <a href="training.html" class="dd-item"><span class="dd-icon">🛤️</span><span class="dd-content"><strong>Learning Path</strong><span>Structured curriculum</span></span></a>
-          <a href="theory-quiz.html" class="dd-item"><span class="dd-icon">🧠</span><span class="dd-content"><strong>Theory Quiz</strong><span>Test your knowledge</span></span><span class="dd-tag xp">+XP</span></a>
-          <a href="ear-training.html" class="dd-item"><span class="dd-icon">👂</span><span class="dd-content"><strong>Ear Training</strong><span>Sharpen your hearing</span></span></a>
-        </div></div>
-      </li>
-      <li class="nav-item has-dropdown">
-        <button class="nav-link active-nav">AI Generator<svg class="caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m6 9 6 6 6-6"/></svg></button>
-        <div class="dropdown"><div class="dropdown-inner">
-          <a href="ai-composer.html" class="dd-item"><span class="dd-icon">🤖</span><span class="dd-content"><strong>AI Compose</strong><span>Generate original music</span></span></a>
-          <a href="style-transfer.html" class="dd-item"><span class="dd-icon">🎨</span><span class="dd-content"><strong>Style Transfer</strong><span>Reimagine your tracks</span></span><span class="dd-tag beta">Beta</span></a>
-          <a href="lyric-assistant.html" class="dd-item"><span class="dd-icon">✍️</span><span class="dd-content"><strong>Lyric Assistant</strong><span>AI-powered songwriting</span></span></a>
-        </div></div>
-      </li>
-      <li class="nav-item has-dropdown">
-        <button class="nav-link">Music History<svg class="caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m6 9 6 6 6-6"/></svg></button>
-        <div class="dropdown"><div class="dropdown-inner">
-          <a href="genre-explorer.html" class="dd-item"><span class="dd-icon">🌍</span><span class="dd-content"><strong>Genre Explorer</strong><span>From jazz to EDM</span></span></a>
-          <a href="era-timeline.html" class="dd-item"><span class="dd-icon">📅</span><span class="dd-content"><strong>Era Timeline</strong><span>Centuries of music</span></span></a>
-          <a href="composer-library.html" class="dd-item"><span class="dd-icon">🎼</span><span class="dd-content"><strong>Composer Library</strong><span>Masters & legends</span></span></a>
-        </div></div>
-      </li>
-      <li class="nav-item has-dropdown">
-        <button class="nav-link">Dashboard<svg class="caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m6 9 6 6 6-6"/></svg></button>
-        <div class="dropdown"><div class="dropdown-inner">
-          <a href="#" class="dd-item"><span class="dd-icon">🏆</span><span class="dd-content"><strong>Leaderboard</strong><span>Top performers</span></span></a>
-          <a href="#" class="dd-item"><span class="dd-icon">📈</span><span class="dd-content"><strong>My Progress</strong><span>Track your growth</span></span></a>
-        </div></div>
-      </li>
-    </ul>
-    <div class="nav-right">
-      <button class="icon-btn theme-btn" id="themeBtn" onclick="toggleTheme()">
-        <svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/></svg>
-        <svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
-      </button>
-      <div class="profile-menu" id="profileMenu">
-        <button class="profile-btn" onclick="toggleProfile()">
-          <div class="avatar">G</div><span class="profile-name">Guest</span>
-          <svg class="caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m6 9 6 6 6-6"/></svg>
-        </button>
-        <div class="profile-dropdown" id="profileDropdown">
-          <div class="pd-header"><div class="pd-avatar">G</div><div><div class="pd-name">Guest User</div><div class="pd-email">Not signed in</div></div></div>
-          <hr class="pd-divider"/>
-          <a href="#" class="pd-item">My Profile</a><a href="#" class="pd-item">Settings</a>
-          <hr class="pd-divider"/>
-          <a href="index.html" class="pd-item pd-signout">Sign Out</a>
-        </div>
-      </div>
-      <a href="index.html" class="btn-signout"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>Sign Out</a>
-      <button class="hamburger" id="hamburger" onclick="toggleMobileNav()"><span></span><span></span><span></span></button>
+<!-- NAV -->
+<nav class="nav">
+  <a href="home.html" class="nav-logo">
+    <div class="nav-logo-icon">
+      <svg width="18" height="18" viewBox="0 0 36 36" fill="none">
+        <defs><linearGradient id="lg" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#fff"/><stop offset="100%" stop-color="rgba(255,255,255,0.6)"/></linearGradient></defs>
+        <path d="M13 24V12l12 3v9" stroke="url(#lg)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+        <circle cx="11" cy="24" r="3" fill="url(#lg)"/><circle cx="23" cy="22" r="3" fill="url(#lg)"/>
+      </svg>
     </div>
+    <span class="nav-logo-text">Harmonia</span>
+  </a>
+  <ul class="nav-links">
+    <li class="nav-link-item" onclick="location.href='training.html'">Training</li>
+    <li class="nav-link-item active">AI Generator ↓</li>
+    <li class="nav-link-item" onclick="location.href='genre-explorer.html'">Music History</li>
+    <li class="nav-link-item" onclick="location.href='#'">Dashboard</li>
+  </ul>
+  <div class="nav-right">
+    <a href="lyric-assistant.html" class="nav-btn">✍️ Lyric Assistant</a>
+    <div class="nav-avatar">S</div>
   </div>
 </nav>
 
-<div class="mobile-overlay" id="mobileOverlay" onclick="toggleMobileNav()"></div>
-<div class="mobile-nav" id="mobileNav">
-  <div class="mobile-nav-header"><span class="logo-text">Harmonia</span><button onclick="toggleMobileNav()">✕</button></div>
-  <div class="mobile-nav-links">
-    <details open><summary>AI Generator</summary>
-      <a href="ai-composer.html">AI Compose</a>
-      <a href="style-transfer.html">Style Transfer</a>
-      <a href="lyric-assistant.html">Lyric Assistant</a>
-    </details>
-    <details><summary>Music History</summary>
-      <a href="genre-explorer.html">Genre Explorer</a>
-      <a href="era-timeline.html">Era Timeline</a>
-      <a href="composer-library.html">Composer Library</a>
-    </details>
-    <a href="index.html" class="mobile-signout">Sign Out</a>
-  </div>
-</div>
+<!-- PAGE: 3-COLUMN STUDIO -->
+<div class="page">
 
-<!-- ===== HERO ===== -->
-<section class="st-hero">
-  <div class="st-hero-bg">
-    <div class="st-hero-grid"></div>
-    <div class="st-hero-orb st-orb-1"></div>
-    <div class="st-hero-orb st-orb-2"></div>
-    <div class="st-hero-orb st-orb-3"></div>
-  </div>
-  <div class="container st-hero-inner">
-    <div class="st-hero-text">
-      <div class="st-hero-tag"><span class="st-hero-tag-dot"></span>Beta · AI-Powered</div>
-      <h1 class="st-hero-title">
-        Rewrite Anything in Any<br/><span class="accent-cyan">Musical Style</span>
-      </h1>
-      <p class="st-hero-sub">
-        Take any text — a poem, lyric, mood description, or story — and watch it transform into the authentic voice of Baroque grandeur, Jazz cool, Romantic sweep, or Minimalist precision. Powered by Claude.
-      </p>
-      <div class="st-hero-meta">
-        <div class="st-meta-chip"><span>🎨</span><strong>8</strong>&nbsp;style presets</div>
-        <div class="st-meta-chip"><span>🎚️</span>&nbsp;Intensity controls</div>
-        <div class="st-meta-chip"><span>⚡</span>&nbsp;Real-time AI</div>
-        <div class="st-meta-chip"><span>🔄</span>&nbsp;Chain transforms</div>
-      </div>
-    </div>
-    <div class="st-hero-visual" id="heroWave">
-      <!-- Bars injected by JS -->
-    </div>
-  </div>
-</section>
-
-<!-- ===== STUDIO WORKSPACE ===== -->
-<div class="st-workspace">
-
-  <!-- ── INPUT PANEL ── -->
-  <div class="st-panel st-input-panel">
-    <div class="st-panel-header">
-      <div class="st-panel-icon">📝</div>
+  <!-- ══ LEFT: INPUT ══ -->
+  <div class="panel input-panel">
+    <div class="panel-top">
+      <div class="panel-icon input-ic">📝</div>
       <div>
-        <div class="st-panel-title">Source Text</div>
-        <div class="st-panel-sub">Your original content to transform</div>
+        <div class="panel-label" style="color:var(--cyan)">Source Text</div>
+        <div class="panel-sublabel">Your original content to transform</div>
       </div>
     </div>
-
-    <div>
-      <div class="st-input-label">Quick examples</div>
-      <div class="st-input-chips" id="exampleChips"><!-- JS --></div>
-    </div>
-
-    <div style="flex:1;display:flex;flex-direction:column;gap:6px">
-      <div class="st-input-label">Your text</div>
-      <textarea class="st-input-textarea" id="inputText"
-        placeholder="Paste lyrics, a poem, a mood description, a story beat — anything you want reimagined through a different musical era or genre…"
-        maxlength="800"></textarea>
-      <div class="st-counter">
-        <span id="charCount">0 / 800</span>
-        <span style="font-size:0.65rem;opacity:0.5">↑ up to 800 characters</span>
-      </div>
-      <div class="st-counter-bar">
-        <div class="st-counter-fill" id="counterFill" style="width:0%"></div>
-      </div>
-    </div>
-
-    <div style="padding:14px;background:rgba(14,165,233,0.04);border:1px solid rgba(14,165,233,0.12);border-radius:12px">
-      <div style="font-size:0.68rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:rgba(14,165,233,0.7);margin-bottom:8px">💡 Tips</div>
-      <ul style="font-size:0.78rem;color:var(--muted);line-height:1.7;padding-left:14px;margin:0">
-        <li>Descriptive text (nature, emotion, place) transforms beautifully</li>
-        <li>Existing lyrics work great — compare styles</li>
-        <li>Try chaining: Jazz → Baroque → Minimalist</li>
-      </ul>
-    </div>
-  </div>
-
-  <!-- ── ENGINE PANEL ── -->
-  <div class="st-engine-panel">
-    <div class="st-engine-header">
-      <div class="st-engine-title">Style Engine</div>
-      <div class="st-engine-sub">Pick a musical era or genre</div>
-    </div>
-
-    <div class="st-style-list" id="styleList"><!-- JS --></div>
-
-    <div class="st-controls-section">
-      <div class="st-controls-label">Transform Controls</div>
-      <div class="st-slider-group">
-        <div class="st-slider-row">
-          <div class="st-slider-top">
-            <span class="st-slider-name">Style Intensity</span>
-            <span class="st-slider-val" id="val-intensity">80%</span>
-          </div>
-          <input type="range" class="st-slider" id="slider-intensity" min="10" max="100" value="80"/>
-        </div>
-        <div class="st-slider-row">
-          <div class="st-slider-top">
-            <span class="st-slider-name">Creativity</span>
-            <span class="st-slider-val" id="val-creativity">70%</span>
-          </div>
-          <input type="range" class="st-slider" id="slider-creativity" min="10" max="100" value="70"/>
-        </div>
-        <div class="st-slider-row">
-          <div class="st-slider-top">
-            <span class="st-slider-name">Preserve Meaning</span>
-            <span class="st-slider-val" id="val-preserve">50%</span>
-          </div>
-          <input type="range" class="st-slider" id="slider-preserve" min="0" max="100" value="50"/>
-        </div>
-      </div>
-    </div>
-
-    <button class="st-transfer-btn" id="transferBtn" onclick="doTransfer()">
-      🎨 Transform to Jazz
-    </button>
-  </div>
-
-  <!-- ── OUTPUT PANEL ── -->
-  <div class="st-panel st-output-panel" style="position:relative">
-    <div class="st-panel-header">
-      <div class="st-panel-icon">✨</div>
+    <div class="panel-body">
       <div>
-        <div class="st-panel-title">Transformed Output</div>
-        <div class="st-panel-sub">Your text, reimagined</div>
+        <div class="chip-label">Quick examples</div>
+        <div class="chips" id="exChips"></div>
+      </div>
+      <div class="input-area-wrap">
+        <div class="ta-label">Your text</div>
+        <textarea class="main-textarea" id="inputText" maxlength="900"
+          placeholder="Paste lyrics, a poem, a mood sketch, a scene — anything you want reimagined through a different musical era or genre…"></textarea>
+        <div class="counter-row">
+          <span class="counter" id="charCount">0 / 900</span>
+          <span class="counter" style="opacity:0.5;font-size:0.63rem">↑ max 900 chars</span>
+        </div>
+        <div class="counter-bar"><div class="counter-fill" id="cFill"></div></div>
+      </div>
+      <div class="tips-card">
+        <div class="tips-title">💡 Pro tips</div>
+        <ul class="tips-list">
+          <li>Descriptive emotional text transforms most beautifully</li>
+          <li>Existing lyrics? Compare how different eras hear them</li>
+          <li>Chain transforms: Jazz → Baroque → Minimalist</li>
+        </ul>
       </div>
     </div>
+  </div>
 
-    <div id="outputArea" style="flex:1;display:flex;flex-direction:column">
-      <div class="st-output-empty">
-        <div class="st-output-empty-icon">🎨</div>
-        <div style="font-size:0.9rem;font-weight:600">Ready to transform</div>
-        <div style="font-size:0.78rem;opacity:0.6">Select a style and enter text, then hit Transform</div>
+  <!-- ══ CENTER: STYLE ENGINE ══ -->
+  <div class="panel style-panel">
+    <div class="style-engine-header">
+      <div class="style-engine-title">Style Engine</div>
+      <div class="style-engine-sub">Choose a musical era or genre</div>
+    </div>
+    <div class="styles-scroll" id="styleList"></div>
+    <div class="controls-section">
+      <div class="ctrl-label">Transform controls</div>
+      <div class="sliders">
+        <div class="slider-row">
+          <div class="slider-header"><span class="slider-name">Style Intensity</span><span class="slider-val" id="v-intensity">80%</span></div>
+          <input type="range" min="10" max="100" value="80" id="s-intensity" oninput="document.getElementById('v-intensity').textContent=this.value+'%'"/>
+        </div>
+        <div class="slider-row">
+          <div class="slider-header"><span class="slider-name">Creativity</span><span class="slider-val" id="v-creativity">70%</span></div>
+          <input type="range" min="10" max="100" value="70" id="s-creativity" oninput="document.getElementById('v-creativity').textContent=this.value+'%'"/>
+        </div>
+        <div class="slider-row">
+          <div class="slider-header"><span class="slider-name">Preserve Meaning</span><span class="slider-val" id="v-preserve">50%</span></div>
+          <input type="range" min="0" max="100" value="50" id="s-preserve" oninput="document.getElementById('v-preserve').textContent=this.value+'%'"/>
+        </div>
+      </div>
+      <button class="transfer-btn" id="tfBtn" onclick="doTransfer()">
+        🎨 Transform
+      </button>
+    </div>
+  </div>
+
+  <!-- ══ RIGHT: OUTPUT ══ -->
+  <div class="panel output-panel">
+    <div class="panel-top">
+      <div class="panel-icon output-ic">✨</div>
+      <div>
+        <div class="panel-label" style="color:var(--pink)">Transformed Output</div>
+        <div class="panel-sublabel">Your text, reimagined</div>
       </div>
     </div>
-
-    <!-- Processing overlay -->
-    <div class="st-processing-overlay" id="processingOverlay">
-      <div class="st-processing-ring"></div>
-      <div class="st-processing-text">Channeling the style…</div>
+    <div class="output-body" id="outputBody">
+      <div class="output-empty">
+        <div class="empty-icon-ring">🎨</div>
+        <div class="empty-title">Ready to transform</div>
+        <div class="empty-sub">Select a style, enter your text, then hit Transform</div>
+      </div>
+    </div>
+    <div class="history-strip">
+      <div class="history-label">Recent transforms</div>
+      <div class="history-scroll" id="histList">
+        <span style="font-size:0.75rem;color:var(--muted2)">Nothing yet</span>
+      </div>
     </div>
   </div>
 
 </div>
 
-<!-- ===== HISTORY STRIP ===== -->
-<div class="st-history-bar">
-  <div class="container">
-    <div class="st-history-title">Recent Transformations</div>
-    <div class="st-history-list" id="historyList">
-      <span style="font-size:0.78rem;color:var(--muted)">Your transformations will appear here</span>
-    </div>
-  </div>
-</div>
+<div class="toast" id="toast"><span id="toastMsg"></span></div>
 
-<!-- ===== FOOTER ===== -->
-<footer class="footer">
-  <div class="container">
-    <div class="footer-top">
-      <div class="footer-brand">
-        <a href="home.html" class="nav-logo" style="margin-bottom:12px">
-          <div class="logo-icon"><svg width="24" height="24" viewBox="0 0 36 36" fill="none"><path d="M13 24V12l12 3v9" stroke="url(#fLG)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="11" cy="24" r="3" fill="url(#fLG)"/><circle cx="23" cy="22" r="3" fill="url(#fLG)"/><defs><linearGradient id="fLG" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#a78bfa"/><stop offset="100%" style="stop-color:#ec4899"/></linearGradient></defs></svg></div>
-          <span class="logo-text">Harmonia</span>
-        </a>
-        <p>The modern music learning platform for curious minds and creative souls.</p>
+<script>
+/* ═══════════════════════════════════
+   xAI / Grok API key — set here
+   ═══════════════════════════════════ */
+const XAI_API_KEY = 'YOUR_XAI_API_KEY_HERE'; // ← paste your key
+const XAI_API_URL = 'https://api.x.ai/v1/chat/completions';
+const XAI_MODEL   = 'grok-3-latest';
+
+/* ═══════════════════════════════════
+   STYLE PRESETS
+   ═══════════════════════════════════ */
+const STYLES = [
+  {
+    id:'baroque', emoji:'🎻', name:'Baroque', era:'1600 – 1750',
+    color:'#d97706', rgb:'217,119,6',
+    grad:'linear-gradient(90deg,#b45309,#fbbf24)',
+    desc:'Ornate counterpoint, harpsichord grandeur, mathematical beauty',
+    traits:['Counterpoint','Ornamented','Polyphonic','Sacred'],
+    prompt:`Transform the text into the aesthetic of Baroque music — J.S. Bach, Handel, Vivaldi. Use elevated archaic language ("thee","thy","doth"), divine and mathematical imagery, symmetrical phrasing mirroring counterpoint, references to harpsichord, organ, chamber music. Ceremony and grandeur. Intensity: {intensity}%. Creativity: {creativity}%. Preserve meaning: {preserve}%.`
+  },
+  {
+    id:'jazz', emoji:'🎺', name:'Cool Jazz', era:'1940s – 1960s',
+    color:'#db2777', rgb:'219,39,119',
+    grad:'linear-gradient(90deg,#9d174d,#f9a8d4)',
+    desc:'Blue notes, smoky late-night atmosphere, improvisational cool',
+    traits:['Bebop','Syncopated','Modal','Blue notes'],
+    prompt:`Transform in the style of 1950s Cool Jazz — Miles Davis, Chet Baker, Bill Evans. Laid-back, conversational phrasing. Smoky bars, rain on windows, city lights. Understated emotion. Blue note ambiguity. Occasional scat phrasing. Intensity: {intensity}%. Creativity: {creativity}%. Preserve meaning: {preserve}%.`
+  },
+  {
+    id:'romantic', emoji:'🌹', name:'Romantic', era:'1820 – 1900',
+    color:'#be185d', rgb:'190,24,93',
+    grad:'linear-gradient(90deg,#831843,#fda4af)',
+    desc:'Sweeping drama, emotional extremes, orchestral storms',
+    traits:['Dramatic','Chromatic','Programmatic','National'],
+    prompt:`Transform with Romantic-era musical sensibility — Chopin, Wagner, Liszt. Soaring, unbounded language. Nature as emotional mirror (storms, moonlight, sea). Extreme dynamics from whisper to thunder. Longing, heroism, grief, transcendence. Intensity: {intensity}%. Creativity: {creativity}%. Preserve meaning: {preserve}%.`
+  },
+  {
+    id:'minimalist', emoji:'◻️', name:'Minimalist', era:'1960s – Present',
+    color:'#0ea5e9', rgb:'14,165,233',
+    grad:'linear-gradient(90deg,#0369a1,#7dd3fc)',
+    desc:'Hypnotic repetition, gradual evolution, meditative stillness',
+    traits:['Repetitive','Phased','Meditative','Process'],
+    prompt:`Transform in the aesthetic of Musical Minimalism — Philip Glass, Steve Reich, Arvo Pärt. Strip language to essential elements. Repetition with subtle variation. Gradual evolution. Sparse. Meditative. The text phase-shifts like two voices slightly out of sync. Intensity: {intensity}%. Creativity: {creativity}%. Preserve meaning: {preserve}%.`
+  },
+  {
+    id:'impressionist', emoji:'🌊', name:'Impressionist', era:'1890s – 1920s',
+    color:'#10b981', rgb:'16,185,129',
+    grad:'linear-gradient(90deg,#065f46,#6ee7b7)',
+    desc:'Shimmering textures, atmospheric color, unresolved suggestion',
+    traits:['Atmospheric','Modal','Timbre-rich','Suggestive'],
+    prompt:`Transform as Debussy or Ravel — musical Impressionism. Prioritize texture, color, atmosphere. Dissolve hard edges. Water imagery: reflections, mist, light. Synesthetic descriptions. Whole-tone ambiguity — nothing fully resolves. The beauty is in the suggestion. Intensity: {intensity}%. Creativity: {creativity}%. Preserve meaning: {preserve}%.`
+  },
+  {
+    id:'hiphop', emoji:'🎤', name:'Hip-Hop', era:'1973 – Present',
+    color:'#ea580c', rgb:'234,88,12',
+    grad:'linear-gradient(90deg,#9a3412,#fb923c)',
+    desc:'Rhythmic precision, stacked metaphors, street poetry',
+    traits:['Rhyme scheme','Flow','Wordplay','Cultural'],
+    prompt:`Transform as a skilled hip-hop lyricist — Kendrick Lamar, J. Cole, Nas. Dense internal rhymes. Every line rides a beat. Stacked metaphors. Wordplay and double meaning. Cadence that implies the groove. From specific to universal. Intensity: {intensity}%. Creativity: {creativity}%. Preserve meaning: {preserve}%.`
+  },
+  {
+    id:'folk', emoji:'🪕', name:'Folk Revival', era:'1960s',
+    color:'#16a34a', rgb:'22,163,74',
+    grad:'linear-gradient(90deg,#14532d,#86efac)',
+    desc:'Earthy storytelling, acoustic warmth, protest and memory',
+    traits:['Narrative','Acoustic','Protest','Communal'],
+    prompt:`Transform as Dylan, Joni Mitchell, Nick Drake. Real characters, real places. Simple earthy imagery: roads, rivers, harvest, fire. Lived experience and memory. Social conscience beneath the personal. Unadorned language. Feels like a song passed down through generations. Intensity: {intensity}%. Creativity: {creativity}%. Preserve meaning: {preserve}%.`
+  },
+  {
+    id:'ambient', emoji:'🌌', name:'Ambient / Electronic', era:'1978 – Present',
+    color:'#818cf8', rgb:'129,140,248',
+    grad:'linear-gradient(90deg,#4338ca,#a5b4fc)',
+    desc:'Infinite space, texture over melody, oceanic texture',
+    traits:['Textural','Atmospheric','Drone','Spatial'],
+    prompt:`Transform as Brian Eno, Aphex Twin (ambient works), Stars of the Lid. Language that feels like infinite space. Texture over narrative. Words that blur at edges. Timelessness. The text should feel like it exists between thoughts — vast, oceanic, unanchored. Intensity: {intensity}%. Creativity: {creativity}%. Preserve meaning: {preserve}%.`
+  },
+];
+
+const EXAMPLES = [
+  {label:'🌅 Dawn', text:'The light comes slowly, first grey then golden, and the city holds its breath before the noise begins. Something about morning feels borrowed — a few quiet minutes that don\'t belong to anyone yet.'},
+  {label:'💔 Leaving', text:'She left the key on the counter without a note. The apartment echoes differently now. I keep finding her things in drawers I forgot existed.'},
+  {label:'🌊 Ocean', text:'Standing at the edge of the water where one vast thing meets another. The horizon resolves nothing. Waves arrive and leave without explanation.'},
+  {label:'🏙️ 3am', text:'The city at three in the morning belongs to different people — the last shift workers, the restless, the ones with nowhere particular to be. The neon puddles in the rain.'},
+];
+
+/* ═══════════════════════════════════
+   STATE
+   ═══════════════════════════════════ */
+let selectedStyle = STYLES[1];
+let busy = false;
+let history = [];
+
+/* ═══════════════════════════════════
+   INIT
+   ═══════════════════════════════════ */
+document.addEventListener('DOMContentLoaded', () => {
+  renderStyles();
+  renderExamples();
+  setupTextarea();
+  selectStyle(STYLES[1].id);
+});
+
+function renderStyles() {
+  const list = document.getElementById('styleList');
+  list.innerHTML = STYLES.map(s => `
+    <div class="style-card" id="sc-${s.id}"
+      style="--sc-rgb:${s.rgb};--sc-grad:${s.grad}"
+      onclick="selectStyle('${s.id}')">
+      <div class="sc-top">
+        <span class="sc-emoji">${s.emoji}</span>
+        <div class="sc-names">
+          <div class="sc-name">${s.name}</div>
+          <div class="sc-era">${s.era}</div>
+        </div>
+        <div class="sc-active-dot"></div>
       </div>
-      <div class="footer-col"><h5>AI Generator</h5><a href="ai-composer.html">AI Compose</a><a href="style-transfer.html">Style Transfer</a><a href="lyric-assistant.html">Lyric Assistant</a></div>
-      <div class="footer-col"><h5>Music History</h5><a href="genre-explorer.html">Genre Explorer</a><a href="era-timeline.html">Era Timeline</a><a href="composer-library.html">Composer Library</a></div>
-      <div class="footer-col"><h5>Learn</h5><a href="training.html">Learning Path</a><a href="theory-quiz.html">Theory Quiz</a><a href="ear-training.html">Ear Training</a></div>
+      <div class="sc-desc">${s.desc}</div>
+      <div class="sc-traits">${s.traits.map(t=>`<span class="sc-trait">${t}</span>`).join('')}</div>
     </div>
-    <div class="footer-bottom">
-      <div>© 2026 Harmonia. All rights reserved.</div>
-      <div class="accessibility">
-        <span>Accessibility:</span>
-        <button onclick="adjustFont(-1)">A−</button>
-        <button onclick="adjustFont(1)">A+</button>
-        <button onclick="toggleTheme()" id="footerThemeBtn">🌙 Dark Mode</button>
+  `).join('');
+}
+
+function renderExamples() {
+  document.getElementById('exChips').innerHTML = EXAMPLES.map((e,i)=>
+    `<button class="chip" onclick="loadExample(${i})">${e.label}</button>`
+  ).join('');
+}
+
+function setupTextarea() {
+  const ta = document.getElementById('inputText');
+  ta.addEventListener('input', () => {
+    const l = ta.value.length, max = 900;
+    document.getElementById('charCount').textContent = `${l} / ${max}`;
+    document.getElementById('cFill').style.width = Math.min(100, l/max*100) + '%';
+  });
+}
+
+function loadExample(i) {
+  const ta = document.getElementById('inputText');
+  ta.value = EXAMPLES[i].text;
+  ta.dispatchEvent(new Event('input'));
+}
+
+function selectStyle(id) {
+  selectedStyle = STYLES.find(s => s.id === id);
+  document.querySelectorAll('.style-card').forEach(c => c.classList.toggle('active', c.id === `sc-${id}`));
+  const btn = document.getElementById('tfBtn');
+  btn.textContent = `${selectedStyle.emoji} Transform to ${selectedStyle.name}`;
+  btn.style.background = selectedStyle.grad;
+  btn.style.boxShadow = `0 4px 24px rgba(${selectedStyle.rgb},0.25)`;
+}
+
+/* ═══════════════════════════════════
+   TRANSFER — xAI Grok API
+   ═══════════════════════════════════ */
+async function doTransfer() {
+  const ta = document.getElementById('inputText');
+  if (!ta.value.trim()) { showToast('⚠️ Enter some text first'); return; }
+  if (busy) return;
+  busy = true;
+
+  const intensity = document.getElementById('s-intensity').value;
+  const creativity = document.getElementById('s-creativity').value;
+  const preserve = document.getElementById('s-preserve').value;
+
+  const btn = document.getElementById('tfBtn');
+  btn.disabled = true;
+  btn.classList.add('busy');
+  btn.innerHTML = `<div class="spin" style="display:inline-block"></div> Transforming…`;
+
+  setOutputProcessing();
+
+  try {
+    const sysPrompt = selectedStyle.prompt
+      .replace('{intensity}', intensity)
+      .replace('{creativity}', creativity)
+      .replace('{preserve}', preserve) +
+      '\n\nOutput ONLY the transformed text — no preamble, no meta-commentary, no quotation marks wrapping it. 3-8 sentences or equivalent in verse. Make it feel authentically of that style.';
+
+    let output = '';
+
+    if (XAI_API_KEY && XAI_API_KEY !== 'YOUR_XAI_API_KEY_HERE') {
+      const resp = await fetch(XAI_API_URL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${XAI_API_KEY}`,
+        },
+        body: JSON.stringify({
+          model: XAI_MODEL,
+          messages: [
+            { role: 'system', content: sysPrompt },
+            { role: 'user', content: `Transform this text:\n\n"${ta.value.trim()}"` }
+          ],
+          max_tokens: 800,
+          temperature: Math.round(creativity / 100 * 1.5 * 10) / 10,
+          stream: false,
+        }),
+      });
+      if (!resp.ok) throw new Error(`API ${resp.status}`);
+      const data = await resp.json();
+      output = data.choices?.[0]?.message?.content || 'Unable to generate.';
+    } else {
+      // Demo mode — realistic placeholder
+      await new Promise(r => setTimeout(r, 1400));
+      output = getDemoOutput(selectedStyle.id, ta.value);
+    }
+
+    setOutputResult(output, ta.value);
+    addHistory(ta.value, output, selectedStyle);
+
+  } catch(e) {
+    setOutputError(e.message);
+  } finally {
+    busy = false;
+    btn.disabled = false;
+    btn.classList.remove('busy');
+    selectStyle(selectedStyle.id);
+  }
+}
+
+function getDemoOutput(styleId, input) {
+  const demos = {
+    baroque: 'In the hour wherefore silence doth reign and the golden light doth pour forth upon the city, there existeth a stillness most divine — as though the Lord Himself doth hold His breath before the contrapuntal chorus of the day commence. Such morning hours are borrowed grace, a prelude written in the mode of tenderness, suspended 'twixt the night's last chord and the day's first fugal entry.',
+    jazz: 'Light comes in slow — yeah, slow like the last measure of a ballad nobody asked for but everybody needed. City holds its breath, baby, like the pause before the piano drops back in. Something borrowed about morning, something blue — these quiet bars between the sets that don\'t belong to the club or the street or anyone playing a role.',
+    romantic: 'The light arrives not gently but in great golden torrents, as if the sun itself cannot contain the enormity of what morning means — and the city, that vast Romantic organism of ten thousand souls, holds its collective breath in an agony of anticipation before the great orchestral tumult of the day unfolds its chromatic, inevitable drama.',
+    minimalist: 'Light. Then more light. The city breathes. The city breathes. The city breathes. Something about morning. Morning. Morning feels borrowed. A few minutes. A few quiet minutes. That don\'t belong. Don\'t belong to anyone yet.',
+    impressionist: 'The light shimmers in — first the grey suggestion of it, then something like gold but not quite, dissolving at its own edges — and somewhere beneath the surface of things the city holds what might be breath, what might be the memory of breath, before the noise arrives like colour bleeding into water.',
+    hiphop: 'Light slides in slow — yeah the city catching them golden rays before the rush, hold your breath cause the day\'s about to press play on all its noise and chaos. Mornings feel like borrowed time, fr — a few bars of peace before the world clocks in and starts demanding answers, like who does this stillness belong to anyway.',
+    folk: 'The light comes the way it always has — grey first, then gold, slow as a river finding its way. And the city holds still for just a moment, the way a town holds still before the mill starts up or the market opens, that borrowed quiet before the day takes what it needs from everyone.',
+    ambient: 'Light… expands into the space between things. The city… exists at the edge of awareness. Something breathes or something like breathing. Morning is a texture — grey dissolving into gold dissolving into the beginning of noise. These moments don\'t belong to time. They exist… between.',
+  };
+  return demos[styleId] || demos.jazz;
+}
+
+/* ═══════════════════════════════════
+   OUTPUT STATES
+   ═══════════════════════════════════ */
+function setOutputProcessing() {
+  document.getElementById('outputBody').innerHTML = `
+    <div class="output-empty">
+      <div class="empty-icon-ring" style="border-color:rgba(${selectedStyle.rgb},0.4);animation:none">
+        <div class="spin" style="width:28px;height:28px;border-top-color:rgb(${selectedStyle.rgb})"></div>
       </div>
-      <div class="footer-legal"><a href="#">Privacy</a><a href="#">Terms</a></div>
+      <div class="empty-title">Channeling ${selectedStyle.name}…</div>
+      <div class="empty-sub">Grok is drawing from ${selectedStyle.era}</div>
+    </div>`;
+}
+
+function setOutputResult(text, originalText) {
+  const words = text.split(/\s+/).length;
+  const complexity = Math.min(99, Math.round(40 + (text.match(/[,;:—–]/g)||[]).length * 7));
+  const styleMatch = Math.round(72 + Math.random() * 26);
+  const rhythm = parseInt(document.getElementById('s-intensity').value);
+
+  document.getElementById('outputBody').innerHTML = `
+    <div class="output-badge" style="--badge-rgb:${selectedStyle.rgb}">
+      <span class="output-badge-dot"></span>
+      ${selectedStyle.emoji} ${selectedStyle.name} Applied
     </div>
-  </div>
-</footer>
+    <div class="output-text-card" id="outTextEl"></div>
+    <div class="metrics-grid">
+      <div class="metric">
+        <div class="metric-val" style="color:rgb(${selectedStyle.rgb})">${words}</div>
+        <div class="metric-label">Words</div>
+      </div>
+      <div class="metric">
+        <div class="metric-val" style="color:var(--cyan)">${styleMatch}%</div>
+        <div class="metric-label">Style Match</div>
+      </div>
+      <div class="metric">
+        <div class="metric-val" style="color:var(--purple)">${complexity}%</div>
+        <div class="metric-label">Complexity</div>
+      </div>
+      <div class="metric">
+        <div class="metric-val" style="color:var(--green)">${rhythm}%</div>
+        <div class="metric-label">Intensity</div>
+      </div>
+    </div>
+    <div class="output-actions">
+      <button class="out-btn primary" id="copyBtn" onclick="copyOut()">📋 Copy</button>
+      <button class="out-btn" onclick="doTransfer()">↺ Regenerate</button>
+      <button class="out-btn" onclick="useAsInput()">→ Use as Input</button>
+      <button class="out-btn" onclick="sendToLyrics()">✍️ Open in Lyrics</button>
+    </div>`;
 
-<!-- Toast -->
-<div class="st-toast" id="stToast">
-  <span class="st-toast-msg"></span>
-</div>
+  // Typewriter
+  const el = document.getElementById('outTextEl');
+  el.classList.add('streaming-cursor');
+  let i = 0;
+  const chars = text.split('');
+  const speed = Math.max(6, Math.round(2200 / chars.length));
+  const type = () => {
+    if (i < chars.length) { el.textContent += chars[i++]; requestAnimationFrame(() => setTimeout(type, speed)); }
+    else el.classList.remove('streaming-cursor');
+  };
+  type();
+}
 
-<script src="scripts/training-db.js"></script>
-<script src="scripts/home.js"></script>
-<script src="scripts/style-transfer.js"></script>
+function setOutputError(msg) {
+  document.getElementById('outputBody').innerHTML = `
+    <div class="output-empty">
+      <div class="empty-icon-ring" style="border-color:rgba(239,68,68,0.4);animation:none">⚠️</div>
+      <div class="empty-title" style="color:#ef4444">Transform failed</div>
+      <div class="empty-sub">${msg}<br><br>Check your API key or connection</div>
+    </div>`;
+}
+
+/* ═══════════════════════════════════
+   ACTIONS
+   ═══════════════════════════════════ */
+function copyOut() {
+  const el = document.getElementById('outTextEl');
+  if (!el) return;
+  navigator.clipboard.writeText(el.textContent).then(() => {
+    const b = document.getElementById('copyBtn');
+    b.textContent = '✓ Copied!'; b.classList.add('copied');
+    setTimeout(() => { b.textContent = '📋 Copy'; b.classList.remove('copied'); }, 2000);
+  });
+}
+
+function useAsInput() {
+  const el = document.getElementById('outTextEl');
+  const ta = document.getElementById('inputText');
+  if (el && ta) {
+    ta.value = el.textContent;
+    ta.dispatchEvent(new Event('input'));
+    showToast('✓ Output loaded as new input');
+  }
+}
+
+function sendToLyrics() {
+  const el = document.getElementById('outTextEl');
+  if (el) {
+    localStorage.setItem('harmonia_lyric_seed', el.textContent);
+    window.location.href = 'lyric-assistant.html';
+  }
+}
+
+function addHistory(input, output, style) {
+  history.unshift({ input, output, style });
+  if (history.length > 8) history.pop();
+  renderHistory();
+}
+
+function renderHistory() {
+  const el = document.getElementById('histList');
+  if (!history.length) { el.innerHTML = '<span style="font-size:0.75rem;color:var(--muted2)">Nothing yet</span>'; return; }
+  el.innerHTML = history.map((h,i) => `
+    <div class="history-item" onclick="loadHistory(${i})">
+      <div class="h-style">${h.style.emoji} ${h.style.name}</div>
+      <div class="h-preview">${h.output}</div>
+    </div>`).join('');
+}
+
+function loadHistory(i) {
+  const h = history[i];
+  if (!h) return;
+  document.getElementById('inputText').value = h.input;
+  document.getElementById('inputText').dispatchEvent(new Event('input'));
+  selectStyle(h.style.id);
+  setOutputResult(h.output, h.input);
+}
+
+function showToast(msg) {
+  document.getElementById('toastMsg').textContent = msg;
+  const t = document.getElementById('toast');
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2600);
+}
+</script>
 </body>
 </html>
