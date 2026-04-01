@@ -382,22 +382,30 @@ body::after{content:'';position:fixed;inset:0;background-image:url("data:image/s
 
 <script>
 // ═══════════════════════════════════
-// CONFIGURATION — paste your xAI key
-// ═══════════════════════════════════
-const XAI_KEY   = 'xai-Qe70VqSGQl6hir1VMvh4ZHWJMX8hqBs5Iv4xQvO7Bp4NtuccFTlyDqNs2ejEKOUGByOX9tsi1qbB7GAC';
-const XAI_URL   = 'https://api.x.ai/v1/chat/completions';
-const XAI_MODEL = 'grok-3-latest';
+// ═══════════════════════════════════════════════════════
+// xAI PROXY CONFIG
+// Calls local proxy.js which forwards to api.x.ai
+// Run: node proxy.js   (in the harmonia folder)
+// ═══════════════════════════════════════════════════════
+const PROXY_URL  = 'http://localhost:3579/chat';
+const XAI_MODEL  = 'grok-3-latest';
 
 async function callGrok(system, user, maxTok, temp) {
-  if (!XAI_KEY || XAI_KEY === 'YOUR_XAI_API_KEY_HERE') return null;
-  const resp = await fetch(XAI_URL, {
-    method:'POST',
-    headers:{'Content-Type':'application/json','Authorization':'Bearer '+XAI_KEY},
-    body:JSON.stringify({model:XAI_MODEL,messages:[{role:'system',content:system},{role:'user',content:user}],max_tokens:maxTok||900,temperature:temp||0.85}),
+  const resp = await fetch(PROXY_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      model:       XAI_MODEL,
+      messages:    [{ role: 'system', content: system }, { role: 'user', content: user }],
+      max_tokens:  maxTok || 1000,
+      temperature: temp   || 0.85,
+    }),
   });
   if (!resp.ok) {
-    const err = await resp.json().catch(()=>({error:{message:'HTTP '+resp.status}}));
-    throw new Error(err.error?.message || 'API error '+resp.status);
+    const err = await resp.json().catch(() => ({ error: { message: 'Proxy error ' + resp.status } }));
+    // If proxy not running, fall back to demo mode
+    if (resp.status === 0 || resp.status >= 500) return null;
+    throw new Error(err.error?.message || 'API error ' + resp.status);
   }
   const d = await resp.json();
   return d.choices?.[0]?.message?.content || '';
