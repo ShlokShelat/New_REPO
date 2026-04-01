@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Lyric Assistant — Harmonia AI Generator</title>
+  <link rel="stylesheet" href="styles/home.css"/>
+  <link rel="stylesheet" href="styles/lyric-assistant.css"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+  <style>
+    /* Keep body from scrolling — workspace handles it */
+    body { overflow: hidden; }
+    .la-toast {
+      position: fixed; bottom: 24px; left: 50%;
+      transform: translateX(-50%) translateY(60px);
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 12px; padding: 10px 18px;
+      display: flex; align-items: center; gap: 8px;
+      font-size: 0.82rem; font-weight: 500;
+      box-shadow: 0 12px 40px rgba(0,0,0,0.5);
+      z-index: 9999; transition: transform 0.35s cubic-bezier(0.34,1.56,0.64,1);
+      white-space: nowrap;
+    }
+    .la-toast.show { transform: translateX(-50%) translateY(0); }
+  </style>
+</head>
+<body>
+
+<!-- ===== NAVBAR ===== -->
+<nav class="navbar" id="navbar">
+  <div class="nav-inner">
+    <a href="home.html" class="nav-logo">
+      <div class="logo-icon">
+        <svg width="28" height="28" viewBox="0 0 36 36" fill="none">
+          <defs><linearGradient id="ng" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#a78bfa"/><stop offset="100%" style="stop-color:#ec4899"/></linearGradient></defs>
+          <path d="M13 24V12l12 3v9" stroke="url(#ng)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+          <circle cx="11" cy="24" r="3" fill="url(#ng)"/><circle cx="23" cy="22" r="3" fill="url(#ng)"/>
+        </svg>
+      </div>
+      <span class="logo-text">Harmonia</span>
+    </a>
+    <ul class="nav-links" id="navLinks">
+      <li class="nav-item has-dropdown">
+        <button class="nav-link">Training<svg class="caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m6 9 6 6 6-6"/></svg></button>
+        <div class="dropdown"><div class="dropdown-inner">
+          <a href="training.html" class="dd-item"><span class="dd-icon">🛤️</span><span class="dd-content"><strong>Learning Path</strong><span>Structured curriculum</span></span></a>
+          <a href="theory-quiz.html" class="dd-item"><span class="dd-icon">🧠</span><span class="dd-content"><strong>Theory Quiz</strong><span>Test your knowledge</span></span><span class="dd-tag xp">+XP</span></a>
+        </div></div>
+      </li>
+      <li class="nav-item has-dropdown">
+        <button class="nav-link active-nav">AI Generator<svg class="caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m6 9 6 6 6-6"/></svg></button>
+        <div class="dropdown"><div class="dropdown-inner">
+          <a href="ai-composer.html" class="dd-item"><span class="dd-icon">🤖</span><span class="dd-content"><strong>AI Compose</strong><span>Generate original music</span></span></a>
+          <a href="style-transfer.html" class="dd-item"><span class="dd-icon">🎨</span><span class="dd-content"><strong>Style Transfer</strong><span>Reimagine your tracks</span></span><span class="dd-tag beta">Beta</span></a>
+          <a href="lyric-assistant.html" class="dd-item"><span class="dd-icon">✍️</span><span class="dd-content"><strong>Lyric Assistant</strong><span>AI-powered songwriting</span></span></a>
+        </div></div>
+      </li>
+      <li class="nav-item has-dropdown">
+        <button class="nav-link">Music History<svg class="caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m6 9 6 6 6-6"/></svg></button>
+        <div class="dropdown"><div class="dropdown-inner">
+          <a href="genre-explorer.html" class="dd-item"><span class="dd-icon">🌍</span><span class="dd-content"><strong>Genre Explorer</strong><span>From jazz to EDM</span></span></a>
+          <a href="era-timeline.html" class="dd-item"><span class="dd-icon">📅</span><span class="dd-content"><strong>Era Timeline</strong><span>Centuries of music</span></span></a>
+          <a href="composer-library.html" class="dd-item"><span class="dd-icon">🎼</span><span class="dd-content"><strong>Composer Library</strong><span>Masters & legends</span></span></a>
+        </div></div>
+      </li>
+    </ul>
+    <div class="nav-right">
+      <button class="icon-btn theme-btn" id="themeBtn" onclick="toggleTheme()">
+        <svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/></svg>
+        <svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+      </button>
+      <div class="profile-menu" id="profileMenu">
+        <button class="profile-btn" onclick="toggleProfile()">
+          <div class="avatar">G</div><span class="profile-name">Guest</span>
+          <svg class="caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m6 9 6 6 6-6"/></svg>
+        </button>
+        <div class="profile-dropdown" id="profileDropdown">
+          <div class="pd-header"><div class="pd-avatar">G</div><div><div class="pd-name">Guest User</div><div class="pd-email">Not signed in</div></div></div>
+          <hr class="pd-divider"/>
+          <a href="#" class="pd-item">My Profile</a>
+          <hr class="pd-divider"/>
+          <a href="index.html" class="pd-item pd-signout">Sign Out</a>
+        </div>
+      </div>
+      <a href="index.html" class="btn-signout"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>Sign Out</a>
+      <button class="hamburger" id="hamburger" onclick="toggleMobileNav()"><span></span><span></span><span></span></button>
+    </div>
+  </div>
+</nav>
+
+<div class="mobile-overlay" id="mobileOverlay" onclick="toggleMobileNav()"></div>
+<div class="mobile-nav" id="mobileNav">
+  <div class="mobile-nav-header"><span class="logo-text">Harmonia</span><button onclick="toggleMobileNav()">✕</button></div>
+  <div class="mobile-nav-links">
+    <details open><summary>AI Generator</summary>
+      <a href="ai-composer.html">AI Compose</a>
+      <a href="style-transfer.html">Style Transfer</a>
+      <a href="lyric-assistant.html">Lyric Assistant</a>
+    </details>
+    <a href="index.html" class="mobile-signout">Sign Out</a>
+  </div>
+</div>
+
+<!-- ===== LA PAGE ===== -->
+<div class="la-page">
+
+  <!-- ── Top bar ── -->
+  <div class="la-topbar">
+    <svg viewBox="0 0 24 24" fill="none" stroke="var(--accent1)" stroke-width="2" width="16" height="16" style="flex-shrink:0"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+    <input class="la-song-title-input" id="songTitle" placeholder="Untitled Song" maxlength="60"/>
+    <div class="la-topbar-divider"></div>
+    <div class="la-topbar-meta">
+      <strong id="statusWords">0</strong> words ·
+      <strong id="statusLines">0</strong> lines ·
+      <strong id="statusSections">4</strong> sections ·
+      <strong id="statusChars">0</strong> chars
+    </div>
+    <div class="la-topbar-actions">
+      <button class="la-topbar-btn" onclick="copyAllLyrics()">📋 Copy All</button>
+      <button class="la-topbar-btn" onclick="exportLyrics()">💾 Export .txt</button>
+      <a href="style-transfer.html" class="la-topbar-btn" style="text-decoration:none">🎨 Style Transfer</a>
+    </div>
+  </div>
+
+  <!-- ── Workspace ── -->
+  <div class="la-workspace">
+
+    <!-- ══ LEFT: SONG EDITOR ══ -->
+    <div class="la-editor">
+
+      <!-- Song meta -->
+      <div class="la-song-meta">
+        <select class="la-meta-select" id="songGenre">
+          <option value="">Genre: Any</option>
+          <option value="pop">Pop</option>
+          <option value="indie">Indie / Folk</option>
+          <option value="hip-hop">Hip-Hop / Rap</option>
+          <option value="rnb">R&B / Soul</option>
+          <option value="rock">Rock</option>
+          <option value="country">Country</option>
+          <option value="electronic">Electronic</option>
+          <option value="jazz">Jazz</option>
+        </select>
+        <select class="la-meta-select" id="songMood">
+          <option value="">Mood: Any</option>
+          <option value="melancholy">Melancholy</option>
+          <option value="uplifting">Uplifting</option>
+          <option value="romantic">Romantic</option>
+          <option value="angry">Angry / Defiant</option>
+          <option value="nostalgic">Nostalgic</option>
+          <option value="dreamy">Dreamy</option>
+          <option value="dark">Dark / Brooding</option>
+        </select>
+        <select class="la-meta-select" id="songTempo">
+          <option value="">Tempo: Any</option>
+          <option value="slow">Slow / Ballad</option>
+          <option value="mid">Mid-tempo</option>
+          <option value="fast">Fast / Uptempo</option>
+        </select>
+        <div class="la-meta-badge">✨ AI-Assisted</div>
+        <div class="la-word-count" id="wordCountDisplay">0 words</div>
+      </div>
+
+      <!-- Section tabs -->
+      <div class="la-section-tabs" id="sectionTabs">
+        <!-- Rendered by JS -->
+      </div>
+
+      <!-- Editor area -->
+      <div class="la-editor-area" id="editorArea">
+        <!-- Rendered by JS -->
+      </div>
+
+      <!-- Status bar -->
+      <div class="la-status-bar">
+        <div class="la-status-dot"></div>
+        <div class="la-status-item">Live · AI Ready</div>
+        <div class="la-status-item">·</div>
+        <div class="la-status-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="12" height="12"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+          Click any section to edit
+        </div>
+        <div class="la-status-item">·</div>
+        <div class="la-status-item">✨ Use the panel → for AI help</div>
+      </div>
+    </div>
+
+    <!-- ══ RIGHT: AI PANEL ══ -->
+    <div class="la-ai-panel">
+
+      <!-- Panel tabs -->
+      <div class="la-ai-tabs">
+        <button class="la-ai-tab active" data-tab="suggest" onclick="setActiveTab('suggest')">✨ Suggest</button>
+        <button class="la-ai-tab" data-tab="rhyme" onclick="setActiveTab('rhyme')">🔤 Rhyme</button>
+        <button class="la-ai-tab" data-tab="analyze" onclick="setActiveTab('analyze')">📊 Analyze</button>
+        <button class="la-ai-tab" data-tab="rewrite" onclick="setActiveTab('rewrite')">✏️ Rewrite</button>
+      </div>
+
+      <!-- ── SUGGEST tab ── -->
+      <div class="la-ai-content">
+
+        <div class="la-tab-panel active" id="panel-suggest">
+          <div class="la-suggest-controls">
+            <div>
+              <div class="la-suggest-label">Themes to weave in</div>
+              <div class="la-theme-chips" id="themeChips"><!-- JS --></div>
+            </div>
+            <div>
+              <div class="la-suggest-label">Any extra context?</div>
+              <textarea class="la-suggest-context" id="suggestContext"
+                placeholder="e.g. 'This is about leaving a city I loved' or 'sung from the perspective of the sea'…"
+                rows="3"></textarea>
+            </div>
+            <button class="la-suggest-btn" id="suggestBtn" onclick="getSuggestions()">
+              ✨ Generate Suggestions
+            </button>
+          </div>
+          <div class="la-suggestions-list" id="suggestionsList">
+            <div style="text-align:center;padding:24px 0;color:var(--muted)">
+              <div style="font-size:1.5rem;margin-bottom:10px">✨</div>
+              <div style="font-size:0.84rem;font-weight:600;margin-bottom:4px">AI Co-Writer</div>
+              <div style="font-size:0.76rem;opacity:0.6;line-height:1.5">Pick your themes, add context, and<br/>let Claude suggest your next lines.</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ── RHYME tab ── -->
+        <div class="la-tab-panel" id="panel-rhyme">
+          <div class="la-rhyme-finder">
+            <div>
+              <div class="la-suggest-label">Find rhymes for…</div>
+              <div class="la-rhyme-input-wrap">
+                <input class="la-rhyme-input" id="rhymeInput" placeholder="e.g. night, fire, love…"
+                  onkeydown="if(event.key==='Enter') findRhymes()"/>
+                <button class="la-rhyme-search-btn" onclick="findRhymes()">Find</button>
+              </div>
+            </div>
+            <div style="font-size:0.72rem;color:var(--muted)">
+              <strong style="color:var(--text)">Quick words:</strong>
+              <span style="display:flex;flex-wrap:wrap;gap:5px;margin-top:5px">
+                <button onclick="document.getElementById('rhymeInput').value='night';findRhymes()" class="la-rhyme-word" style="font-size:0.72rem">night</button>
+                <button onclick="document.getElementById('rhymeInput').value='love';findRhymes()" class="la-rhyme-word" style="font-size:0.72rem">love</button>
+                <button onclick="document.getElementById('rhymeInput').value='heart';findRhymes()" class="la-rhyme-word" style="font-size:0.72rem">heart</button>
+                <button onclick="document.getElementById('rhymeInput').value='fire';findRhymes()" class="la-rhyme-word" style="font-size:0.72rem">fire</button>
+                <button onclick="document.getElementById('rhymeInput').value='time';findRhymes()" class="la-rhyme-word" style="font-size:0.72rem">time</button>
+                <button onclick="document.getElementById('rhymeInput').value='rain';findRhymes()" class="la-rhyme-word" style="font-size:0.72rem">rain</button>
+              </span>
+            </div>
+            <div class="la-rhyme-results" id="rhymeResults">
+              <div style="color:var(--muted);font-size:0.8rem;text-align:center;padding:16px 0">Type a word and hit Find</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ── ANALYZE tab ── -->
+        <div class="la-tab-panel" id="panel-analyze">
+          <div class="la-analysis">
+            <div class="la-analysis-card">
+              <div class="la-analysis-card-title">Syllable Meter</div>
+              <div class="la-meter-grid" id="meterGrid">
+                <div style="color:var(--muted);font-size:0.78rem">Write some lines to see meter analysis</div>
+              </div>
+            </div>
+            <div class="la-analysis-card">
+              <div class="la-analysis-card-title">Rhyme Scheme</div>
+              <div class="la-scheme-display" id="rhymeScheme">
+                <div style="color:var(--muted);font-size:0.78rem">Needs 2+ lines</div>
+              </div>
+            </div>
+            <div class="la-analysis-card">
+              <div class="la-analysis-card-title">Mood Analysis</div>
+              <div class="la-mood-bar-wrap" id="moodBars">
+                <div style="color:var(--muted);font-size:0.78rem">Write to see mood breakdown</div>
+              </div>
+            </div>
+            <button onclick="updateAnalysisTab()" style="background:rgba(167,139,250,0.08);border:1px solid rgba(167,139,250,0.2);color:var(--accent1);font-family:inherit;font-size:0.78rem;font-weight:600;padding:9px;border-radius:10px;cursor:pointer;width:100%;transition:background 0.2s" onmouseover="this.style.background='rgba(167,139,250,0.14)'" onmouseout="this.style.background='rgba(167,139,250,0.08)'">
+              ↺ Refresh Analysis
+            </button>
+          </div>
+        </div>
+
+        <!-- ── REWRITE tab ── -->
+        <div class="la-tab-panel" id="panel-rewrite">
+          <div class="la-rewrite">
+            <div>
+              <div class="la-suggest-label">How to rewrite the active section</div>
+              <div class="la-rewrite-modes" id="rewriteModes"><!-- JS --></div>
+            </div>
+            <button class="la-rewrite-btn" id="rewriteBtn" onclick="doRewrite()">
+              ✨ Elevate
+            </button>
+            <div class="la-rewrite-result" id="rewriteResult"></div>
+            <div class="la-rewrite-actions" id="rewriteActions"></div>
+            <div style="padding:12px;background:rgba(255,255,255,0.02);border:1px solid var(--border);border-radius:10px">
+              <div style="font-size:0.68rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--muted);margin-bottom:6px">💡 How it works</div>
+              <div style="font-size:0.75rem;color:var(--muted);line-height:1.6">The active section (highlighted tab) will be rewritten in the chosen mode. You can then accept or try again.</div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="la-toast" id="laToast">
+  <span class="la-toast-msg"></span>
+</div>
+
+<script src="scripts/training-db.js"></script>
+<script src="scripts/home.js"></script>
+<script src="scripts/lyric-assistant.js"></script>
+</body>
+</html>
