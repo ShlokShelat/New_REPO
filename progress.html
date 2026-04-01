@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>My Progress – Harmonia</title>
+  <link rel="stylesheet" href="styles/home.css" />
+  <link rel="stylesheet" href="styles/progress.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+</head>
+<body>
+
+<!-- ===== NAVBAR ===== -->
+<nav class="navbar" id="navbar">
+  <div class="nav-inner">
+    <a href="home.html" class="nav-logo">
+      <div class="logo-icon">
+        <svg width="28" height="28" viewBox="0 0 36 36" fill="none">
+          <defs><linearGradient id="navLogoGrad" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#a78bfa"/><stop offset="100%" style="stop-color:#ec4899"/></linearGradient></defs>
+          <path d="M13 24V12l12 3v9" stroke="url(#navLogoGrad)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+          <circle cx="11" cy="24" r="3" fill="url(#navLogoGrad)"/>
+          <circle cx="23" cy="22" r="3" fill="url(#navLogoGrad)"/>
+        </svg>
+      </div>
+      <span class="logo-text">Harmonia</span>
+    </a>
+    <ul class="nav-links" id="navLinks">
+      <li class="nav-item has-dropdown">
+        <button class="nav-link">Training<svg class="caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m6 9 6 6 6-6"/></svg></button>
+        <div class="dropdown"><div class="dropdown-inner">
+          <a href="training.html" class="dd-item"><span class="dd-icon">🛤️</span><span class="dd-content"><strong>Learning Path</strong><span>Structured curriculum</span></span></a>
+          <a href="theory-quiz.html" class="dd-item"><span class="dd-icon">🧠</span><span class="dd-content"><strong>Theory Quiz</strong><span>Test your knowledge</span></span><span class="dd-tag xp">+XP</span></a>
+          <a href="ear-training.html" class="dd-item"><span class="dd-icon">👂</span><span class="dd-content"><strong>Ear Training</strong><span>Sharpen your hearing</span></span></a>
+          <a href="practice-mode.html" class="dd-item"><span class="dd-icon">🎸</span><span class="dd-content"><strong>Practice Mode</strong><span>Guided sessions</span></span><span class="dd-tag new">New</span></a>
+        </div></div>
+      </li>
+      <li class="nav-item has-dropdown">
+        <button class="nav-link active-nav">Dashboard<svg class="caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m6 9 6 6 6-6"/></svg></button>
+        <div class="dropdown"><div class="dropdown-inner">
+          <a href="leaderboard.html" class="dd-item"><span class="dd-icon">🏆</span><span class="dd-content"><strong>Leaderboard</strong><span>Top performers</span></span></a>
+          <a href="progress.html" class="dd-item"><span class="dd-icon">📈</span><span class="dd-content"><strong>My Progress</strong><span>Track your growth</span></span></a>
+          <a href="achievements.html" class="dd-item"><span class="dd-icon">🥇</span><span class="dd-content"><strong>Achievements</strong><span>Badges & rewards</span></span></a>
+        </div></div>
+      </li>
+    </ul>
+    <div class="nav-right">
+      <div class="search-wrap" id="searchWrap">
+        <button class="icon-btn search-toggle" id="searchToggle" onclick="toggleSearch()" aria-label="Search">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+        </button>
+        <div class="search-expand" id="searchExpand">
+          <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+          <input type="text" placeholder="Search lessons, instruments…" id="searchInput" />
+          <button class="search-close" onclick="toggleSearch()">✕</button>
+        </div>
+      </div>
+      <button class="icon-btn theme-btn" id="themeBtn" onclick="toggleTheme()" aria-label="Toggle theme">
+        <svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+        <svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+      </button>
+      <div class="profile-menu" id="profileMenu">
+        <button class="profile-btn" onclick="toggleProfile()" aria-label="Profile menu">
+          <div class="avatar">G</div>
+          <span class="profile-name">Guest</span>
+          <svg class="caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m6 9 6 6 6-6"/></svg>
+        </button>
+        <div class="profile-dropdown" id="profileDropdown">
+          <div class="pd-header">
+            <div class="pd-avatar">G</div>
+            <div><div class="pd-name">Guest User</div><div class="pd-email">Not signed in</div></div>
+          </div>
+          <hr class="pd-divider"/>
+          <a href="#" class="pd-item">My Profile</a>
+          <a href="#" class="pd-item">Settings</a>
+          <hr class="pd-divider"/>
+          <a href="index.html" class="pd-item pd-signout">Sign Out</a>
+        </div>
+      </div>
+      <a href="index.html" class="btn-signout">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        Sign Out
+      </a>
+      <button class="hamburger" id="hamburger" onclick="toggleMobileNav()" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </div>
+</nav>
+
+<div class="mobile-overlay" id="mobileOverlay" onclick="toggleMobileNav()"></div>
+<div class="mobile-nav" id="mobileNav">
+  <div class="mobile-nav-header"><span class="logo-text">Harmonia</span><button onclick="toggleMobileNav()">✕</button></div>
+  <div class="mobile-nav-links">
+    <details><summary>Training</summary>
+      <a href="training.html">Learning Path</a><a href="theory-quiz.html">Theory Quiz</a>
+      <a href="ear-training.html">Ear Training</a><a href="practice-mode.html">Practice Mode</a>
+    </details>
+    <details open><summary>Dashboard</summary>
+      <a href="leaderboard.html">🏆 Leaderboard</a>
+      <a href="progress.html">📈 My Progress</a>
+      <a href="achievements.html">🥇 Achievements</a>
+    </details>
+    <a href="index.html" class="mobile-signout">Sign Out</a>
+  </div>
+</div>
+
+<!-- ===== HERO ===== -->
+<section class="pr-hero">
+  <div class="pr-hero-bg">
+    <div class="pr-orb pr-orb-1"></div>
+    <div class="pr-orb pr-orb-2"></div>
+    <div class="pr-orb pr-orb-3"></div>
+    <div class="pr-grid"></div>
+  </div>
+  <div class="container pr-hero-inner">
+    <div class="pr-hero-left">
+      <nav class="breadcrumb">
+        <a href="home.html">Home</a>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="m9 18 6-6-6-6"/></svg>
+        <a href="#">Dashboard</a>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="m9 18 6-6-6-6"/></svg>
+        <span>My Progress</span>
+      </nav>
+      <div class="pr-badge"><span class="badge-dot"></span>Your personal stats</div>
+      <h1 class="pr-title">My <span class="grad-text">Progress</span></h1>
+      <p class="pr-subtitle">Track every lesson, quiz, and practice session. See how far you've come and where to go next.</p>
+    </div>
+
+    <!-- Level Ring -->
+    <div class="pr-level-ring-wrap">
+      <div class="pr-level-ring" id="prLevelRing">
+        <svg viewBox="0 0 180 180" width="180" height="180">
+          <circle cx="90" cy="90" r="78" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="10"/>
+          <circle cx="90" cy="90" r="78" fill="none"
+            stroke="url(#ringGrad)" stroke-width="10"
+            stroke-linecap="round"
+            stroke-dasharray="490"
+            stroke-dashoffset="490"
+            id="ringArc"
+            transform="rotate(-90 90 90)"/>
+          <defs>
+            <linearGradient id="ringGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" style="stop-color:#a78bfa"/>
+              <stop offset="100%" style="stop-color:#ec4899"/>
+            </linearGradient>
+          </defs>
+        </svg>
+        <div class="pr-ring-center">
+          <span class="pr-ring-level" id="ringLevel">1</span>
+          <span class="pr-ring-label">Level</span>
+          <span class="pr-ring-title" id="ringTitle">Newcomer</span>
+        </div>
+      </div>
+      <div class="pr-ring-stats">
+        <div class="prs-item">
+          <span class="prs-val" id="ringsXP">0</span>
+          <span class="prs-lbl">Total XP</span>
+        </div>
+        <div class="prs-div"></div>
+        <div class="prs-item">
+          <span class="prs-val" id="ringsNext">500</span>
+          <span class="prs-lbl">XP to Next</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== STAT CARDS ROW ===== -->
+<section class="pr-stat-row">
+  <div class="container pr-stat-grid" id="prStatGrid">
+    <!-- Populated by JS -->
+  </div>
+</section>
+
+<!-- ===== MAIN ===== -->
+<main class="pr-main">
+  <div class="container pr-layout">
+
+    <!-- Left column -->
+    <div class="pr-col-main">
+
+      <!-- Module Progress -->
+      <div class="pr-card">
+        <div class="pr-card-header">
+          <h2>Module Progress</h2>
+          <a href="training.html" class="pr-see-all">Continue Training →</a>
+        </div>
+        <div class="pr-modules" id="prModules"><!-- JS --></div>
+      </div>
+
+      <!-- Activity Heatmap -->
+      <div class="pr-card">
+        <div class="pr-card-header">
+          <h2>Activity Heatmap</h2>
+          <span class="pr-sub-badge" id="heatmapTotal">0 days active</span>
+        </div>
+        <div class="pr-heatmap-wrap">
+          <div class="pr-heatmap" id="prHeatmap"><!-- JS --></div>
+          <div class="pr-heatmap-legend">
+            <span>Less</span>
+            <div class="hm-swatch hm-0"></div>
+            <div class="hm-swatch hm-1"></div>
+            <div class="hm-swatch hm-2"></div>
+            <div class="hm-swatch hm-3"></div>
+            <div class="hm-swatch hm-4"></div>
+            <span>More</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Recent Sessions -->
+      <div class="pr-card">
+        <div class="pr-card-header">
+          <h2>Recent Sessions</h2>
+          <div class="pr-session-tabs">
+            <button class="pr-stab active" data-tab="all">All</button>
+            <button class="pr-stab" data-tab="quiz">Quiz</button>
+            <button class="pr-stab" data-tab="ear">Ear</button>
+            <button class="pr-stab" data-tab="practice">Practice</button>
+          </div>
+        </div>
+        <div class="pr-sessions" id="prSessions"><!-- JS --></div>
+      </div>
+    </div>
+
+    <!-- Right sidebar -->
+    <aside class="pr-col-side">
+
+      <!-- Streak Calendar -->
+      <div class="pr-card pr-streak-card">
+        <div class="pr-card-header">
+          <h3>Streak</h3>
+          <span class="pr-streak-fire" id="streakNum">0🔥</span>
+        </div>
+        <div class="pr-streak-info">
+          <div class="psi-item">
+            <span class="psi-val" id="streakCurrent">0</span>
+            <span class="psi-lbl">Current</span>
+          </div>
+          <div class="psi-div"></div>
+          <div class="psi-item">
+            <span class="psi-val" id="streakLongest">0</span>
+            <span class="psi-lbl">Longest</span>
+          </div>
+          <div class="psi-div"></div>
+          <div class="psi-item">
+            <span class="psi-val" id="streakLastDate">—</span>
+            <span class="psi-lbl">Last Active</span>
+          </div>
+        </div>
+        <div class="pr-week-calendar" id="prWeekCalendar"><!-- JS --></div>
+        <a href="training.html" class="pr-streak-cta" id="streakCTA">Keep your streak alive →</a>
+      </div>
+
+      <!-- Goals -->
+      <div class="pr-card">
+        <div class="pr-card-header">
+          <h3>Daily Goals</h3>
+          <span class="pr-goals-date" id="goalsDate">Today</span>
+        </div>
+        <div class="pr-goals" id="prGoals"><!-- JS --></div>
+      </div>
+
+      <!-- Skills Radar -->
+      <div class="pr-card">
+        <div class="pr-card-header">
+          <h3>Skill Profile</h3>
+          <span class="pr-sub-badge">Based on activity</span>
+        </div>
+        <canvas id="skillRadar" width="260" height="260"></canvas>
+      </div>
+
+      <!-- Quick Nav -->
+      <div class="pr-card pr-quicknav">
+        <h3 class="pr-qn-title">Dashboard</h3>
+        <a href="leaderboard.html" class="pr-qn-item">
+          <span>🏆</span><div><strong>Leaderboard</strong><span>See global rankings</span></div>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="14" height="14"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </a>
+        <a href="achievements.html" class="pr-qn-item">
+          <span>🥇</span><div><strong>Achievements</strong><span>Unlock badges</span></div>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="14" height="14"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </a>
+      </div>
+
+    </aside>
+  </div>
+</main>
+
+<!-- ===== FOOTER ===== -->
+<footer class="footer">
+  <div class="container">
+    <div class="footer-top">
+      <div class="footer-brand">
+        <a href="home.html" class="nav-logo" style="margin-bottom:12px">
+          <div class="logo-icon">
+            <svg width="24" height="24" viewBox="0 0 36 36" fill="none">
+              <path d="M13 24V12l12 3v9" stroke="url(#fLG3)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+              <circle cx="11" cy="24" r="3" fill="url(#fLG3)"/>
+              <circle cx="23" cy="22" r="3" fill="url(#fLG3)"/>
+              <defs><linearGradient id="fLG3" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#a78bfa"/><stop offset="100%" style="stop-color:#ec4899"/></linearGradient></defs>
+            </svg>
+          </div>
+          <span class="logo-text">Harmonia</span>
+        </a>
+        <p>The modern music learning platform for curious minds and creative souls.</p>
+        <div class="footer-social"><a href="#">🐦</a><a href="#">📸</a><a href="#">▶️</a><a href="#">💬</a></div>
+      </div>
+      <div class="footer-col"><h5>Training</h5><a href="training.html">Learning Path</a><a href="theory-quiz.html">Theory Quiz</a><a href="ear-training.html">Ear Training</a><a href="practice-mode.html">Practice Mode</a></div>
+      <div class="footer-col"><h5>Dashboard</h5><a href="leaderboard.html">Leaderboard</a><a href="progress.html">My Progress</a><a href="achievements.html">Achievements</a></div>
+      <div class="footer-col"><h5>Account</h5><a href="#">Profile</a><a href="#">Settings</a><a href="index.html">Sign Out</a></div>
+    </div>
+    <div class="footer-bottom">
+      <div class="footer-copy">© 2026 Harmonia. All rights reserved.</div>
+      <div class="accessibility">
+        <span>Accessibility:</span>
+        <button onclick="adjustFont(-1)">A−</button>
+        <button onclick="adjustFont(1)">A+</button>
+        <button onclick="toggleTheme()" id="footerThemeBtn">🌙 Dark Mode</button>
+      </div>
+      <div class="footer-legal"><a href="#">Privacy</a><a href="#">Terms</a></div>
+    </div>
+  </div>
+</footer>
+
+<script src="scripts/training-db.js"></script>
+<script src="scripts/home.js"></script>
+<script src="scripts/progress.js"></script>
+</body>
+</html>
