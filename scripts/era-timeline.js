@@ -1,8 +1,11 @@
 /**
- * era-timeline.js — Era Timeline full functionality
- * All musical eras, data, navigation, XP integration
+ * era-timeline.js — Era Timeline
+ * Curved SVG path navigator + scroll-driven entrance animations
  */
 
+/* ══════════════════════════════════════════════════
+   DATA
+   ══════════════════════════════════════════════════ */
 const ERAS = [
   {
     id: 'ancient',
@@ -71,7 +74,7 @@ const ERAS = [
     id: 'baroque',
     name: 'Baroque',
     years: '1600 – 1750',
-    color: '#b45309',
+    color: '#d97706',
     grad: 'linear-gradient(135deg,#b45309,#fbbf24)',
     badge: 'Drama & Grandeur',
     intro: 'A period of extraordinary invention: opera is born in Florence, the orchestra takes shape, and counterpoint reaches its ultimate expression in the fugues of J.S. Bach. Emotional drama, ornamental complexity, and the contrast of loud and soft (terraced dynamics) define the era.',
@@ -96,7 +99,7 @@ const ERAS = [
     ],
     works: [
       { icon: '🎼', title: 'The Well-Tempered Clavier', composer: 'J.S. Bach', year: '1722/1742', desc: 'Two books of 24 preludes and fugues in all major and minor keys — the Old Testament of piano music' },
-      { icon: '🎻', title: 'The Four Seasons', composer: 'A. Vivaldi', year: '1725', desc: 'Four violin concertos with poetic programs describing seasonal landscapes — programmatic music\'s first masterwork' },
+      { icon: '🎻', title: 'The Four Seasons', composer: 'A. Vivaldi', year: '1725', desc: 'Four violin concertos with poetic programs describing seasonal landscapes' },
       { icon: '🎭', title: 'Messiah', composer: 'G.F. Handel', year: '1741', desc: 'A sacred oratorio whose "Hallelujah" chorus has been sung standing for nearly 300 years' },
     ],
   },
@@ -137,7 +140,7 @@ const ERAS = [
     id: 'romantic',
     name: 'Romantic Era',
     years: '1820 – 1900',
-    color: '#9d174d',
+    color: '#be185d',
     grad: 'linear-gradient(135deg,#9d174d,#f9a8d4)',
     badge: 'Emotion Unleashed',
     intro: 'The orchestra swells to 100 players, harmony grows chromatic and daring, and individual expression becomes paramount. Composers set literature to music, write for virtuoso performers, and express national identity through folk melodies. Beethoven\'s Ninth opened the floodgates.',
@@ -162,7 +165,7 @@ const ERAS = [
     ],
     works: [
       { icon: '🌙', title: 'Nocturnes Op. 9', composer: 'F. Chopin', year: '1831', desc: 'Intimate night-music for solo piano — the Romantic soul in miniature' },
-      { icon: '🎪', title: 'Symphonic Poem "Les Préludes"', composer: 'F. Liszt', year: '1854', desc: 'One of the first and finest examples of the symphonic poem form' },
+      { icon: '🎪', title: 'Les Préludes', composer: 'F. Liszt', year: '1854', desc: 'One of the first and finest examples of the symphonic poem form' },
       { icon: '💍', title: 'Der Ring des Nibelungen', composer: 'R. Wagner', year: '1876', desc: 'A 15-hour, 4-opera epic based on Norse mythology — music drama\'s greatest monument' },
     ],
   },
@@ -195,7 +198,7 @@ const ERAS = [
       { name: 'Arvo Pärt', dates: '1935–', role: 'Tintinnabuli style', color: '#0369a1', init: 'AP' },
     ],
     works: [
-      { icon: '💃', title: 'The Rite of Spring', composer: 'I. Stravinsky', year: '1913', desc: 'Revolutionary use of rhythm and dissonance — caused a riot at its premiere, now considered a masterwork' },
+      { icon: '💃', title: 'The Rite of Spring', composer: 'I. Stravinsky', year: '1913', desc: 'Revolutionary use of rhythm and dissonance — caused a riot at its premiere' },
       { icon: '🎵', title: 'Kind of Blue', composer: 'Miles Davis', year: '1959', desc: 'The best-selling jazz album ever — introduced modal jazz to millions' },
       { icon: '🎸', title: 'Sgt. Pepper\'s Lonely Hearts Club Band', composer: 'The Beatles', year: '1967', desc: 'The album that proved popular music could be a serious art form' },
     ],
@@ -208,224 +211,350 @@ const ERAS = [
       { name: 'Reggae', color: '#dc2626' },
       { name: 'Folk Revival', color: '#065f46' },
       { name: 'Minimalism', color: '#7c3aed' },
-      { name: 'Post-Rock', color: '#374151' },
     ],
   },
 ];
 
-// ── DOM Ready ─────────────────────────────────────
+/* ══════════════════════════════════════════════════
+   INIT
+   ══════════════════════════════════════════════════ */
 document.addEventListener('DOMContentLoaded', () => {
   renderTimeline();
-  setupEraNav();
+  buildPathNav();
   setupScrollSpy();
+  // Kick off the glow path draw shortly after load
+  setTimeout(() => {
+    const glow = document.querySelector('.et-path-track-glow');
+    if (glow) glow.classList.add('drawn');
+  }, 400);
 });
 
-// ── Render Timeline ────────────────────────────────
-function renderTimeline() {
-  const container = document.getElementById('timelineContainer');
-  if (!container) return;
+/* ══════════════════════════════════════════════════
+   SVG CURVED PATH NAVIGATOR
+   ══════════════════════════════════════════════════ */
+function buildPathNav() {
+  const wrap = document.getElementById('eraNavInner');
+  if (!wrap) return;
 
-  container.innerHTML = ERAS.map((era, idx) => `
-    <div class="et-era-block" id="era-${era.id}"
-         style="--era-color:${era.color};--era-grad:${era.grad}">
+  const W = wrap.clientWidth || 900;
+  const H = 120;
+  const n = ERAS.length;
+  const pad = 60;
+  const step = (W - pad * 2) / (n - 1);
 
-      <div class="et-era-header">
-        <div class="et-era-date-col">
-          <div class="et-era-years">${era.years}</div>
-          <div class="et-era-name">${era.name}</div>
-          <div class="et-era-name-sub">${era.intro.substring(0,80)}…</div>
-          <div class="et-era-badge" style="color:${era.color};background:rgba(${hexToRgb(era.color)},0.1);border-color:rgba(${hexToRgb(era.color)},0.2)">${era.badge}</div>
-        </div>
-        <div class="et-era-intro">${era.intro}</div>
-      </div>
+  // Y positions: alternating high / low to create wave
+  const ys = ERAS.map((_, i) => i % 2 === 0 ? 38 : 78);
 
-      <div class="et-era-content">
+  // Build smooth cubic bezier path through all points
+  const pts = ERAS.map((_, i) => ({ x: pad + i * step, y: ys[i] }));
 
-        <!-- Composers -->
-        <div class="et-feature-card" style="--era-grad:${era.grad}">
-          <h4>Key Figures</h4>
-          <div class="et-composers">
-            ${era.composers.map(c => `
-              <div class="et-composer-item">
-                <div class="et-composer-avatar" style="background:${c.color}">${c.init}</div>
-                <div class="et-composer-info">
-                  <strong>${c.name}</strong>
-                  <span>${c.role}</span>
-                </div>
-                <div class="et-composer-dates">${c.dates}</div>
-              </div>
-            `).join('')}
-          </div>
-        </div>
+  let d = `M ${pts[0].x} ${pts[0].y}`;
+  for (let i = 0; i < pts.length - 1; i++) {
+    const cp1x = pts[i].x + (pts[i+1].x - pts[i].x) * 0.45;
+    const cp1y = pts[i].y;
+    const cp2x = pts[i+1].x - (pts[i+1].x - pts[i].x) * 0.45;
+    const cp2y = pts[i+1].y;
+    d += ` C ${cp1x} ${cp1y}, ${cp2x} ${cp2y}, ${pts[i+1].x} ${pts[i+1].y}`;
+  }
 
-        <!-- Characteristics -->
-        <div class="et-feature-card" style="--era-grad:${era.grad}">
-          <h4>Musical Characteristics</h4>
-          <div class="et-chars">
-            ${era.characteristics.map(c => `
-              <div class="et-char-item">
-                <div class="et-char-icon">${c.icon}</div>
-                <div class="et-char-text">${c.desc}</div>
-              </div>
-            `).join('')}
-          </div>
-        </div>
+  // Gradient defs
+  const gradStops = ERAS.map((era, i) => {
+    const pct = Math.round((i / (n - 1)) * 100);
+    return `<stop offset="${pct}%" stop-color="${era.color}"/>`;
+  }).join('');
 
-        <!-- Key Works -->
-        <div class="et-feature-card" style="--era-grad:${era.grad}">
-          <h4>Essential Works</h4>
-          <div class="et-works">
-            ${era.works.map(w => `
-              <div class="et-work-item">
-                <div class="et-work-icon">${w.icon}</div>
-                <div class="et-work-info">
-                  <strong>${w.title}</strong>
-                  <span>${w.composer}</span>
-                </div>
-                <div class="et-work-year">${w.year}</div>
-              </div>
-            `).join('')}
-          </div>
-        </div>
+  const svg = `
+    <svg class="et-path-svg" viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+      <defs>
+        <linearGradient id="pathGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+          ${gradStops}
+        </linearGradient>
+        <filter id="nodeGlow" x="-50%" y="-50%" width="200%" height="200%">
+          <feGaussianBlur stdDeviation="3" result="blur"/>
+          <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+        </filter>
+      </defs>
 
-        <!-- Historical Context -->
-        <div class="et-context-card">
-          <h4>Historical Context</h4>
-          <div class="et-context-list">
-            ${era.context.map(c => `<div class="et-context-item">${c}</div>`).join('')}
-          </div>
-        </div>
+      <!-- Base track -->
+      <path class="et-path-track" d="${d}"/>
+      <!-- Animated glow track -->
+      <path class="et-path-track-glow" d="${d}"/>
 
-        <!-- Era Span -->
-        <div class="et-feature-card et-era-content-wide" style="--era-grad:${era.grad}">
-          <h4>Era Timeline Span</h4>
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;align-items:center">
-            <div>
-              <div class="et-span-bar">
-                <div class="et-span-title">Duration in Music History</div>
-                <div class="et-span-track">
-                  <div class="et-span-fill"
-                       style="left:${((era.span_start / 2024)*100).toFixed(1)}%;width:${(((era.span_end - era.span_start) / 2024)*100).toFixed(1)}%;background:${era.grad}">
-                  </div>
-                </div>
-                <div class="et-span-labels">
-                  <span>${era.span_start || 'Antiquity'}</span>
-                  <span style="color:${era.color};font-weight:700">${era.span_end >= 2024 ? 'Present' : era.span_end}</span>
-                </div>
-              </div>
-              <div style="margin-top:16px;font-size:0.84rem;color:var(--muted)">
-                Approximate duration: <strong style="color:var(--text)">${era.span_end >= 2024 ? '124+' : era.span_end - era.span_start} years</strong>
-              </div>
-            </div>
-            ${era.modernGenres ? `
-            <div>
-              <div style="font-size:0.78rem;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:var(--muted);margin-bottom:12px">Major Genres Emerged</div>
-              <div class="et-modern-genres">
-                ${era.modernGenres.map(g => `
-                  <a href="genre-explorer.html" class="et-modern-genre" style="text-decoration:none;color:var(--text)">
-                    <div class="et-modern-genre-dot" style="background:${g.color}"></div>
-                    ${g.name}
-                  </a>
-                `).join('')}
-              </div>
-            </div>
-            ` : `
-            <div>
-              <div style="font-size:0.78rem;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:var(--muted);margin-bottom:12px">Explore More</div>
-              <a href="genre-explorer.html" style="
-                display:inline-flex;align-items:center;gap:8px;
-                background:rgba(${hexToRgb(era.color)},0.1);
-                border:1px solid rgba(${hexToRgb(era.color)},0.3);
-                color:${era.color};padding:11px 20px;border-radius:12px;
-                font-size:0.84rem;font-weight:700;text-decoration:none;
-                transition:background 0.2s;
-              ">
-                🎵 Explore Genres from this Era →
-              </a>
-            </div>
-            `}
-          </div>
-        </div>
+      <!-- Era nodes -->
+      ${ERAS.map((era, i) => {
+        const x = pts[i].x;
+        const y = pts[i].y;
+        const labelY = y < 58 ? y + 20 : y - 12;
+        const shortName = era.name.length > 14 ? era.name.split(' ')[0] : era.name;
+        return `
+          <g class="et-path-node${i === 0 ? ' active' : ''}" data-era="${era.id}"
+             onclick="scrollToEra('${era.id}')" filter="url(#nodeGlow)">
+            <!-- Outer ring -->
+            <circle cx="${x}" cy="${y}" r="14"
+              class="et-node-outer"
+              stroke="${era.color}" fill="rgba(8,8,16,0.85)"/>
+            <!-- Inner fill -->
+            <circle cx="${x}" cy="${y}" r="${i === 0 ? 8 : 6}"
+              class="et-node-inner"
+              fill="${era.color}" opacity="0.9"/>
+            <!-- Era name label -->
+            <text x="${x}" y="${labelY}"
+              class="et-node-label" fill="${era.color}">${shortName}</text>
+            <!-- Year range -->
+            <text x="${x}" y="${y < 58 ? labelY + 11 : labelY - 11}"
+              class="et-node-years">${era.years.split('–')[0].trim()}</text>
+          </g>
+        `;
+      }).join('')}
+    </svg>
+  `;
 
-      </div>
+  wrap.innerHTML = svg;
 
-      <!-- XP button -->
-      <div style="margin-top:24px;display:flex;align-items:center;gap:12px;flex-wrap:wrap">
-        <button onclick="awardEraXP('${era.id}','${era.name}')" style="
-          background:rgba(167,139,250,0.08);border:1px solid rgba(167,139,250,0.2);
-          color:var(--accent1);padding:9px 20px;border-radius:10px;
-          font-size:0.82rem;font-weight:700;font-family:inherit;cursor:pointer;
-          display:inline-flex;align-items:center;gap:8px;
-          transition:background 0.2s;
-        " id="xpBtn-${era.id}"
-        onmouseover="this.style.background='rgba(167,139,250,0.14)'"
-        onmouseout="this.style.background='rgba(167,139,250,0.08)'">
-          ⭐ Earn XP for studying this era
-        </button>
-        <span style="font-size:0.72rem;color:var(--muted)" id="xpStatus-${era.id}"></span>
-      </div>
-
-    </div>
-
-    ${idx < ERAS.length - 1 ? `
-    <div class="et-era-divider">
-      <div class="et-era-divider-text">↓ ${ERAS[idx+1].years} →</div>
-    </div>
-    ` : ''}
-  `).join('');
+  // Recalculate on resize
+  let resizeTimer;
+  window.addEventListener('resize', () => {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(buildPathNav, 200);
+  });
 }
 
-// ── Era Nav ────────────────────────────────────────
-function setupEraNav() {
-  const navInner = document.getElementById('eraNavInner');
-  if (!navInner) return;
-
-  navInner.innerHTML = ERAS.map(era => `
-    <button class="et-era-nav-btn" data-era="${era.id}" onclick="scrollToEra('${era.id}')">
-      <span class="et-era-nav-dot" style="background:${era.color}"></span>
-      ${era.name}
-    </button>
-  `).join('');
-
-  // Activate first
-  const first = navInner.querySelector('.et-era-nav-btn');
-  if (first) first.classList.add('active');
+function setActiveNode(eraId) {
+  document.querySelectorAll('.et-path-node').forEach(n => {
+    const isActive = n.dataset.era === eraId;
+    n.classList.toggle('active', isActive);
+    // Resize inner circle
+    const inner = n.querySelector('.et-node-inner');
+    if (inner) inner.setAttribute('r', isActive ? '8' : '6');
+  });
 }
 
+/* ══════════════════════════════════════════════════
+   SCROLL TO ERA
+   ══════════════════════════════════════════════════ */
 function scrollToEra(id) {
   const el = document.getElementById(`era-${id}`);
   if (!el) return;
-  const navH = 64 + 56; // main nav + era nav
+  const navH = 64 + 120; // main nav + path nav height
   const y = el.getBoundingClientRect().top + window.scrollY - navH - 20;
   window.scrollTo({ top: y, behavior: 'smooth' });
 }
 
-// ── Scroll Spy ─────────────────────────────────────
+/* ══════════════════════════════════════════════════
+   SCROLL SPY + ENTRANCE ANIMATIONS
+   ══════════════════════════════════════════════════ */
 function setupScrollSpy() {
-  const obs = new IntersectionObserver((entries) => {
+  // Scroll spy for active nav node
+  const navObs = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
       if (entry.isIntersecting) {
         const id = entry.target.id.replace('era-', '');
-        document.querySelectorAll('.et-era-nav-btn').forEach(btn => {
-          btn.classList.toggle('active', btn.dataset.era === id);
-        });
-        // Scroll nav btn into view
-        const activeBtn = document.querySelector(`.et-era-nav-btn[data-era="${id}"]`);
-        if (activeBtn) activeBtn.scrollIntoView({ inline: 'center', behavior: 'smooth' });
+        setActiveNode(id);
       }
     });
-  }, { threshold: 0.15, rootMargin: '-80px 0px -60% 0px' });
+  }, { threshold: 0.2, rootMargin: '-80px 0px -50% 0px' });
+
+  // Entrance animation observer
+  const enterObs = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+        // Animate span fill width
+        const fill = entry.target.querySelector('.et-span-fill');
+        if (fill && fill.dataset.fillW) {
+          fill.style.width = fill.dataset.fillW;
+        }
+        enterObs.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.1, rootMargin: '0px 0px -60px 0px' });
 
   ERAS.forEach(era => {
     const el = document.getElementById(`era-${era.id}`);
-    if (el) obs.observe(el);
+    if (el) {
+      navObs.observe(el);
+      enterObs.observe(el);
+    }
   });
 }
 
-// ── XP ─────────────────────────────────────────────
+/* ══════════════════════════════════════════════════
+   RENDER TIMELINE
+   ══════════════════════════════════════════════════ */
+function renderTimeline() {
+  const container = document.getElementById('timelineContainer');
+  if (!container) return;
+
+  const TOTAL_SPAN = 2024;
+
+  container.innerHTML = ERAS.map((era, idx) => {
+    const fillLeft = ((era.span_start / TOTAL_SPAN) * 100).toFixed(1);
+    const fillW    = (((era.span_end - era.span_start) / TOTAL_SPAN) * 100).toFixed(1);
+    const duration = era.span_end >= 2024 ? '124+ years' : `${era.span_end - era.span_start} years`;
+
+    return `
+    <div class="et-era-block" id="era-${era.id}"
+         style="--era-color:${era.color};--era-grad:${era.grad}">
+
+      <div class="container">
+
+        <!-- ── Header ── -->
+        <div class="et-era-header">
+          <div class="et-era-date-col">
+            <div class="et-era-years">${era.years}</div>
+            <div class="et-era-name">${era.name}</div>
+            <div class="et-era-badge"
+              style="color:${era.color};background:rgba(${hexToRgb(era.color)},0.1);border-color:rgba(${hexToRgb(era.color)},0.2)">
+              ${era.badge}
+            </div>
+          </div>
+          <div>
+            <div class="et-era-intro">${era.intro}</div>
+            <span class="et-era-header-line"></span>
+          </div>
+        </div>
+
+        <!-- ── Content Grid ── -->
+        <div class="et-era-content">
+
+          <!-- Key Figures -->
+          <div class="et-feature-card" style="--era-grad:${era.grad}">
+            <h4>Key Figures</h4>
+            <div class="et-composers">
+              ${era.composers.map(c => `
+                <div class="et-composer-item">
+                  <div class="et-composer-avatar" style="background:${c.color}">${c.init}</div>
+                  <div class="et-composer-info">
+                    <strong>${c.name}</strong>
+                    <span>${c.role}</span>
+                  </div>
+                  <div class="et-composer-dates">${c.dates}</div>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+
+          <!-- Characteristics -->
+          <div class="et-feature-card" style="--era-grad:${era.grad}">
+            <h4>Musical Characteristics</h4>
+            <div class="et-chars">
+              ${era.characteristics.map(c => `
+                <div class="et-char-item">
+                  <div class="et-char-icon">${c.icon}</div>
+                  <div class="et-char-text">${c.desc}</div>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+
+          <!-- Key Works -->
+          <div class="et-feature-card" style="--era-grad:${era.grad}">
+            <h4>Essential Works</h4>
+            <div class="et-works">
+              ${era.works.map(w => `
+                <div class="et-work-item">
+                  <div class="et-work-icon">${w.icon}</div>
+                  <div class="et-work-info">
+                    <strong>${w.title}</strong>
+                    <span>${w.composer}</span>
+                  </div>
+                  <div class="et-work-year">${w.year}</div>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+
+          <!-- Historical Context -->
+          <div class="et-context-card">
+            <h4>Historical Context</h4>
+            <div class="et-context-list">
+              ${era.context.map(c => `<div class="et-context-item">${c}</div>`).join('')}
+            </div>
+          </div>
+
+          <!-- Span + Genres (full width) -->
+          <div class="et-feature-card et-era-content-wide" style="--era-grad:${era.grad}">
+            <div style="display:grid;grid-template-columns:1fr ${era.modernGenres ? '1fr' : ''};gap:24px;align-items:start">
+              <div>
+                <h4>Duration in Music History</h4>
+                <div class="et-span-bar">
+                  <div class="et-span-title">${era.span_start || 'Antiquity'} → ${era.span_end >= 2024 ? 'Present' : era.span_end}</div>
+                  <div class="et-span-track">
+                    <div class="et-span-fill"
+                         style="left:${fillLeft}%;background:${era.grad}"
+                         data-fill-w="${fillW}%">
+                    </div>
+                  </div>
+                  <div class="et-span-labels">
+                    <span>Antiquity</span>
+                    <span>Present (2024)</span>
+                  </div>
+                </div>
+                <div style="margin-top:12px;font-size:0.84rem;color:var(--muted)">
+                  Approximate duration: <strong style="color:var(--text)">${duration}</strong>
+                </div>
+              </div>
+              ${era.modernGenres ? `
+              <div>
+                <h4 style="font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:var(--muted);margin-bottom:14px">Major Genres Emerged</h4>
+                <div class="et-modern-genres">
+                  ${era.modernGenres.map(g => `
+                    <a href="genre-explorer.html" class="et-modern-genre" style="text-decoration:none;color:var(--text)">
+                      <div class="et-modern-genre-dot" style="background:${g.color}"></div>
+                      ${g.name}
+                    </a>
+                  `).join('')}
+                </div>
+              </div>
+              ` : `
+              <div>
+                <h4 style="font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:var(--muted);margin-bottom:14px">Explore More</h4>
+                <a href="genre-explorer.html" style="
+                  display:inline-flex;align-items:center;gap:8px;
+                  background:rgba(${hexToRgb(era.color)},0.1);
+                  border:1px solid rgba(${hexToRgb(era.color)},0.3);
+                  color:${era.color};padding:11px 20px;border-radius:12px;
+                  font-size:0.84rem;font-weight:700;text-decoration:none;
+                  transition:background 0.2s;
+                ">🎵 Explore Genres from this Era →</a>
+              </div>
+              `}
+            </div>
+          </div>
+
+        </div>
+
+        <!-- XP button -->
+        <div style="margin-top:28px;display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+          <button class="et-xp-btn" onclick="awardEraXP('${era.id}','${era.name}')"
+                  id="xpBtn-${era.id}">
+            ⭐ Earn XP for studying this era
+          </button>
+          <span style="font-size:0.72rem;color:var(--muted)" id="xpStatus-${era.id}"></span>
+        </div>
+
+      </div>
+    </div>
+
+    ${idx < ERAS.length - 1 ? `
+    <div class="et-era-divider">
+      <div class="et-era-divider-inner">
+        <span class="et-era-divider-arrow">↓</span>
+        <span>${ERAS[idx+1].years}</span>
+      </div>
+    </div>
+    ` : ''}
+  `;
+  }).join('');
+}
+
+/* ══════════════════════════════════════════════════
+   XP
+   ══════════════════════════════════════════════════ */
 const awardedEras = new Set();
+
 function awardEraXP(eraId, eraName) {
-  const btn = document.getElementById(`xpBtn-${eraId}`);
+  const btn    = document.getElementById(`xpBtn-${eraId}`);
   const status = document.getElementById(`xpStatus-${eraId}`);
   if (awardedEras.has(eraId)) {
     if (status) status.textContent = '✓ XP already earned for this era';
@@ -433,15 +562,8 @@ function awardEraXP(eraId, eraName) {
   }
   awardedEras.add(eraId);
   const xp = 40;
-  if (window.HarmoniaDB) {
-    HarmoniaDB.addXP(xp, `Studied ${eraName} era`);
-  }
-  if (btn) {
-    btn.textContent = '✓ XP Earned!';
-    btn.style.background = 'rgba(52,211,153,0.1)';
-    btn.style.borderColor = 'rgba(52,211,153,0.3)';
-    btn.style.color = '#34d399';
-  }
+  if (window.HarmoniaDB) HarmoniaDB.addXP(xp, `Studied ${eraName} era`);
+  if (btn) btn.classList.add('earned'), btn.textContent = '✓ XP Earned!';
   if (status) status.textContent = `+${xp} XP added to your profile`;
   showEraToast(`+${xp} XP — ${eraName}`, xp);
 }
@@ -457,10 +579,12 @@ function showEraToast(msg, xp) {
   setTimeout(() => toast.classList.remove('show'), 3200);
 }
 
-// ── Utility ────────────────────────────────────────
+/* ══════════════════════════════════════════════════
+   UTILITY
+   ══════════════════════════════════════════════════ */
 function hexToRgb(hex) {
-  const r = parseInt(hex.slice(1,3),16);
-  const g = parseInt(hex.slice(3,5),16);
-  const b = parseInt(hex.slice(5,7),16);
+  const r = parseInt(hex.slice(1,3), 16);
+  const g = parseInt(hex.slice(3,5), 16);
+  const b = parseInt(hex.slice(5,7), 16);
   return `${r},${g},${b}`;
 }
