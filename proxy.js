@@ -18,7 +18,7 @@ const http  = require('http');
 const https = require('https');
 
 // ── YOUR XAI API KEY ──────────────────────────────────
-const XAI_API_KEY = 'YOUR_XAI_API_KEY_HERE'; // ← paste your key here
+const XAI_API_KEY = 'xai-Qe70VqSGQl6hir1VMvh4ZHWJMX8hqBs5Iv4xQvO7Bp4NtuccFTlyDqNs2ejEKOUGByOX9tsi1qbB7GAC'; // ← paste your key here
 // ─────────────────────────────────────────────────────
 
 const PORT       = 3579;
