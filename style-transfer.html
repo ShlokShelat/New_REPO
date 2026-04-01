@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Style Transfer — Harmonia AI Generator</title>
+  <link rel="stylesheet" href="styles/home.css"/>
+  <link rel="stylesheet" href="styles/style-transfer.css"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+</head>
+<body>
+
+<!-- ===== NAVBAR ===== -->
+<nav class="navbar" id="navbar">
+  <div class="nav-inner">
+    <a href="home.html" class="nav-logo">
+      <div class="logo-icon">
+        <svg width="28" height="28" viewBox="0 0 36 36" fill="none">
+          <defs><linearGradient id="ng" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#a78bfa"/><stop offset="100%" style="stop-color:#ec4899"/></linearGradient></defs>
+          <path d="M13 24V12l12 3v9" stroke="url(#ng)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+          <circle cx="11" cy="24" r="3" fill="url(#ng)"/><circle cx="23" cy="22" r="3" fill="url(#ng)"/>
+        </svg>
+      </div>
+      <span class="logo-text">Harmonia</span>
+    </a>
+    <ul class="nav-links" id="navLinks">
+      <li class="nav-item has-dropdown">
+        <button class="nav-link">Training<svg class="caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m6 9 6 6 6-6"/></svg></button>
+        <div class="dropdown"><div class="dropdown-inner">
+          <a href="training.html" class="dd-item"><span class="dd-icon">🛤️</span><span class="dd-content"><strong>Learning Path</strong><span>Structured curriculum</span></span></a>
+          <a href="theory-quiz.html" class="dd-item"><span class="dd-icon">🧠</span><span class="dd-content"><strong>Theory Quiz</strong><span>Test your knowledge</span></span><span class="dd-tag xp">+XP</span></a>
+          <a href="ear-training.html" class="dd-item"><span class="dd-icon">👂</span><span class="dd-content"><strong>Ear Training</strong><span>Sharpen your hearing</span></span></a>
+        </div></div>
+      </li>
+      <li class="nav-item has-dropdown">
+        <button class="nav-link active-nav">AI Generator<svg class="caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m6 9 6 6 6-6"/></svg></button>
+        <div class="dropdown"><div class="dropdown-inner">
+          <a href="ai-composer.html" class="dd-item"><span class="dd-icon">🤖</span><span class="dd-content"><strong>AI Compose</strong><span>Generate original music</span></span></a>
+          <a href="style-transfer.html" class="dd-item"><span class="dd-icon">🎨</span><span class="dd-content"><strong>Style Transfer</strong><span>Reimagine your tracks</span></span><span class="dd-tag beta">Beta</span></a>
+          <a href="lyric-assistant.html" class="dd-item"><span class="dd-icon">✍️</span><span class="dd-content"><strong>Lyric Assistant</strong><span>AI-powered songwriting</span></span></a>
+        </div></div>
+      </li>
+      <li class="nav-item has-dropdown">
+        <button class="nav-link">Music History<svg class="caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m6 9 6 6 6-6"/></svg></button>
+        <div class="dropdown"><div class="dropdown-inner">
+          <a href="genre-explorer.html" class="dd-item"><span class="dd-icon">🌍</span><span class="dd-content"><strong>Genre Explorer</strong><span>From jazz to EDM</span></span></a>
+          <a href="era-timeline.html" class="dd-item"><span class="dd-icon">📅</span><span class="dd-content"><strong>Era Timeline</strong><span>Centuries of music</span></span></a>
+          <a href="composer-library.html" class="dd-item"><span class="dd-icon">🎼</span><span class="dd-content"><strong>Composer Library</strong><span>Masters & legends</span></span></a>
+        </div></div>
+      </li>
+      <li class="nav-item has-dropdown">
+        <button class="nav-link">Dashboard<svg class="caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m6 9 6 6 6-6"/></svg></button>
+        <div class="dropdown"><div class="dropdown-inner">
+          <a href="#" class="dd-item"><span class="dd-icon">🏆</span><span class="dd-content"><strong>Leaderboard</strong><span>Top performers</span></span></a>
+          <a href="#" class="dd-item"><span class="dd-icon">📈</span><span class="dd-content"><strong>My Progress</strong><span>Track your growth</span></span></a>
+        </div></div>
+      </li>
+    </ul>
+    <div class="nav-right">
+      <button class="icon-btn theme-btn" id="themeBtn" onclick="toggleTheme()">
+        <svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/></svg>
+        <svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+      </button>
+      <div class="profile-menu" id="profileMenu">
+        <button class="profile-btn" onclick="toggleProfile()">
+          <div class="avatar">G</div><span class="profile-name">Guest</span>
+          <svg class="caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m6 9 6 6 6-6"/></svg>
+        </button>
+        <div class="profile-dropdown" id="profileDropdown">
+          <div class="pd-header"><div class="pd-avatar">G</div><div><div class="pd-name">Guest User</div><div class="pd-email">Not signed in</div></div></div>
+          <hr class="pd-divider"/>
+          <a href="#" class="pd-item">My Profile</a><a href="#" class="pd-item">Settings</a>
+          <hr class="pd-divider"/>
+          <a href="index.html" class="pd-item pd-signout">Sign Out</a>
+        </div>
+      </div>
+      <a href="index.html" class="btn-signout"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>Sign Out</a>
+      <button class="hamburger" id="hamburger" onclick="toggleMobileNav()"><span></span><span></span><span></span></button>
+    </div>
+  </div>
+</nav>
+
+<div class="mobile-overlay" id="mobileOverlay" onclick="toggleMobileNav()"></div>
+<div class="mobile-nav" id="mobileNav">
+  <div class="mobile-nav-header"><span class="logo-text">Harmonia</span><button onclick="toggleMobileNav()">✕</button></div>
+  <div class="mobile-nav-links">
+    <details open><summary>AI Generator</summary>
+      <a href="ai-composer.html">AI Compose</a>
+      <a href="style-transfer.html">Style Transfer</a>
+      <a href="lyric-assistant.html">Lyric Assistant</a>
+    </details>
+    <details><summary>Music History</summary>
+      <a href="genre-explorer.html">Genre Explorer</a>
+      <a href="era-timeline.html">Era Timeline</a>
+      <a href="composer-library.html">Composer Library</a>
+    </details>
+    <a href="index.html" class="mobile-signout">Sign Out</a>
+  </div>
+</div>
+
+<!-- ===== HERO ===== -->
+<section class="st-hero">
+  <div class="st-hero-bg">
+    <div class="st-hero-grid"></div>
+    <div class="st-hero-orb st-orb-1"></div>
+    <div class="st-hero-orb st-orb-2"></div>
+    <div class="st-hero-orb st-orb-3"></div>
+  </div>
+  <div class="container st-hero-inner">
+    <div class="st-hero-text">
+      <div class="st-hero-tag"><span class="st-hero-tag-dot"></span>Beta · AI-Powered</div>
+      <h1 class="st-hero-title">
+        Rewrite Anything in Any<br/><span class="accent-cyan">Musical Style</span>
+      </h1>
+      <p class="st-hero-sub">
+        Take any text — a poem, lyric, mood description, or story — and watch it transform into the authentic voice of Baroque grandeur, Jazz cool, Romantic sweep, or Minimalist precision. Powered by Claude.
+      </p>
+      <div class="st-hero-meta">
+        <div class="st-meta-chip"><span>🎨</span><strong>8</strong>&nbsp;style presets</div>
+        <div class="st-meta-chip"><span>🎚️</span>&nbsp;Intensity controls</div>
+        <div class="st-meta-chip"><span>⚡</span>&nbsp;Real-time AI</div>
+        <div class="st-meta-chip"><span>🔄</span>&nbsp;Chain transforms</div>
+      </div>
+    </div>
+    <div class="st-hero-visual" id="heroWave">
+      <!-- Bars injected by JS -->
+    </div>
+  </div>
+</section>
+
+<!-- ===== STUDIO WORKSPACE ===== -->
+<div class="st-workspace">
+
+  <!-- ── INPUT PANEL ── -->
+  <div class="st-panel st-input-panel">
+    <div class="st-panel-header">
+      <div class="st-panel-icon">📝</div>
+      <div>
+        <div class="st-panel-title">Source Text</div>
+        <div class="st-panel-sub">Your original content to transform</div>
+      </div>
+    </div>
+
+    <div>
+      <div class="st-input-label">Quick examples</div>
+      <div class="st-input-chips" id="exampleChips"><!-- JS --></div>
+    </div>
+
+    <div style="flex:1;display:flex;flex-direction:column;gap:6px">
+      <div class="st-input-label">Your text</div>
+      <textarea class="st-input-textarea" id="inputText"
+        placeholder="Paste lyrics, a poem, a mood description, a story beat — anything you want reimagined through a different musical era or genre…"
+        maxlength="800"></textarea>
+      <div class="st-counter">
+        <span id="charCount">0 / 800</span>
+        <span style="font-size:0.65rem;opacity:0.5">↑ up to 800 characters</span>
+      </div>
+      <div class="st-counter-bar">
+        <div class="st-counter-fill" id="counterFill" style="width:0%"></div>
+      </div>
+    </div>
+
+    <div style="padding:14px;background:rgba(14,165,233,0.04);border:1px solid rgba(14,165,233,0.12);border-radius:12px">
+      <div style="font-size:0.68rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:rgba(14,165,233,0.7);margin-bottom:8px">💡 Tips</div>
+      <ul style="font-size:0.78rem;color:var(--muted);line-height:1.7;padding-left:14px;margin:0">
+        <li>Descriptive text (nature, emotion, place) transforms beautifully</li>
+        <li>Existing lyrics work great — compare styles</li>
+        <li>Try chaining: Jazz → Baroque → Minimalist</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ── ENGINE PANEL ── -->
+  <div class="st-engine-panel">
+    <div class="st-engine-header">
+      <div class="st-engine-title">Style Engine</div>
+      <div class="st-engine-sub">Pick a musical era or genre</div>
+    </div>
+
+    <div class="st-style-list" id="styleList"><!-- JS --></div>
+
+    <div class="st-controls-section">
+      <div class="st-controls-label">Transform Controls</div>
+      <div class="st-slider-group">
+        <div class="st-slider-row">
+          <div class="st-slider-top">
+            <span class="st-slider-name">Style Intensity</span>
+            <span class="st-slider-val" id="val-intensity">80%</span>
+          </div>
+          <input type="range" class="st-slider" id="slider-intensity" min="10" max="100" value="80"/>
+        </div>
+        <div class="st-slider-row">
+          <div class="st-slider-top">
+            <span class="st-slider-name">Creativity</span>
+            <span class="st-slider-val" id="val-creativity">70%</span>
+          </div>
+          <input type="range" class="st-slider" id="slider-creativity" min="10" max="100" value="70"/>
+        </div>
+        <div class="st-slider-row">
+          <div class="st-slider-top">
+            <span class="st-slider-name">Preserve Meaning</span>
+            <span class="st-slider-val" id="val-preserve">50%</span>
+          </div>
+          <input type="range" class="st-slider" id="slider-preserve" min="0" max="100" value="50"/>
+        </div>
+      </div>
+    </div>
+
+    <button class="st-transfer-btn" id="transferBtn" onclick="doTransfer()">
+      🎨 Transform to Jazz
+    </button>
+  </div>
+
+  <!-- ── OUTPUT PANEL ── -->
+  <div class="st-panel st-output-panel" style="position:relative">
+    <div class="st-panel-header">
+      <div class="st-panel-icon">✨</div>
+      <div>
+        <div class="st-panel-title">Transformed Output</div>
+        <div class="st-panel-sub">Your text, reimagined</div>
+      </div>
+    </div>
+
+    <div id="outputArea" style="flex:1;display:flex;flex-direction:column">
+      <div class="st-output-empty">
+        <div class="st-output-empty-icon">🎨</div>
+        <div style="font-size:0.9rem;font-weight:600">Ready to transform</div>
+        <div style="font-size:0.78rem;opacity:0.6">Select a style and enter text, then hit Transform</div>
+      </div>
+    </div>
+
+    <!-- Processing overlay -->
+    <div class="st-processing-overlay" id="processingOverlay">
+      <div class="st-processing-ring"></div>
+      <div class="st-processing-text">Channeling the style…</div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ===== HISTORY STRIP ===== -->
+<div class="st-history-bar">
+  <div class="container">
+    <div class="st-history-title">Recent Transformations</div>
+    <div class="st-history-list" id="historyList">
+      <span style="font-size:0.78rem;color:var(--muted)">Your transformations will appear here</span>
+    </div>
+  </div>
+</div>
+
+<!-- ===== FOOTER ===== -->
+<footer class="footer">
+  <div class="container">
+    <div class="footer-top">
+      <div class="footer-brand">
+        <a href="home.html" class="nav-logo" style="margin-bottom:12px">
+          <div class="logo-icon"><svg width="24" height="24" viewBox="0 0 36 36" fill="none"><path d="M13 24V12l12 3v9" stroke="url(#fLG)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="11" cy="24" r="3" fill="url(#fLG)"/><circle cx="23" cy="22" r="3" fill="url(#fLG)"/><defs><linearGradient id="fLG" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#a78bfa"/><stop offset="100%" style="stop-color:#ec4899"/></linearGradient></defs></svg></div>
+          <span class="logo-text">Harmonia</span>
+        </a>
+        <p>The modern music learning platform for curious minds and creative souls.</p>
+      </div>
+      <div class="footer-col"><h5>AI Generator</h5><a href="ai-composer.html">AI Compose</a><a href="style-transfer.html">Style Transfer</a><a href="lyric-assistant.html">Lyric Assistant</a></div>
+      <div class="footer-col"><h5>Music History</h5><a href="genre-explorer.html">Genre Explorer</a><a href="era-timeline.html">Era Timeline</a><a href="composer-library.html">Composer Library</a></div>
+      <div class="footer-col"><h5>Learn</h5><a href="training.html">Learning Path</a><a href="theory-quiz.html">Theory Quiz</a><a href="ear-training.html">Ear Training</a></div>
+    </div>
+    <div class="footer-bottom">
+      <div>© 2026 Harmonia. All rights reserved.</div>
+      <div class="accessibility">
+        <span>Accessibility:</span>
+        <button onclick="adjustFont(-1)">A−</button>
+        <button onclick="adjustFont(1)">A+</button>
+        <button onclick="toggleTheme()" id="footerThemeBtn">🌙 Dark Mode</button>
+      </div>
+      <div class="footer-legal"><a href="#">Privacy</a><a href="#">Terms</a></div>
+    </div>
+  </div>
+</footer>
+
+<!-- Toast -->
+<div class="st-toast" id="stToast">
+  <span class="st-toast-msg"></span>
+</div>
+
+<script src="scripts/training-db.js"></script>
+<script src="scripts/home.js"></script>
+<script src="scripts/style-transfer.js"></script>
+</body>
+</html>
