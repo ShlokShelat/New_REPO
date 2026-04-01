@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Playlists – Harmonia Community</title>
+  <link rel="stylesheet" href="styles/home.css" />
+  <link rel="stylesheet" href="styles/playlists.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+</head>
+<body>
+
+<!-- ===== NAVBAR ===== -->
+<nav class="navbar" id="navbar">
+  <div class="nav-inner">
+    <a href="home.html" class="nav-logo">
+      <div class="logo-icon">
+        <svg width="28" height="28" viewBox="0 0 36 36" fill="none">
+          <defs>
+            <linearGradient id="navLogoGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" style="stop-color:#a78bfa"/>
+              <stop offset="100%" style="stop-color:#ec4899"/>
+            </linearGradient>
+          </defs>
+          <path d="M13 24V12l12 3v9" stroke="url(#navLogoGrad)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+          <circle cx="11" cy="24" r="3" fill="url(#navLogoGrad)"/>
+          <circle cx="23" cy="22" r="3" fill="url(#navLogoGrad)"/>
+        </svg>
+      </div>
+      <span class="logo-text">Harmonia</span>
+    </a>
+
+    <ul class="nav-links" id="navLinks">
+      <li class="nav-item has-dropdown">
+        <button class="nav-link">Training
+          <svg class="caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m6 9 6 6 6-6"/></svg>
+        </button>
+        <div class="dropdown"><div class="dropdown-inner">
+          <a href="training.html" class="dd-item"><span class="dd-icon">🛤️</span><span class="dd-content"><strong>Learning Path</strong><span>Structured curriculum</span></span></a>
+          <a href="theory-quiz.html" class="dd-item"><span class="dd-icon">🧠</span><span class="dd-content"><strong>Theory Quiz</strong><span>Test your knowledge</span></span><span class="dd-tag xp">+XP</span></a>
+          <a href="ear-training.html" class="dd-item"><span class="dd-icon">👂</span><span class="dd-content"><strong>Ear Training</strong><span>Sharpen your hearing</span></span></a>
+          <a href="practice-mode.html" class="dd-item"><span class="dd-icon">🎸</span><span class="dd-content"><strong>Practice Mode</strong><span>Guided sessions</span></span><span class="dd-tag new">New</span></a>
+        </div></div>
+      </li>
+      <li class="nav-item has-dropdown">
+        <button class="nav-link">AI Generator
+          <svg class="caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m6 9 6 6 6-6"/></svg>
+        </button>
+        <div class="dropdown"><div class="dropdown-inner">
+          <a href="#" class="dd-item"><span class="dd-icon">🤖</span><span class="dd-content"><strong>AI Compose</strong><span>Generate original music</span></span></a>
+          <a href="#" class="dd-item"><span class="dd-icon">🎨</span><span class="dd-content"><strong>Style Transfer</strong><span>Reimagine your tracks</span></span><span class="dd-tag beta">Beta</span></a>
+          <a href="#" class="dd-item"><span class="dd-icon">✍️</span><span class="dd-content"><strong>Lyric Assistant</strong><span>AI-powered songwriting</span></span></a>
+        </div></div>
+      </li>
+      <li class="nav-item has-dropdown">
+        <button class="nav-link">Music History
+          <svg class="caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m6 9 6 6 6-6"/></svg>
+        </button>
+        <div class="dropdown"><div class="dropdown-inner">
+          <a href="#" class="dd-item"><span class="dd-icon">🌍</span><span class="dd-content"><strong>Genre Explorer</strong><span>From jazz to EDM</span></span></a>
+          <a href="#" class="dd-item"><span class="dd-icon">📅</span><span class="dd-content"><strong>Era Timeline</strong><span>Centuries of music</span></span></a>
+          <a href="#" class="dd-item"><span class="dd-icon">🎼</span><span class="dd-content"><strong>Composer Library</strong><span>Masters & legends</span></span></a>
+        </div></div>
+      </li>
+      <li class="nav-item has-dropdown">
+        <button class="nav-link active-nav">Community
+          <svg class="caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m6 9 6 6 6-6"/></svg>
+        </button>
+        <div class="dropdown"><div class="dropdown-inner">
+          <a href="social-feed.html" class="dd-item"><span class="dd-icon">💬</span><span class="dd-content"><strong>Social Feed</strong><span>Share your journey</span></span></a>
+          <a href="playlists.html" class="dd-item"><span class="dd-icon">🎵</span><span class="dd-content"><strong>Playlists</strong><span>Community curations</span></span></a>
+          <a href="concerts.html" class="dd-item"><span class="dd-icon">🎤</span><span class="dd-content"><strong>Concerts</strong><span>Live events & shows</span></span></a>
+        </div></div>
+      </li>
+      <li class="nav-item has-dropdown">
+        <button class="nav-link">Dashboard
+          <svg class="caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m6 9 6 6 6-6"/></svg>
+        </button>
+        <div class="dropdown"><div class="dropdown-inner">
+          <a href="#" class="dd-item"><span class="dd-icon">🏆</span><span class="dd-content"><strong>Leaderboard</strong><span>Top performers</span></span></a>
+          <a href="#" class="dd-item"><span class="dd-icon">📈</span><span class="dd-content"><strong>My Progress</strong><span>Track your growth</span></span></a>
+          <a href="#" class="dd-item"><span class="dd-icon">🥇</span><span class="dd-content"><strong>Achievements</strong><span>Badges & rewards</span></span></a>
+        </div></div>
+      </li>
+    </ul>
+
+    <div class="nav-right">
+      <div class="search-wrap" id="searchWrap">
+        <button class="icon-btn search-toggle" id="searchToggle" onclick="toggleSearch()" aria-label="Search">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+        </button>
+        <div class="search-expand" id="searchExpand">
+          <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+          <input type="text" placeholder="Search playlists, songs…" id="searchInput" />
+          <button class="search-close" onclick="toggleSearch()">✕</button>
+        </div>
+      </div>
+      <button class="icon-btn theme-btn" id="themeBtn" onclick="toggleTheme()" aria-label="Toggle theme">
+        <svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+        <svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+      </button>
+      <div class="profile-menu" id="profileMenu">
+        <button class="profile-btn" onclick="toggleProfile()" aria-label="Profile menu">
+          <div class="avatar" id="navAvatar">G</div>
+          <span class="profile-name" id="navName">Guest</span>
+          <svg class="caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m6 9 6 6 6-6"/></svg>
+        </button>
+        <div class="profile-dropdown" id="profileDropdown">
+          <div class="pd-header">
+            <div class="pd-avatar" id="pdAvatar">G</div>
+            <div><div class="pd-name" id="pdName">Guest User</div><div class="pd-email">Not signed in</div></div>
+          </div>
+          <hr class="pd-divider"/>
+          <a href="#" class="pd-item">My Profile</a>
+          <a href="#" class="pd-item">Settings</a>
+          <hr class="pd-divider"/>
+          <a href="index.html" class="pd-item pd-signout">Sign Out</a>
+        </div>
+      </div>
+      <a href="index.html" class="btn-signout">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        Sign Out
+      </a>
+      <button class="hamburger" id="hamburger" onclick="toggleMobileNav()" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </div>
+</nav>
+
+<!-- Mobile Nav -->
+<div class="mobile-overlay" id="mobileOverlay" onclick="toggleMobileNav()"></div>
+<div class="mobile-nav" id="mobileNav">
+  <div class="mobile-nav-header">
+    <span class="logo-text">Harmonia</span>
+    <button onclick="toggleMobileNav()">✕</button>
+  </div>
+  <div class="mobile-nav-links">
+    <details><summary>Community</summary>
+      <a href="social-feed.html">Social Feed</a>
+      <a href="playlists.html">Playlists</a>
+      <a href="concerts.html">Concerts</a>
+    </details>
+    <a href="index.html" class="mobile-signout">Sign Out</a>
+  </div>
+</div>
+
+<!-- ===== HERO ===== -->
+<section class="pl-hero">
+  <div class="pl-hero-bg">
+    <div class="pl-orb pl-orb-1"></div>
+    <div class="pl-orb pl-orb-2"></div>
+    <div class="pl-orb pl-orb-3"></div>
+    <div class="pl-grid"></div>
+    <!-- Vinyl record decoration -->
+    <div class="vinyl-deco" aria-hidden="true">
+      <div class="vinyl-outer"></div>
+      <div class="vinyl-middle"></div>
+      <div class="vinyl-inner"></div>
+      <div class="vinyl-label"></div>
+    </div>
+    <!-- Equalizer bars -->
+    <div class="hero-eq" aria-hidden="true">
+      <span></span><span></span><span></span><span></span><span></span>
+      <span></span><span></span><span></span><span></span><span></span>
+      <span></span><span></span><span></span><span></span><span></span>
+    </div>
+  </div>
+
+  <div class="container pl-hero-inner">
+    <nav class="breadcrumb" aria-label="breadcrumb">
+      <a href="home.html">Home</a>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="m9 18 6-6-6-6"/></svg>
+      <a href="social-feed.html">Community</a>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="m9 18 6-6-6-6"/></svg>
+      <span>Playlists</span>
+    </nav>
+
+    <div class="pl-hero-content">
+      <div class="pl-hero-text">
+        <div class="pl-badge">
+          <span class="badge-dot"></span>
+          Community Curated
+        </div>
+        <h1 class="pl-title">Discover & Share<br/><span class="grad-text">Music Playlists</span></h1>
+        <p class="pl-subtitle">Curated by musicians, for musicians. Explore playlists for every mood, genre, and learning goal — or craft your own masterpiece.</p>
+
+        <div class="pl-hero-actions">
+          <button class="btn-create-playlist" onclick="openCreateModal()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="18" height="18"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            Create Playlist
+          </button>
+          <button class="btn-browse" onclick="document.getElementById('browseSection').scrollIntoView({behavior:'smooth'})">
+            Browse All
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="16" height="16"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </button>
+        </div>
+
+        <div class="pl-hero-stats">
+          <div class="phs"><strong id="totalPlaylists">0</strong><span>Playlists</span></div>
+          <div class="phs-div"></div>
+          <div class="phs"><strong id="totalTracks">0</strong><span>Tracks</span></div>
+          <div class="phs-div"></div>
+          <div class="phs"><strong id="totalListens">0</strong><span>Listens</span></div>
+          <div class="phs-div"></div>
+          <div class="phs"><strong id="totalCreators">0</strong><span>Creators</span></div>
+        </div>
+      </div>
+
+      <!-- Now Playing Widget -->
+      <div class="now-playing-widget" id="nowPlayingWidget">
+        <div class="npw-vinyl" id="npwVinyl">
+          <div class="npw-vinyl-grooves"></div>
+          <div class="npw-vinyl-label" id="npwLabel">
+            <span id="npwLabelText">H</span>
+          </div>
+        </div>
+        <div class="npw-info">
+          <div class="npw-status">
+            <span class="npw-dot"></span>
+            <span id="npwStatus">Now Playing</span>
+          </div>
+          <div class="npw-track" id="npwTrack">Select a track to play</div>
+          <div class="npw-artist" id="npwArtist">—</div>
+          <div class="npw-progress-wrap">
+            <span class="npw-time" id="npwCurrentTime">0:00</span>
+            <div class="npw-progress" id="npwProgressBar" onclick="seekTrack(event)">
+              <div class="npw-fill" id="npwFill" style="width:0%"></div>
+              <div class="npw-thumb" id="npwThumb" style="left:0%"></div>
+            </div>
+            <span class="npw-time" id="npwDuration">0:00</span>
+          </div>
+          <div class="npw-controls">
+            <button class="npw-btn" id="npwShuffle" onclick="toggleShuffle()" title="Shuffle">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><polyline points="16 3 21 3 21 8"/><line x1="4" y1="20" x2="21" y2="3"/><polyline points="21 16 21 21 16 21"/><line x1="4" y1="4" x2="9" y2="9"/></svg>
+            </button>
+            <button class="npw-btn npw-prev" onclick="playPrev()" title="Previous">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="18" height="18"><polygon points="19 20 9 12 19 4 19 20"/><line x1="5" y1="19" x2="5" y2="5"/></svg>
+            </button>
+            <button class="npw-btn npw-play" id="npwPlayBtn" onclick="togglePlay()" title="Play/Pause">
+              <svg class="play-icon" viewBox="0 0 24 24" fill="currentColor" width="20" height="20"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+              <svg class="pause-icon" viewBox="0 0 24 24" fill="currentColor" width="20" height="20" style="display:none"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>
+            </button>
+            <button class="npw-btn npw-next" onclick="playNext()" title="Next">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="18" height="18"><polygon points="5 4 15 12 5 20 5 4"/><line x1="19" y1="5" x2="19" y2="19"/></svg>
+            </button>
+            <button class="npw-btn" id="npwRepeat" onclick="toggleRepeat()" title="Repeat">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>
+            </button>
+          </div>
+          <div class="npw-volume">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
+            <input type="range" class="npw-vol-slider" id="npwVolume" min="0" max="100" value="70" oninput="setVolume(this.value)" />
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== FEATURED PLAYLISTS ===== -->
+<section class="featured-section">
+  <div class="container">
+    <div class="section-row">
+      <div>
+        <span class="section-label">Editor's Pick</span>
+        <h2 class="section-title-sm">Featured Playlists</h2>
+      </div>
+      <button class="see-all-btn" onclick="setFilter('all')">See All →</button>
+    </div>
+    <div class="featured-grid" id="featuredGrid">
+      <!-- Populated by JS -->
+    </div>
+  </div>
+</section>
+
+<!-- ===== MY PLAYLISTS ===== -->
+<section class="my-playlists-section" id="myPlaylistsSection">
+  <div class="container">
+    <div class="section-row">
+      <div>
+        <span class="section-label">Your Collection</span>
+        <h2 class="section-title-sm">My Playlists</h2>
+      </div>
+      <button class="btn-create-sm" onclick="openCreateModal()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="14" height="14"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        New Playlist
+      </button>
+    </div>
+    <div class="my-playlists-grid" id="myPlaylistsGrid">
+      <!-- Populated by JS -->
+    </div>
+    <div class="empty-my-playlists" id="emptyMyPlaylists" style="display:none">
+      <span>🎵</span>
+      <p>You haven't created any playlists yet.</p>
+      <button onclick="openCreateModal()">Create Your First Playlist</button>
+    </div>
+  </div>
+</section>
+
+<!-- ===== BROWSE ALL ===== -->
+<section class="browse-section" id="browseSection">
+  <div class="container">
+
+    <!-- Filter & Search bar -->
+    <div class="browse-controls">
+      <div class="browse-search">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+        <input type="text" id="browseSearch" placeholder="Search playlists or tracks…" oninput="filterPlaylists()" />
+        <button class="browse-search-clear" id="clearSearch" onclick="clearBrowseSearch()" style="display:none">✕</button>
+      </div>
+      <div class="browse-filters">
+        <button class="browse-filter active" data-filter="all" onclick="setFilter('all',this)">All</button>
+        <button class="browse-filter" data-filter="learning" onclick="setFilter('learning',this)">📚 Learning</button>
+        <button class="browse-filter" data-filter="practice" onclick="setFilter('practice',this)">🎸 Practice</button>
+        <button class="browse-filter" data-filter="focus" onclick="setFilter('focus',this)">🎯 Focus</button>
+        <button class="browse-filter" data-filter="chill" onclick="setFilter('chill',this)">☁️ Chill</button>
+        <button class="browse-filter" data-filter="workout" onclick="setFilter('workout',this)">⚡ Workout</button>
+        <button class="browse-filter" data-filter="theory" onclick="setFilter('theory',this)">🎼 Theory</button>
+      </div>
+      <div class="browse-sort">
+        <label>Sort:</label>
+        <select id="sortSelect" onchange="sortPlaylists()">
+          <option value="popular">Most Popular</option>
+          <option value="newest">Newest</option>
+          <option value="tracks">Most Tracks</option>
+          <option value="alpha">A–Z</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Results count -->
+    <div class="browse-meta">
+      <span id="browseCount">0 playlists</span>
+      <div class="view-toggle">
+        <button class="view-btn active" id="gridViewBtn" onclick="setView('grid')" title="Grid view">
+          <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+        </button>
+        <button class="view-btn" id="listViewBtn" onclick="setView('list')" title="List view">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Playlist grid -->
+    <div class="playlists-grid" id="playlistsGrid">
+      <!-- Populated by JS -->
+    </div>
+    <div class="browse-empty" id="browseEmpty" style="display:none">
+      <span>🔍</span>
+      <p>No playlists found matching your search.</p>
+    </div>
+
+    <!-- Load more -->
+    <div class="load-more-wrap" id="loadMoreWrap">
+      <button class="load-more-btn" id="loadMoreBtn" onclick="loadMore()">Load More Playlists</button>
+    </div>
+  </div>
+</section>
+
+<!-- ===== TRENDING TRACKS ===== -->
+<section class="trending-section">
+  <div class="container">
+    <div class="section-row">
+      <div>
+        <span class="section-label">Hot Right Now</span>
+        <h2 class="section-title-sm">Trending Tracks</h2>
+      </div>
+    </div>
+    <div class="trending-tracks" id="trendingTracks">
+      <!-- Populated by JS -->
+    </div>
+  </div>
+</section>
+
+<!-- ===== FOOTER ===== -->
+<footer class="footer">
+  <div class="container">
+    <div class="footer-top">
+      <div class="footer-brand">
+        <a href="home.html" class="nav-logo" style="margin-bottom:12px">
+          <div class="logo-icon">
+            <svg width="24" height="24" viewBox="0 0 36 36" fill="none">
+              <path d="M13 24V12l12 3v9" stroke="url(#fLogoGrad3)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+              <circle cx="11" cy="24" r="3" fill="url(#fLogoGrad3)"/>
+              <circle cx="23" cy="22" r="3" fill="url(#fLogoGrad3)"/>
+              <defs><linearGradient id="fLogoGrad3" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#a78bfa"/><stop offset="100%" style="stop-color:#ec4899"/></linearGradient></defs>
+            </svg>
+          </div>
+          <span class="logo-text">Harmonia</span>
+        </a>
+        <p>The modern music learning platform for curious minds and creative souls.</p>
+        <div class="footer-social">
+          <a href="#" aria-label="Twitter">🐦</a><a href="#" aria-label="Instagram">📸</a>
+          <a href="#" aria-label="YouTube">▶️</a><a href="#" aria-label="Discord">💬</a>
+        </div>
+      </div>
+      <div class="footer-col"><h5>Community</h5>
+        <a href="social-feed.html">Social Feed</a>
+        <a href="playlists.html">Playlists</a>
+        <a href="concerts.html">Concerts</a>
+      </div>
+      <div class="footer-col"><h5>Training</h5>
+        <a href="training.html">Learning Path</a>
+        <a href="theory-quiz.html">Theory Quiz</a>
+        <a href="ear-training.html">Ear Training</a>
+      </div>
+      <div class="footer-col"><h5>Account</h5>
+        <a href="#">Dashboard</a>
+        <a href="#">Achievements</a>
+        <a href="#">Settings</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div class="footer-copy">© 2026 Harmonia. All rights reserved.</div>
+      <div class="accessibility">
+        <span>Accessibility:</span>
+        <button onclick="adjustFont(-1)" aria-label="Decrease font size">A−</button>
+        <button onclick="adjustFont(1)" aria-label="Increase font size">A+</button>
+        <button onclick="toggleTheme()" id="footerThemeBtn">🌙 Dark Mode</button>
+      </div>
+      <div class="footer-legal"><a href="#">Privacy</a><a href="#">Terms</a></div>
+    </div>
+  </div>
+</footer>
+
+<!-- ===== CREATE PLAYLIST MODAL ===== -->
+<div class="modal-overlay" id="createModalOverlay" onclick="closeCreateModal(event)">
+  <div class="modal create-modal" id="createModal">
+    <div class="modal-header">
+      <h2 id="createModalTitle">Create New Playlist</h2>
+      <button class="modal-close" onclick="closeCreateModal(null,true)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="20" height="20"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="modal-body">
+      <!-- Cover picker -->
+      <div class="cover-picker">
+        <div class="cover-preview" id="coverPreview">
+          <span id="coverEmoji">🎵</span>
+          <div class="cover-overlay">Change Cover</div>
+        </div>
+        <div class="cover-options">
+          <div class="cover-option-group">
+            <label class="form-label">Cover Emoji</label>
+            <div class="emoji-grid">
+              <button class="emoji-opt active" onclick="setCoverEmoji(this,'🎵')">🎵</button>
+              <button class="emoji-opt" onclick="setCoverEmoji(this,'🎸')">🎸</button>
+              <button class="emoji-opt" onclick="setCoverEmoji(this,'🎹')">🎹</button>
+              <button class="emoji-opt" onclick="setCoverEmoji(this,'🎺')">🎺</button>
+              <button class="emoji-opt" onclick="setCoverEmoji(this,'🥁')">🥁</button>
+              <button class="emoji-opt" onclick="setCoverEmoji(this,'🎻')">🎻</button>
+              <button class="emoji-opt" onclick="setCoverEmoji(this,'🎤')">🎤</button>
+              <button class="emoji-opt" onclick="setCoverEmoji(this,'🎼')">🎼</button>
+              <button class="emoji-opt" onclick="setCoverEmoji(this,'🎧')">🎧</button>
+              <button class="emoji-opt" onclick="setCoverEmoji(this,'🪗')">🪗</button>
+              <button class="emoji-opt" onclick="setCoverEmoji(this,'🪘')">🪘</button>
+              <button class="emoji-opt" onclick="setCoverEmoji(this,'🎷')">🎷</button>
+            </div>
+          </div>
+          <div class="cover-option-group">
+            <label class="form-label">Cover Color</label>
+            <div class="color-grid" id="colorGrid">
+              <button class="color-opt active" style="background:linear-gradient(135deg,#7c3aed,#ec4899)" onclick="setCoverColor(this,'linear-gradient(135deg,#7c3aed,#ec4899)')"></button>
+              <button class="color-opt" style="background:linear-gradient(135deg,#0ea5e9,#38bdf8)" onclick="setCoverColor(this,'linear-gradient(135deg,#0ea5e9,#38bdf8)')"></button>
+              <button class="color-opt" style="background:linear-gradient(135deg,#10b981,#34d399)" onclick="setCoverColor(this,'linear-gradient(135deg,#10b981,#34d399)')"></button>
+              <button class="color-opt" style="background:linear-gradient(135deg,#f97316,#fbbf24)" onclick="setCoverColor(this,'linear-gradient(135deg,#f97316,#fbbf24)')"></button>
+              <button class="color-opt" style="background:linear-gradient(135deg,#ef4444,#f97316)" onclick="setCoverColor(this,'linear-gradient(135deg,#ef4444,#f97316)')"></button>
+              <button class="color-opt" style="background:linear-gradient(135deg,#8b5cf6,#0ea5e9)" onclick="setCoverColor(this,'linear-gradient(135deg,#8b5cf6,#0ea5e9)')"></button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Form fields -->
+      <div class="form-group">
+        <label class="form-label">Playlist Name <span class="req">*</span></label>
+        <input type="text" id="plName" class="form-input" placeholder="My Awesome Playlist" maxlength="60" oninput="updateCharCount(this,'nameCount',60)" />
+        <span class="char-count"><span id="nameCount">0</span>/60</span>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Description</label>
+        <textarea id="plDesc" class="form-input form-textarea" placeholder="What's this playlist about?" maxlength="200" oninput="updateCharCount(this,'descCount',200)"></textarea>
+        <span class="char-count"><span id="descCount">0</span>/200</span>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Genre / Category</label>
+          <select id="plGenre" class="form-select">
+            <option value="">Select genre…</option>
+            <option value="learning">📚 Learning</option>
+            <option value="practice">🎸 Practice</option>
+            <option value="focus">🎯 Focus</option>
+            <option value="chill">☁️ Chill</option>
+            <option value="workout">⚡ Workout</option>
+            <option value="theory">🎼 Theory</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Visibility</label>
+          <select id="plVisibility" class="form-select">
+            <option value="public">🌍 Public</option>
+            <option value="community">👥 Community</option>
+            <option value="private">🔒 Private</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Tags -->
+      <div class="form-group">
+        <label class="form-label">Tags</label>
+        <div class="tag-input-wrap">
+          <input type="text" id="tagInput" class="form-input" placeholder="Add a tag and press Enter…" onkeydown="handleTagInput(event)" />
+          <div class="tag-pills" id="tagPills"></div>
+        </div>
+      </div>
+
+      <!-- Add Tracks -->
+      <div class="form-group">
+        <label class="form-label">Add Tracks</label>
+        <div class="track-search-wrap">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+          <input type="text" id="trackSearch" class="form-input" placeholder="Search tracks to add…" oninput="searchTracks(this.value)" />
+        </div>
+        <div class="track-results" id="trackResults"></div>
+        <div class="selected-tracks" id="selectedTracks">
+          <p class="no-tracks-msg">No tracks added yet</p>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-cancel" onclick="closeCreateModal(null,true)">Cancel</button>
+      <button class="btn-save-playlist" onclick="savePlaylist()" id="savePlaylistBtn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="16" height="16"><polyline points="20 6 9 17 4 12"/></svg>
+        <span id="savePlaylistText">Create Playlist</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== PLAYLIST DETAIL MODAL ===== -->
+<div class="modal-overlay" id="detailModalOverlay" onclick="closeDetailModal(event)">
+  <div class="modal detail-modal" id="detailModal">
+    <div class="detail-hero" id="detailHero">
+      <button class="modal-close detail-close" onclick="closeDetailModal(null,true)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="20" height="20"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+      <div class="detail-cover" id="detailCover">
+        <span id="detailCoverEmoji">🎵</span>
+      </div>
+      <div class="detail-info">
+        <div class="detail-tag" id="detailTag">PLAYLIST</div>
+        <h2 class="detail-title" id="detailTitle">Playlist Name</h2>
+        <p class="detail-desc" id="detailDesc">Description</p>
+        <div class="detail-meta">
+          <div class="detail-author">
+            <div class="detail-avatar" id="detailAvatar">G</div>
+            <span id="detailAuthor">Guest</span>
+          </div>
+          <span class="detail-sep">·</span>
+          <span id="detailTrackCount">0 tracks</span>
+          <span class="detail-sep">·</span>
+          <span id="detailDuration">0 min</span>
+          <span class="detail-sep">·</span>
+          <span id="detailListens">0 listens</span>
+        </div>
+        <div class="detail-actions">
+          <button class="detail-play-btn" id="detailPlayBtn" onclick="playPlaylist()">
+            <svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+            Play All
+          </button>
+          <button class="detail-action-btn" id="detailLikeBtn" onclick="togglePlaylistLike()" title="Like">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+            <span id="detailLikeCount">0</span>
+          </button>
+          <button class="detail-action-btn" id="detailSaveBtn" onclick="toggleSavePlaylist()" title="Save">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+            <span id="detailSaveText">Save</span>
+          </button>
+          <button class="detail-action-btn" onclick="sharePlaylist()" title="Share">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+            Share
+          </button>
+          <button class="detail-action-btn" id="detailEditBtn" onclick="editPlaylist()" title="Edit" style="display:none">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+            Edit
+          </button>
+        </div>
+      </div>
+    </div>
+    <div class="detail-body">
+      <div class="detail-tracklist" id="detailTracklist">
+        <!-- Populated by JS -->
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== TOAST ===== -->
+<div class="toast" id="toast" role="alert"></div>
+
+<!-- ===== MINI PLAYER (sticky bottom) ===== -->
+<div class="mini-player" id="miniPlayer" style="display:none">
+  <div class="mp-track">
+    <div class="mp-cover" id="mpCover">🎵</div>
+    <div class="mp-info">
+      <div class="mp-title" id="mpTitle">Track Name</div>
+      <div class="mp-artist" id="mpArtist">Artist</div>
+    </div>
+  </div>
+  <div class="mp-controls">
+    <button class="mp-btn" onclick="playPrev()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="18" height="18"><polygon points="19 20 9 12 19 4 19 20"/><line x1="5" y1="19" x2="5" y2="5"/></svg>
+    </button>
+    <button class="mp-btn mp-play" id="mpPlayBtn" onclick="togglePlay()">
+      <svg class="play-icon" viewBox="0 0 24 24" fill="currentColor" width="20" height="20"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+      <svg class="pause-icon" viewBox="0 0 24 24" fill="currentColor" width="20" height="20" style="display:none"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>
+    </button>
+    <button class="mp-btn" onclick="playNext()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="18" height="18"><polygon points="5 4 15 12 5 20 5 4"/><line x1="19" y1="5" x2="19" y2="19"/></svg>
+    </button>
+  </div>
+  <div class="mp-progress-wrap">
+    <div class="mp-progress" onclick="seekTrack(event,'mini')">
+      <div class="mp-fill" id="mpFill" style="width:0%"></div>
+    </div>
+  </div>
+  <div class="mp-vol">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/></svg>
+    <input type="range" min="0" max="100" value="70" oninput="setVolume(this.value)" class="mp-vol-slider" />
+  </div>
+  <button class="mp-close" onclick="closeMiniPlayer()">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+  </button>
+</div>
+
+<script src="scripts/training-db.js"></script>
+<script src="scripts/home.js"></script>
+<script src="scripts/playlists.js"></script>
+</body>
+</html>
