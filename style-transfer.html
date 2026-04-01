@@ -5,509 +5,235 @@
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
 <title>Style Transfer — Harmonia</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-
 :root{
-  --bg:#04040a;
-  --surface:#0c0c18;
-  --surface2:#111125;
-  --surface3:#181830;
-  --border:rgba(255,255,255,0.07);
-  --border-hi:rgba(255,255,255,0.14);
-  --text:#f0f0ff;
-  --muted:#6b6b8a;
-  --muted2:#4a4a62;
-  --cyan:#00d4ff;
-  --cyan-dim:rgba(0,212,255,0.15);
-  --purple:#8b5cf6;
-  --pink:#f472b6;
-  --green:#10b981;
-  --amber:#f59e0b;
+  --bg:#04040a;--surface:#0c0c18;--surface2:#111125;--surface3:#181830;
+  --border:rgba(255,255,255,0.07);--border-hi:rgba(255,255,255,0.14);
+  --text:#f0f0ff;--muted:#6b6b8a;--muted2:#4a4a62;
+  --cyan:#00d4ff;--purple:#8b5cf6;--pink:#f472b6;--green:#10b981;--amber:#f59e0b;
   --nav-h:60px;
-  --font-display:'Syne',sans-serif;
-  --font-body:'DM Sans',sans-serif;
-  --font-mono:'DM Mono',monospace;
+  --font-display:'Syne',sans-serif;--font-body:'DM Sans',sans-serif;--font-mono:'DM Mono',monospace;
 }
-
 html,body{height:100%;overflow:hidden}
-body{
-  font-family:var(--font-body);
-  background:var(--bg);
-  color:var(--text);
-  display:flex;
-  flex-direction:column;
-}
+body{font-family:var(--font-body);background:var(--bg);color:var(--text);display:flex;flex-direction:column}
+body::before{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.025'/%3E%3C/svg%3E");pointer-events:none;z-index:9000;mix-blend-mode:overlay}
 
-/* ─── NOISE TEXTURE OVERLAY ─── */
-body::before{
-  content:'';
-  position:fixed;inset:0;
-  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
-  pointer-events:none;z-index:1000;opacity:0.4;
-}
-
-/* ─── NAVBAR ─── */
-.nav{
-  height:var(--nav-h);
-  display:flex;align-items:center;
-  padding:0 28px;
-  border-bottom:1px solid var(--border);
-  background:rgba(4,4,10,0.95);
-  backdrop-filter:blur(20px);
-  flex-shrink:0;
-  position:relative;z-index:100;
-  gap:0;
-}
-.nav-logo{
-  display:flex;align-items:center;gap:10px;
-  text-decoration:none;margin-right:40px;
-}
-.nav-logo-icon{
-  width:34px;height:34px;border-radius:10px;
-  background:linear-gradient(135deg,#7c3aed,#ec4899);
-  display:flex;align-items:center;justify-content:center;
-}
-.nav-logo-text{
-  font-family:var(--font-display);
-  font-size:1.1rem;font-weight:800;
-  background:linear-gradient(135deg,#a78bfa,#ec4899);
-  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
-}
-.nav-links{display:flex;gap:4px;list-style:none;flex:1}
-.nav-link-item{
-  font-size:0.82rem;font-weight:500;color:var(--muted);
-  padding:6px 14px;border-radius:8px;cursor:pointer;
-  transition:all 0.2s;white-space:nowrap;
-  border:1px solid transparent;
-}
+/* NAV */
+.nav{height:var(--nav-h);display:flex;align-items:center;padding:0 28px;border-bottom:1px solid var(--border);background:rgba(4,4,10,0.97);backdrop-filter:blur(20px);flex-shrink:0;position:relative;z-index:100}
+.nav-logo{display:flex;align-items:center;gap:10px;text-decoration:none;margin-right:36px}
+.nav-logo-icon{width:34px;height:34px;border-radius:10px;background:linear-gradient(135deg,#7c3aed,#ec4899);display:flex;align-items:center;justify-content:center}
+.nav-logo-text{font-family:var(--font-display);font-size:1.1rem;font-weight:800;background:linear-gradient(135deg,#a78bfa,#ec4899);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.nav-links{display:flex;gap:3px;list-style:none;flex:1}
+.nav-link-item{font-size:0.8rem;font-weight:500;color:var(--muted);padding:6px 13px;border-radius:8px;cursor:pointer;transition:all 0.2s;white-space:nowrap;border:1px solid transparent}
 .nav-link-item:hover{color:var(--text);background:rgba(255,255,255,0.04)}
-.nav-link-item.active{
-  color:var(--cyan);
-  background:rgba(0,212,255,0.08);
-  border-color:rgba(0,212,255,0.2);
-}
+.nav-link-item.active{color:var(--cyan);background:rgba(0,212,255,0.08);border-color:rgba(0,212,255,0.18)}
 .nav-right{display:flex;align-items:center;gap:10px;margin-left:auto}
-.nav-avatar{
-  width:32px;height:32px;border-radius:50%;
-  background:linear-gradient(135deg,#7c3aed,#ec4899);
-  display:flex;align-items:center;justify-content:center;
-  font-size:0.78rem;font-weight:800;color:white;
-  cursor:pointer;
-}
-.nav-btn{
-  font-family:var(--font-body);font-size:0.78rem;font-weight:500;
-  color:var(--muted);background:rgba(255,255,255,0.05);
-  border:1px solid var(--border);padding:6px 14px;border-radius:8px;cursor:pointer;
-  transition:all 0.2s;text-decoration:none;display:flex;align-items:center;gap:6px;
-}
-.nav-btn:hover{color:var(--text);background:rgba(255,255,255,0.08)}
+.nav-avatar{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#7c3aed,#ec4899);display:flex;align-items:center;justify-content:center;font-size:0.78rem;font-weight:800;color:white;cursor:pointer}
+.nav-pill{font-family:var(--font-body);font-size:0.78rem;font-weight:500;color:var(--muted);background:rgba(255,255,255,0.05);border:1px solid var(--border);padding:6px 13px;border-radius:8px;cursor:pointer;transition:all 0.2s;text-decoration:none;display:flex;align-items:center;gap:6px}
+.nav-pill:hover{color:var(--text);background:rgba(255,255,255,0.08)}
 
-/* ─── MAIN LAYOUT ─── */
-.page{
-  flex:1;display:grid;
-  grid-template-columns:1fr 320px 1fr;
-  grid-template-rows:1fr;
-  overflow:hidden;
-  min-height:0;
-}
+/* 3-COLUMN LAYOUT */
+.page{flex:1;display:grid;grid-template-columns:1fr 308px 1fr;overflow:hidden;min-height:0}
 
-/* ─── PANELS ─── */
-.panel{
-  display:flex;flex-direction:column;
-  overflow:hidden;
-  border-right:1px solid var(--border);
-}
+/* PANELS */
+.panel{display:flex;flex-direction:column;overflow:hidden;border-right:1px solid var(--border)}
 .panel:last-child{border-right:none}
-
-/* ─── INPUT PANEL ─── */
 .input-panel{background:var(--bg)}
+.output-panel{background:var(--bg)}
+.style-panel{background:var(--surface);border-left:1px solid var(--border);border-right:1px solid var(--border)}
 
-.panel-top{
-  padding:20px 24px 16px;
-  border-bottom:1px solid var(--border);
-  display:flex;align-items:center;gap:12px;
-  flex-shrink:0;
-}
-.panel-icon{
-  width:38px;height:38px;border-radius:10px;
-  display:flex;align-items:center;justify-content:center;
-  font-size:1.1rem;flex-shrink:0;
-}
-.panel-icon.input-ic{background:rgba(0,212,255,0.12);border:1px solid rgba(0,212,255,0.2)}
-.panel-icon.style-ic{background:rgba(139,92,246,0.12);border:1px solid rgba(139,92,246,0.2)}
-.panel-icon.output-ic{background:rgba(244,114,182,0.12);border:1px solid rgba(244,114,182,0.2)}
-.panel-label{font-family:var(--font-display);font-size:0.78rem;font-weight:700;letter-spacing:2px;text-transform:uppercase}
-.panel-sublabel{font-size:0.72rem;color:var(--muted);margin-top:1px}
+/* Panel headers */
+.panel-top{padding:18px 22px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px;flex-shrink:0}
+.panel-icon{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0}
+.ic-in{background:rgba(0,212,255,0.12);border:1px solid rgba(0,212,255,0.2)}
+.ic-st{background:rgba(139,92,246,0.12);border:1px solid rgba(139,92,246,0.2)}
+.ic-out{background:rgba(244,114,182,0.12);border:1px solid rgba(244,114,182,0.2)}
+.p-title{font-family:var(--font-display);font-size:0.75rem;font-weight:700;letter-spacing:2px;text-transform:uppercase}
+.p-sub{font-size:0.7rem;color:var(--muted);margin-top:1px}
 
-.panel-body{flex:1;overflow-y:auto;padding:20px 24px;display:flex;flex-direction:column;gap:16px}
+/* Panel body */
+.panel-body{flex:1;overflow-y:auto;padding:18px 22px;display:flex;flex-direction:column;gap:16px}
 .panel-body::-webkit-scrollbar{width:3px}
 .panel-body::-webkit-scrollbar-thumb{background:var(--border);border-radius:99px}
 
-/* Example chips */
-.chip-label{font-size:0.65rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted2);margin-bottom:8px}
-.chips{display:flex;gap:6px;flex-wrap:wrap}
-.chip{
-  font-size:0.72rem;font-weight:500;
-  padding:5px 12px;border-radius:8px;
-  border:1px solid var(--border);background:none;
-  color:var(--muted);cursor:pointer;font-family:var(--font-body);
-  transition:all 0.2s;
-}
+/* Input elements */
+.micro-label{font-size:0.62rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted2);margin-bottom:8px}
+.chips{display:flex;gap:5px;flex-wrap:wrap}
+.chip{font-size:0.72rem;font-weight:500;padding:5px 11px;border-radius:8px;border:1px solid var(--border);background:none;color:var(--muted);cursor:pointer;font-family:var(--font-body);transition:all 0.2s}
 .chip:hover{border-color:var(--border-hi);color:var(--text);background:rgba(255,255,255,0.04)}
 
-/* Textarea */
-.input-area-wrap{flex:1;display:flex;flex-direction:column;gap:6px}
-.ta-label{font-size:0.65rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted2)}
-.main-textarea{
-  flex:1;min-height:180px;
-  background:rgba(255,255,255,0.025);
-  border:1px solid var(--border);
-  border-radius:14px;padding:16px;
-  color:var(--text);
-  font-family:var(--font-mono);
-  font-size:0.84rem;line-height:1.75;
-  resize:none;outline:none;
-  transition:border-color 0.25s,box-shadow 0.25s;
-}
-.main-textarea:focus{
-  border-color:rgba(0,212,255,0.35);
-  box-shadow:0 0 0 3px rgba(0,212,255,0.06),inset 0 0 30px rgba(0,212,255,0.02);
-}
-.main-textarea::placeholder{color:var(--muted2);font-style:italic}
-.counter-row{display:flex;justify-content:space-between;align-items:center}
-.counter{font-size:0.68rem;color:var(--muted2)}
-.counter-bar{height:2px;background:rgba(255,255,255,0.05);border-radius:99px;margin-top:4px;overflow:hidden}
-.counter-fill{height:100%;background:linear-gradient(90deg,var(--cyan),var(--purple));border-radius:99px;transition:width 0.3s;width:0}
+.input-wrap{flex:1;display:flex;flex-direction:column;gap:6px}
+.main-ta{flex:1;min-height:170px;background:rgba(255,255,255,0.025);border:1px solid var(--border);border-radius:14px;padding:15px;color:var(--text);font-family:var(--font-mono);font-size:0.83rem;line-height:1.75;resize:none;outline:none;transition:border-color 0.25s,box-shadow 0.25s}
+.main-ta:focus{border-color:rgba(0,212,255,0.35);box-shadow:0 0 0 3px rgba(0,212,255,0.06)}
+.main-ta::placeholder{color:var(--muted2);font-style:italic}
+.counter-row{display:flex;justify-content:space-between}
+.counter-txt{font-size:0.67rem;color:var(--muted2)}
+.c-bar{height:2px;background:rgba(255,255,255,0.05);border-radius:99px;margin-top:4px;overflow:hidden}
+.c-fill{height:100%;background:linear-gradient(90deg,var(--cyan),var(--purple));border-radius:99px;transition:width 0.3s;width:0}
 
-/* Tips card */
-.tips-card{
-  background:rgba(0,212,255,0.04);
-  border:1px solid rgba(0,212,255,0.1);
-  border-radius:12px;padding:12px 14px;
-}
-.tips-title{font-size:0.65rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:rgba(0,212,255,0.7);margin-bottom:6px}
+.tips-card{background:rgba(0,212,255,0.04);border:1px solid rgba(0,212,255,0.1);border-radius:12px;padding:12px 14px}
+.tips-title{font-size:0.62rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:rgba(0,212,255,0.7);margin-bottom:6px}
 .tips-list{list-style:none;display:flex;flex-direction:column;gap:4px}
-.tips-list li{font-size:0.75rem;color:var(--muted);line-height:1.5;display:flex;gap:7px}
+.tips-list li{font-size:0.74rem;color:var(--muted);line-height:1.5;display:flex;gap:7px}
 .tips-list li::before{content:'→';color:rgba(0,212,255,0.5);flex-shrink:0}
 
-/* ─── STYLE ENGINE PANEL ─── */
-.style-panel{
-  background:var(--surface);
-  border-left:1px solid var(--border);
-  border-right:1px solid var(--border);
-}
-.style-engine-header{
-  padding:20px 20px 16px;
-  border-bottom:1px solid var(--border);
-  text-align:center;flex-shrink:0;
-}
-.style-engine-title{
-  font-family:var(--font-display);font-size:0.7rem;font-weight:700;
-  letter-spacing:2.5px;text-transform:uppercase;color:var(--muted);
-}
-.style-engine-sub{font-size:0.7rem;color:var(--muted2);margin-top:3px}
+/* Style engine */
+.se-header{padding:18px 18px 14px;border-bottom:1px solid var(--border);text-align:center;flex-shrink:0}
+.se-title{font-family:var(--font-display);font-size:0.68rem;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:var(--muted)}
+.se-sub{font-size:0.68rem;color:var(--muted2);margin-top:3px}
+.styles-list{flex:1;overflow-y:auto;padding:10px;display:flex;flex-direction:column;gap:5px}
+.styles-list::-webkit-scrollbar{width:2px}
+.styles-list::-webkit-scrollbar-thumb{background:var(--border);border-radius:99px}
 
-.styles-scroll{flex:1;overflow-y:auto;padding:12px;display:flex;flex-direction:column;gap:6px}
-.styles-scroll::-webkit-scrollbar{width:2px}
-.styles-scroll::-webkit-scrollbar-thumb{background:var(--border);border-radius:99px}
-
-/* BIG style cards */
-.style-card{
-  border-radius:14px;padding:14px 16px;
-  cursor:pointer;border:1.5px solid var(--border);
-  background:rgba(255,255,255,0.02);
-  transition:all 0.25s cubic-bezier(0.4,0,0.2,1);
-  position:relative;overflow:hidden;
-}
-.style-card::before{
-  content:'';
-  position:absolute;top:0;left:0;right:0;height:2px;
-  background:var(--sc-grad,linear-gradient(90deg,#0ea5e9,#7c3aed));
-  opacity:0;transition:opacity 0.25s;
-}
-.style-card:hover{border-color:var(--border-hi);background:rgba(255,255,255,0.04);transform:translateX(2px)}
-.style-card.active{
-  border-color:rgba(var(--sc-rgb,0,212,255),0.4);
-  background:rgba(var(--sc-rgb,0,212,255),0.06);
-  transform:translateX(4px);
-}
-.style-card.active::before{opacity:1}
-/* Glow blob behind active card */
-.style-card.active::after{
-  content:'';
-  position:absolute;right:-20px;top:50%;transform:translateY(-50%);
-  width:60px;height:60px;border-radius:50%;
-  background:rgba(var(--sc-rgb,0,212,255),0.15);
-  filter:blur(20px);pointer-events:none;
-}
-
-.sc-top{display:flex;align-items:center;gap:10px;margin-bottom:6px}
-.sc-emoji{font-size:1.2rem}
-.sc-names{}
-.sc-name{font-family:var(--font-display);font-size:0.88rem;font-weight:700;line-height:1.2}
-.sc-era{font-size:0.65rem;color:var(--muted);margin-top:1px}
-.sc-active-dot{
-  width:7px;height:7px;border-radius:50%;
-  background:var(--cyan);margin-left:auto;flex-shrink:0;
-  opacity:0;transition:opacity 0.2s;box-shadow:0 0 8px var(--cyan);
-}
-.style-card.active .sc-active-dot{opacity:1}
-.sc-desc{font-size:0.73rem;color:var(--muted);line-height:1.45;margin-bottom:8px}
+/* Style cards */
+.sc{border-radius:12px;padding:12px 14px;cursor:pointer;border:1.5px solid var(--border);background:rgba(255,255,255,0.02);transition:all 0.22s cubic-bezier(0.4,0,0.2,1);position:relative;overflow:hidden}
+.sc::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--sc-grad,#0ea5e9);opacity:0;transition:opacity 0.22s}
+.sc::after{content:'';position:absolute;right:-20px;top:50%;transform:translateY(-50%);width:50px;height:50px;border-radius:50%;background:rgba(var(--sc-rgb,0,212,255),0.12);filter:blur(18px);pointer-events:none;opacity:0;transition:opacity 0.22s}
+.sc:hover{border-color:var(--border-hi);background:rgba(255,255,255,0.04);transform:translateX(2px)}
+.sc.on{border-color:rgba(var(--sc-rgb,0,212,255),0.4);background:rgba(var(--sc-rgb,0,212,255),0.05);transform:translateX(4px)}
+.sc.on::before,.sc.on::after{opacity:1}
+.sc-top{display:flex;align-items:center;gap:9px;margin-bottom:5px}
+.sc-emoji{font-size:1.1rem}
+.sc-name{font-family:var(--font-display);font-size:0.86rem;font-weight:700}
+.sc-era{font-size:0.62rem;color:var(--muted);margin-top:1px}
+.sc-dot{width:6px;height:6px;border-radius:50%;background:var(--cyan);margin-left:auto;flex-shrink:0;opacity:0;transition:opacity 0.2s;box-shadow:0 0 7px var(--cyan)}
+.sc.on .sc-dot{opacity:1}
+.sc-desc{font-size:0.71rem;color:var(--muted);line-height:1.44;margin-bottom:7px}
 .sc-traits{display:flex;gap:4px;flex-wrap:wrap}
-.sc-trait{
-  font-size:0.6rem;font-weight:600;padding:2px 7px;border-radius:5px;
-  background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);
-  color:var(--muted);
-}
+.sc-trait{font-size:0.58rem;font-weight:600;padding:2px 6px;border-radius:5px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.07);color:var(--muted)}
 
-/* Controls section */
-.controls-section{
-  padding:16px 16px 0;
-  border-top:1px solid var(--border);
-  flex-shrink:0;
-}
-.ctrl-label{font-size:0.65rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted2);margin-bottom:12px}
-.sliders{display:flex;flex-direction:column;gap:10px;margin-bottom:14px}
-.slider-row{display:flex;flex-direction:column;gap:4px}
-.slider-header{display:flex;justify-content:space-between}
-.slider-name{font-size:0.72rem;color:var(--muted)}
-.slider-val{font-size:0.72rem;font-weight:700;color:var(--cyan)}
-input[type=range]{
-  -webkit-appearance:none;appearance:none;
-  width:100%;height:3px;border-radius:99px;
-  background:rgba(255,255,255,0.08);outline:none;cursor:pointer;
-}
-input[type=range]::-webkit-slider-thumb{
-  -webkit-appearance:none;width:13px;height:13px;border-radius:50%;
-  background:var(--cyan);box-shadow:0 0 8px rgba(0,212,255,0.6);
-  cursor:pointer;transition:transform 0.15s;
-}
+/* Controls */
+.ctrl-wrap{padding:14px 16px 0;border-top:1px solid var(--border);flex-shrink:0}
+.ctrl-label{font-size:0.62rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted2);margin-bottom:10px}
+.sliders{display:flex;flex-direction:column;gap:9px;margin-bottom:12px}
+.sl-row{display:flex;flex-direction:column;gap:4px}
+.sl-head{display:flex;justify-content:space-between}
+.sl-name{font-size:0.71rem;color:var(--muted)}
+.sl-val{font-size:0.71rem;font-weight:700;color:var(--cyan)}
+input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:3px;border-radius:99px;background:rgba(255,255,255,0.08);outline:none;cursor:pointer}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:13px;height:13px;border-radius:50%;background:var(--cyan);box-shadow:0 0 8px rgba(0,212,255,0.6);cursor:pointer;transition:transform 0.15s}
 input[type=range]::-webkit-slider-thumb:active{transform:scale(1.3)}
 
-/* Transfer button */
-.transfer-btn{
-  width:100%;padding:13px;margin:0 0 16px;
-  font-family:var(--font-display);font-size:0.82rem;font-weight:700;letter-spacing:0.5px;
-  border:none;border-radius:12px;cursor:pointer;
-  background:linear-gradient(135deg,var(--cyan),var(--purple));
-  color:white;
-  position:relative;overflow:hidden;
-  transition:transform 0.2s,box-shadow 0.2s,opacity 0.2s;
-  box-shadow:0 4px 24px rgba(0,212,255,0.2);
-}
-.transfer-btn::before{
-  content:'';position:absolute;inset:0;
-  background:linear-gradient(135deg,rgba(255,255,255,0.15),transparent);
-  opacity:0;transition:opacity 0.2s;
-}
-.transfer-btn:hover{transform:translateY(-2px);box-shadow:0 8px 32px rgba(0,212,255,0.3)}
-.transfer-btn:hover::before{opacity:1}
-.transfer-btn:active{transform:translateY(0)}
-.transfer-btn:disabled{opacity:0.5;cursor:not-allowed;transform:none;box-shadow:none}
-.transfer-btn.busy{
-  background:linear-gradient(135deg,#0c2a40,#1a0a40);
-  box-shadow:none;
-}
+.tf-btn{width:100%;padding:12px;margin:0 0 14px;font-family:var(--font-display);font-size:0.8rem;font-weight:700;letter-spacing:0.5px;border:none;border-radius:11px;cursor:pointer;color:white;position:relative;overflow:hidden;transition:transform 0.2s,box-shadow 0.2s,opacity 0.2s;display:flex;align-items:center;justify-content:center;gap:8px}
+.tf-btn::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,0.14),transparent);opacity:0;transition:opacity 0.2s}
+.tf-btn:hover{transform:translateY(-2px)}
+.tf-btn:hover::before{opacity:1}
+.tf-btn:active{transform:translateY(0)}
+.tf-btn:disabled{opacity:0.5;cursor:not-allowed;transform:none;box-shadow:none}
 
-/* ─── OUTPUT PANEL ─── */
-.output-panel{background:var(--bg)}
+/* Output */
+.out-body{flex:1;overflow-y:auto;padding:18px 22px;display:flex;flex-direction:column;gap:14px}
+.out-body::-webkit-scrollbar{width:3px}
+.out-body::-webkit-scrollbar-thumb{background:var(--border);border-radius:99px}
+.out-empty{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;text-align:center}
+.out-empty-ring{width:70px;height:70px;border-radius:50%;border:1.5px dashed rgba(255,255,255,0.1);display:flex;align-items:center;justify-content:center;font-size:1.5rem;animation:ringPulse 3s ease-in-out infinite}
+@keyframes ringPulse{0%,100%{border-color:rgba(255,255,255,0.1)}50%{border-color:rgba(0,212,255,0.3)}}
+.out-empty-title{font-family:var(--font-display);font-size:0.95rem;font-weight:700;color:var(--muted)}
+.out-empty-sub{font-size:0.76rem;color:var(--muted2);line-height:1.55;max-width:210px}
 
-.output-body{
-  flex:1;overflow-y:auto;padding:20px 24px;
-  display:flex;flex-direction:column;gap:16px;
-}
-.output-body::-webkit-scrollbar{width:3px}
-.output-body::-webkit-scrollbar-thumb{background:var(--border);border-radius:99px}
+.out-badge{display:inline-flex;align-items:center;gap:6px;font-size:0.68rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:5px 13px;border-radius:99px;width:fit-content;border:1px solid rgba(var(--b-rgb,139,92,246),0.3);background:rgba(var(--b-rgb,139,92,246),0.1);color:rgb(var(--b-rgb,139,92,246))}
+.out-badge-dot{width:5px;height:5px;border-radius:50%;background:currentColor;box-shadow:0 0 5px currentColor;animation:bdot 2s infinite}
+@keyframes bdot{0%,100%{opacity:1}50%{opacity:0.35}}
 
-/* Empty state */
-.output-empty{
-  flex:1;display:flex;flex-direction:column;
-  align-items:center;justify-content:center;gap:14px;
-  text-align:center;
-}
-.empty-icon-ring{
-  width:72px;height:72px;border-radius:50%;
-  border:1.5px dashed rgba(255,255,255,0.1);
-  display:flex;align-items:center;justify-content:center;
-  font-size:1.6rem;
-  animation:emptyPulse 3s ease-in-out infinite;
-}
-@keyframes emptyPulse{0%,100%{border-color:rgba(255,255,255,0.1)}50%{border-color:rgba(0,212,255,0.25)}}
-.empty-title{font-family:var(--font-display);font-size:1rem;font-weight:700;color:var(--muted)}
-.empty-sub{font-size:0.78rem;color:var(--muted2);line-height:1.55;max-width:220px}
-
-/* Output result */
-.output-badge{
-  display:inline-flex;align-items:center;gap:7px;
-  font-size:0.7rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;
-  padding:6px 14px;border-radius:99px;width:fit-content;
-  border:1px solid rgba(var(--badge-rgb,139,92,246),0.3);
-  background:rgba(var(--badge-rgb,139,92,246),0.1);
-  color:rgb(var(--badge-rgb,139,92,246));
-}
-.output-badge-dot{width:6px;height:6px;border-radius:50%;background:currentColor;box-shadow:0 0 6px currentColor;animation:badgePulse 2s infinite}
-@keyframes badgePulse{0%,100%{opacity:1}50%{opacity:0.4}}
-
-.output-text-card{
-  background:rgba(255,255,255,0.025);
-  border:1px solid var(--border);border-radius:16px;
-  padding:22px;
-  font-family:'Georgia','Times New Roman',serif;
-  font-size:0.94rem;line-height:1.85;
-  color:var(--text);
-  white-space:pre-wrap;
-  position:relative;overflow:hidden;
-  min-height:120px;
-}
-.output-text-card::before{
-  content:'"';
-  position:absolute;top:-10px;left:16px;
-  font-size:5rem;font-family:Georgia,serif;
-  color:rgba(139,92,246,0.08);line-height:1;
-  pointer-events:none;
-}
-.streaming-cursor::after{
-  content:'▋';color:var(--cyan);
-  animation:cur 0.7s step-end infinite;
-}
+.out-text-card{background:rgba(255,255,255,0.025);border:1px solid var(--border);border-radius:14px;padding:20px;font-family:'Georgia',serif;font-size:0.92rem;line-height:1.85;color:var(--text);white-space:pre-wrap;position:relative;overflow:hidden;min-height:110px}
+.out-text-card::before{content:'"';position:absolute;top:-8px;left:14px;font-size:5rem;font-family:Georgia,serif;color:rgba(139,92,246,0.07);line-height:1;pointer-events:none}
+.cur::after{content:'▋';color:var(--cyan);animation:cur 0.7s step-end infinite}
 @keyframes cur{0%,100%{opacity:1}50%{opacity:0}}
 
-/* Analysis metrics */
-.metrics-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
-.metric{
-  background:rgba(255,255,255,0.03);border:1px solid var(--border);
-  border-radius:10px;padding:10px 10px 8px;text-align:center;
-}
-.metric-val{font-family:var(--font-display);font-size:1.1rem;font-weight:800;margin-bottom:2px}
-.metric-label{font-size:0.6rem;text-transform:uppercase;letter-spacing:1px;color:var(--muted2)}
+.metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:7px}
+.met{background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:9px;padding:9px 8px;text-align:center}
+.met-val{font-family:var(--font-display);font-size:1.05rem;font-weight:800;margin-bottom:2px}
+.met-lbl{font-size:0.58rem;text-transform:uppercase;letter-spacing:1px;color:var(--muted2)}
 
-/* Action buttons */
-.output-actions{display:flex;gap:7px;flex-wrap:wrap}
-.out-btn{
-  display:flex;align-items:center;gap:5px;
-  font-family:var(--font-body);font-size:0.73rem;font-weight:600;
-  padding:7px 13px;border-radius:9px;cursor:pointer;
-  border:1px solid var(--border);background:rgba(255,255,255,0.04);
-  color:var(--muted);transition:all 0.18s;
-}
-.out-btn:hover{background:rgba(255,255,255,0.08);border-color:var(--border-hi);color:var(--text)}
-.out-btn.primary{
-  background:rgba(0,212,255,0.08);border-color:rgba(0,212,255,0.25);color:var(--cyan);
-}
-.out-btn.primary:hover{background:rgba(0,212,255,0.14)}
-.out-btn.copied{color:#10b981;border-color:rgba(16,185,129,0.3)}
+.out-actions{display:flex;gap:6px;flex-wrap:wrap}
+.obt{display:flex;align-items:center;gap:5px;font-family:var(--font-body);font-size:0.72rem;font-weight:600;padding:7px 12px;border-radius:8px;cursor:pointer;border:1px solid var(--border);background:rgba(255,255,255,0.04);color:var(--muted);transition:all 0.18s}
+.obt:hover{background:rgba(255,255,255,0.08);border-color:var(--border-hi);color:var(--text)}
+.obt.prim{background:rgba(0,212,255,0.08);border-color:rgba(0,212,255,0.25);color:var(--cyan)}
+.obt.prim:hover{background:rgba(0,212,255,0.14)}
+.obt.ok{color:#10b981;border-color:rgba(16,185,129,0.3)}
 
-/* History strip */
-.history-strip{
-  border-top:1px solid var(--border);
-  padding:14px 24px;flex-shrink:0;
-  background:rgba(255,255,255,0.01);
-}
-.history-label{font-size:0.63rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted2);margin-bottom:10px}
-.history-scroll{display:flex;gap:8px;overflow-x:auto;padding-bottom:2px}
-.history-scroll::-webkit-scrollbar{height:2px}
-.history-scroll::-webkit-scrollbar-thumb{background:var(--border);border-radius:99px}
-.history-item{
-  flex-shrink:0;width:180px;
-  background:var(--surface);border:1px solid var(--border);
-  border-radius:10px;padding:10px 12px;cursor:pointer;
-  transition:all 0.2s;
-}
-.history-item:hover{border-color:var(--border-hi);transform:translateY(-2px)}
-.h-style{font-size:0.67rem;font-weight:700;color:var(--cyan);margin-bottom:3px}
-.h-preview{font-size:0.72rem;color:var(--muted);line-height:1.4;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+/* History */
+.hist-bar{border-top:1px solid var(--border);padding:12px 22px;flex-shrink:0;background:rgba(255,255,255,0.01)}
+.hist-label{font-size:0.61rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted2);margin-bottom:9px}
+.hist-scroll{display:flex;gap:8px;overflow-x:auto;padding-bottom:2px}
+.hist-scroll::-webkit-scrollbar{height:2px}
+.hist-scroll::-webkit-scrollbar-thumb{background:var(--border);border-radius:99px}
+.hist-item{flex-shrink:0;width:175px;background:var(--surface);border:1px solid var(--border);border-radius:9px;padding:9px 11px;cursor:pointer;transition:all 0.2s}
+.hist-item:hover{border-color:var(--border-hi);transform:translateY(-2px)}
+.h-style{font-size:0.66rem;font-weight:700;color:var(--cyan);margin-bottom:3px}
+.h-prev{font-size:0.7rem;color:var(--muted);line-height:1.4;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
 
 /* Toast */
-.toast{
-  position:fixed;bottom:24px;left:50%;
-  transform:translateX(-50%) translateY(70px);
-  background:var(--surface3);border:1px solid var(--border-hi);
-  border-radius:12px;padding:11px 20px;
-  display:flex;align-items:center;gap:8px;
-  font-size:0.82rem;font-weight:500;
-  box-shadow:0 16px 50px rgba(0,0,0,0.6);
-  z-index:9999;transition:transform 0.4s cubic-bezier(0.34,1.56,0.64,1);
-  white-space:nowrap;pointer-events:none;
-}
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(70px);background:var(--surface3);border:1px solid var(--border-hi);border-radius:11px;padding:10px 18px;display:flex;align-items:center;gap:8px;font-size:0.8rem;font-weight:500;box-shadow:0 16px 50px rgba(0,0,0,0.6);z-index:9999;transition:transform 0.4s cubic-bezier(0.34,1.56,0.64,1);white-space:nowrap;pointer-events:none}
 .toast.show{transform:translateX(-50%) translateY(0)}
 
-/* Processing ring */
-.spin{
-  width:16px;height:16px;border-radius:50%;
-  border:2px solid rgba(255,255,255,0.2);
-  border-top-color:white;
-  animation:spin 0.75s linear infinite;
-  flex-shrink:0;
-}
-@keyframes spin{to{transform:rotate(360deg)}}
+/* Spinner */
+.spin{width:15px;height:15px;border-radius:50%;border:2px solid rgba(255,255,255,0.25);border-top-color:white;animation:sp 0.75s linear infinite;flex-shrink:0;display:inline-block}
+@keyframes sp{to{transform:rotate(360deg)}}
 
-/* Scrollbar global */
 ::-webkit-scrollbar{width:4px;height:4px}
 ::-webkit-scrollbar-track{background:transparent}
 ::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.1);border-radius:99px}
 
 @media(max-width:900px){
-  .page{grid-template-columns:1fr;grid-template-rows:auto;overflow:auto}
   html,body{overflow:auto;height:auto}
-  .panel{border-right:none;border-bottom:1px solid var(--border);min-height:400px}
-  .style-panel{min-height:500px}
+  .page{grid-template-columns:1fr;grid-template-rows:auto;overflow:visible}
+  .panel{border-right:none;border-bottom:1px solid var(--border);min-height:380px}
+  .style-panel{min-height:480px}
 }
 </style>
 </head>
 <body>
 
-<!-- NAV -->
 <nav class="nav">
   <a href="home.html" class="nav-logo">
     <div class="nav-logo-icon">
       <svg width="18" height="18" viewBox="0 0 36 36" fill="none">
-        <defs><linearGradient id="lg" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#fff"/><stop offset="100%" stop-color="rgba(255,255,255,0.6)"/></linearGradient></defs>
-        <path d="M13 24V12l12 3v9" stroke="url(#lg)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
-        <circle cx="11" cy="24" r="3" fill="url(#lg)"/><circle cx="23" cy="22" r="3" fill="url(#lg)"/>
+        <path d="M13 24V12l12 3v9" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+        <circle cx="11" cy="24" r="3" fill="white"/><circle cx="23" cy="22" r="3" fill="white"/>
       </svg>
     </div>
     <span class="nav-logo-text">Harmonia</span>
   </a>
   <ul class="nav-links">
     <li class="nav-link-item" onclick="location.href='training.html'">Training</li>
-    <li class="nav-link-item active">AI Generator ↓</li>
+    <li class="nav-link-item active">AI Generator</li>
     <li class="nav-link-item" onclick="location.href='genre-explorer.html'">Music History</li>
     <li class="nav-link-item" onclick="location.href='#'">Dashboard</li>
   </ul>
   <div class="nav-right">
-    <a href="lyric-assistant.html" class="nav-btn">✍️ Lyric Assistant</a>
+    <a href="lyric-assistant.html" class="nav-pill">✍️ Lyric Assistant</a>
     <div class="nav-avatar">S</div>
   </div>
 </nav>
 
-<!-- PAGE: 3-COLUMN STUDIO -->
 <div class="page">
 
-  <!-- ══ LEFT: INPUT ══ -->
+  <!-- LEFT: INPUT -->
   <div class="panel input-panel">
     <div class="panel-top">
-      <div class="panel-icon input-ic">📝</div>
+      <div class="panel-icon ic-in">📝</div>
       <div>
-        <div class="panel-label" style="color:var(--cyan)">Source Text</div>
-        <div class="panel-sublabel">Your original content to transform</div>
+        <div class="p-title" style="color:var(--cyan)">Source Text</div>
+        <div class="p-sub">Your original content to transform</div>
       </div>
     </div>
     <div class="panel-body">
       <div>
-        <div class="chip-label">Quick examples</div>
+        <div class="micro-label">Quick examples</div>
         <div class="chips" id="exChips"></div>
       </div>
-      <div class="input-area-wrap">
-        <div class="ta-label">Your text</div>
-        <textarea class="main-textarea" id="inputText" maxlength="900"
+      <div class="input-wrap">
+        <div class="micro-label">Your text</div>
+        <textarea class="main-ta" id="inputText" maxlength="900"
           placeholder="Paste lyrics, a poem, a mood sketch, a scene — anything you want reimagined through a different musical era or genre…"></textarea>
         <div class="counter-row">
-          <span class="counter" id="charCount">0 / 900</span>
-          <span class="counter" style="opacity:0.5;font-size:0.63rem">↑ max 900 chars</span>
+          <span class="counter-txt" id="charCount">0 / 900</span>
+          <span class="counter-txt" style="opacity:0.45;font-size:0.62rem">max 900 chars</span>
         </div>
-        <div class="counter-bar"><div class="counter-fill" id="cFill"></div></div>
+        <div class="c-bar"><div class="c-fill" id="cFill"></div></div>
       </div>
       <div class="tips-card">
         <div class="tips-title">💡 Pro tips</div>
@@ -520,55 +246,53 @@ input[type=range]::-webkit-slider-thumb:active{transform:scale(1.3)}
     </div>
   </div>
 
-  <!-- ══ CENTER: STYLE ENGINE ══ -->
+  <!-- CENTER: STYLE ENGINE -->
   <div class="panel style-panel">
-    <div class="style-engine-header">
-      <div class="style-engine-title">Style Engine</div>
-      <div class="style-engine-sub">Choose a musical era or genre</div>
+    <div class="se-header">
+      <div class="se-title">Style Engine</div>
+      <div class="se-sub">Choose a musical era or genre</div>
     </div>
-    <div class="styles-scroll" id="styleList"></div>
-    <div class="controls-section">
+    <div class="styles-list" id="styleList"></div>
+    <div class="ctrl-wrap">
       <div class="ctrl-label">Transform controls</div>
       <div class="sliders">
-        <div class="slider-row">
-          <div class="slider-header"><span class="slider-name">Style Intensity</span><span class="slider-val" id="v-intensity">80%</span></div>
-          <input type="range" min="10" max="100" value="80" id="s-intensity" oninput="document.getElementById('v-intensity').textContent=this.value+'%'"/>
+        <div class="sl-row">
+          <div class="sl-head"><span class="sl-name">Style Intensity</span><span class="sl-val" id="vi">80%</span></div>
+          <input type="range" min="10" max="100" value="80" id="si" oninput="vi.textContent=this.value+'%'"/>
         </div>
-        <div class="slider-row">
-          <div class="slider-header"><span class="slider-name">Creativity</span><span class="slider-val" id="v-creativity">70%</span></div>
-          <input type="range" min="10" max="100" value="70" id="s-creativity" oninput="document.getElementById('v-creativity').textContent=this.value+'%'"/>
+        <div class="sl-row">
+          <div class="sl-head"><span class="sl-name">Creativity</span><span class="sl-val" id="vc">70%</span></div>
+          <input type="range" min="10" max="100" value="70" id="sc_" oninput="vc.textContent=this.value+'%'"/>
         </div>
-        <div class="slider-row">
-          <div class="slider-header"><span class="slider-name">Preserve Meaning</span><span class="slider-val" id="v-preserve">50%</span></div>
-          <input type="range" min="0" max="100" value="50" id="s-preserve" oninput="document.getElementById('v-preserve').textContent=this.value+'%'"/>
+        <div class="sl-row">
+          <div class="sl-head"><span class="sl-name">Preserve Meaning</span><span class="sl-val" id="vp">50%</span></div>
+          <input type="range" min="0" max="100" value="50" id="sp" oninput="vp.textContent=this.value+'%'"/>
         </div>
       </div>
-      <button class="transfer-btn" id="tfBtn" onclick="doTransfer()">
-        🎨 Transform
-      </button>
+      <button class="tf-btn" id="tfBtn" onclick="doTransfer()">🎨 Transform</button>
     </div>
   </div>
 
-  <!-- ══ RIGHT: OUTPUT ══ -->
+  <!-- RIGHT: OUTPUT -->
   <div class="panel output-panel">
     <div class="panel-top">
-      <div class="panel-icon output-ic">✨</div>
+      <div class="panel-icon ic-out">✨</div>
       <div>
-        <div class="panel-label" style="color:var(--pink)">Transformed Output</div>
-        <div class="panel-sublabel">Your text, reimagined</div>
+        <div class="p-title" style="color:var(--pink)">Transformed Output</div>
+        <div class="p-sub">Your text, reimagined</div>
       </div>
     </div>
-    <div class="output-body" id="outputBody">
-      <div class="output-empty">
-        <div class="empty-icon-ring">🎨</div>
-        <div class="empty-title">Ready to transform</div>
-        <div class="empty-sub">Select a style, enter your text, then hit Transform</div>
+    <div class="out-body" id="outBody">
+      <div class="out-empty">
+        <div class="out-empty-ring">🎨</div>
+        <div class="out-empty-title">Ready to transform</div>
+        <div class="out-empty-sub">Select a style, enter your text, then hit Transform</div>
       </div>
     </div>
-    <div class="history-strip">
-      <div class="history-label">Recent transforms</div>
-      <div class="history-scroll" id="histList">
-        <span style="font-size:0.75rem;color:var(--muted2)">Nothing yet</span>
+    <div class="hist-bar">
+      <div class="hist-label">Recent transforms</div>
+      <div class="hist-scroll" id="histList">
+        <span style="font-size:0.73rem;color:var(--muted2)">Nothing yet</span>
       </div>
     </div>
   </div>
@@ -578,16 +302,16 @@ input[type=range]::-webkit-slider-thumb:active{transform:scale(1.3)}
 <div class="toast" id="toast"><span id="toastMsg"></span></div>
 
 <script>
-/* ═══════════════════════════════════
-   xAI / Grok API key — set here
-   ═══════════════════════════════════ */
-const XAI_API_KEY = 'YOUR_XAI_API_KEY_HERE'; // ← paste your key
-const XAI_API_URL = 'https://api.x.ai/v1/chat/completions';
-const XAI_MODEL   = 'grok-3-latest';
+// ═══════════════════════════════════
+// CONFIGURATION — paste your xAI key
+// ═══════════════════════════════════
+const XAI_KEY   = 'YOUR_XAI_API_KEY_HERE';
+const XAI_URL   = 'https://api.x.ai/v1/chat/completions';
+const XAI_MODEL = 'grok-3-latest';
 
-/* ═══════════════════════════════════
-   STYLE PRESETS
-   ═══════════════════════════════════ */
+// ═══════════════════════════════════
+// STYLE PRESETS
+// ═══════════════════════════════════
 const STYLES = [
   {
     id:'baroque', emoji:'🎻', name:'Baroque', era:'1600 – 1750',
@@ -595,7 +319,7 @@ const STYLES = [
     grad:'linear-gradient(90deg,#b45309,#fbbf24)',
     desc:'Ornate counterpoint, harpsichord grandeur, mathematical beauty',
     traits:['Counterpoint','Ornamented','Polyphonic','Sacred'],
-    prompt:`Transform the text into the aesthetic of Baroque music — J.S. Bach, Handel, Vivaldi. Use elevated archaic language ("thee","thy","doth"), divine and mathematical imagery, symmetrical phrasing mirroring counterpoint, references to harpsichord, organ, chamber music. Ceremony and grandeur. Intensity: {intensity}%. Creativity: {creativity}%. Preserve meaning: {preserve}%.`
+    prompt:'Transform into Baroque musical aesthetic (Bach, Handel, Vivaldi). Elevated archaic language ("thee","thy","doth"), divine and mathematical imagery, symmetrical phrasing, references to harpsichord/organ. Ceremony and grandeur. Intensity: {i}%. Creativity: {c}%. Preserve meaning: {p}%.'
   },
   {
     id:'jazz', emoji:'🎺', name:'Cool Jazz', era:'1940s – 1960s',
@@ -603,15 +327,15 @@ const STYLES = [
     grad:'linear-gradient(90deg,#9d174d,#f9a8d4)',
     desc:'Blue notes, smoky late-night atmosphere, improvisational cool',
     traits:['Bebop','Syncopated','Modal','Blue notes'],
-    prompt:`Transform in the style of 1950s Cool Jazz — Miles Davis, Chet Baker, Bill Evans. Laid-back, conversational phrasing. Smoky bars, rain on windows, city lights. Understated emotion. Blue note ambiguity. Occasional scat phrasing. Intensity: {intensity}%. Creativity: {creativity}%. Preserve meaning: {preserve}%.`
+    prompt:'Transform in the style of 1950s Cool Jazz (Miles Davis, Chet Baker, Bill Evans). Laid-back conversational phrasing. Smoky bars, city lights, rain. Understated emotion. Blue note ambiguity. Intensity: {i}%. Creativity: {c}%. Preserve meaning: {p}%.'
   },
   {
     id:'romantic', emoji:'🌹', name:'Romantic', era:'1820 – 1900',
     color:'#be185d', rgb:'190,24,93',
     grad:'linear-gradient(90deg,#831843,#fda4af)',
-    desc:'Sweeping drama, emotional extremes, orchestral storms',
+    desc:'Sweeping drama, emotional extremes, orchestral grandeur',
     traits:['Dramatic','Chromatic','Programmatic','National'],
-    prompt:`Transform with Romantic-era musical sensibility — Chopin, Wagner, Liszt. Soaring, unbounded language. Nature as emotional mirror (storms, moonlight, sea). Extreme dynamics from whisper to thunder. Longing, heroism, grief, transcendence. Intensity: {intensity}%. Creativity: {creativity}%. Preserve meaning: {preserve}%.`
+    prompt:'Transform with Romantic-era musical sensibility (Chopin, Wagner, Liszt). Soaring unbounded language. Nature as emotional mirror (storms, moonlight, sea). Extremes from whisper to thunder. Longing, heroism, grief, transcendence. Intensity: {i}%. Creativity: {c}%. Preserve meaning: {p}%.'
   },
   {
     id:'minimalist', emoji:'◻️', name:'Minimalist', era:'1960s – Present',
@@ -619,7 +343,7 @@ const STYLES = [
     grad:'linear-gradient(90deg,#0369a1,#7dd3fc)',
     desc:'Hypnotic repetition, gradual evolution, meditative stillness',
     traits:['Repetitive','Phased','Meditative','Process'],
-    prompt:`Transform in the aesthetic of Musical Minimalism — Philip Glass, Steve Reich, Arvo Pärt. Strip language to essential elements. Repetition with subtle variation. Gradual evolution. Sparse. Meditative. The text phase-shifts like two voices slightly out of sync. Intensity: {intensity}%. Creativity: {creativity}%. Preserve meaning: {preserve}%.`
+    prompt:'Transform in Musical Minimalism (Philip Glass, Steve Reich, Arvo Part). Strip to essential elements. Repetition with subtle variation. Gradual evolution. Sparse. Meditative. Phase-shifting like two voices slightly out of sync. Intensity: {i}%. Creativity: {c}%. Preserve meaning: {p}%.'
   },
   {
     id:'impressionist', emoji:'🌊', name:'Impressionist', era:'1890s – 1920s',
@@ -627,7 +351,7 @@ const STYLES = [
     grad:'linear-gradient(90deg,#065f46,#6ee7b7)',
     desc:'Shimmering textures, atmospheric color, unresolved suggestion',
     traits:['Atmospheric','Modal','Timbre-rich','Suggestive'],
-    prompt:`Transform as Debussy or Ravel — musical Impressionism. Prioritize texture, color, atmosphere. Dissolve hard edges. Water imagery: reflections, mist, light. Synesthetic descriptions. Whole-tone ambiguity — nothing fully resolves. The beauty is in the suggestion. Intensity: {intensity}%. Creativity: {creativity}%. Preserve meaning: {preserve}%.`
+    prompt:'Transform as Debussy or Ravel. Prioritize texture, color, atmosphere. Dissolve hard edges. Water imagery: reflections, mist, light. Synesthetic descriptions. Whole-tone ambiguity — nothing fully resolves. The beauty is in suggestion. Intensity: {i}%. Creativity: {c}%. Preserve meaning: {p}%.'
   },
   {
     id:'hiphop', emoji:'🎤', name:'Hip-Hop', era:'1973 – Present',
@@ -635,7 +359,7 @@ const STYLES = [
     grad:'linear-gradient(90deg,#9a3412,#fb923c)',
     desc:'Rhythmic precision, stacked metaphors, street poetry',
     traits:['Rhyme scheme','Flow','Wordplay','Cultural'],
-    prompt:`Transform as a skilled hip-hop lyricist — Kendrick Lamar, J. Cole, Nas. Dense internal rhymes. Every line rides a beat. Stacked metaphors. Wordplay and double meaning. Cadence that implies the groove. From specific to universal. Intensity: {intensity}%. Creativity: {creativity}%. Preserve meaning: {preserve}%.`
+    prompt:'Transform as a skilled hip-hop lyricist (Kendrick Lamar, J. Cole, Nas). Dense internal rhymes. Every line rides a beat. Stacked metaphors. Wordplay and double meaning. Cadence implies the groove. From specific to universal. Intensity: {i}%. Creativity: {c}%. Preserve meaning: {p}%.'
   },
   {
     id:'folk', emoji:'🪕', name:'Folk Revival', era:'1960s',
@@ -643,302 +367,263 @@ const STYLES = [
     grad:'linear-gradient(90deg,#14532d,#86efac)',
     desc:'Earthy storytelling, acoustic warmth, protest and memory',
     traits:['Narrative','Acoustic','Protest','Communal'],
-    prompt:`Transform as Dylan, Joni Mitchell, Nick Drake. Real characters, real places. Simple earthy imagery: roads, rivers, harvest, fire. Lived experience and memory. Social conscience beneath the personal. Unadorned language. Feels like a song passed down through generations. Intensity: {intensity}%. Creativity: {creativity}%. Preserve meaning: {preserve}%.`
+    prompt:'Transform as Dylan, Joni Mitchell, Nick Drake. Real characters in real places. Simple earthy imagery: roads, rivers, harvest, fire. Lived experience and memory. Social conscience beneath the personal. Unadorned language. Feels like a song passed down through generations. Intensity: {i}%. Creativity: {c}%. Preserve meaning: {p}%.'
   },
   {
-    id:'ambient', emoji:'🌌', name:'Ambient / Electronic', era:'1978 – Present',
+    id:'ambient', emoji:'🌌', name:'Ambient', era:'1978 – Present',
     color:'#818cf8', rgb:'129,140,248',
     grad:'linear-gradient(90deg,#4338ca,#a5b4fc)',
-    desc:'Infinite space, texture over melody, oceanic texture',
+    desc:'Infinite space, texture over melody, oceanic timelessness',
     traits:['Textural','Atmospheric','Drone','Spatial'],
-    prompt:`Transform as Brian Eno, Aphex Twin (ambient works), Stars of the Lid. Language that feels like infinite space. Texture over narrative. Words that blur at edges. Timelessness. The text should feel like it exists between thoughts — vast, oceanic, unanchored. Intensity: {intensity}%. Creativity: {creativity}%. Preserve meaning: {preserve}%.`
+    prompt:'Transform as Brian Eno or Stars of the Lid. Language that feels like infinite space. Texture over narrative. Words blur at edges. Timelessness. The text exists between thoughts — vast, oceanic, unanchored. Intensity: {i}%. Creativity: {c}%. Preserve meaning: {p}%.'
   },
 ];
 
 const EXAMPLES = [
-  {label:'🌅 Dawn', text:'The light comes slowly, first grey then golden, and the city holds its breath before the noise begins. Something about morning feels borrowed — a few quiet minutes that don\'t belong to anyone yet.'},
+  {label:'🌅 Dawn',   text:'The light comes slowly, first grey then golden, and the city holds its breath before the noise begins. Something about morning feels borrowed — a few quiet minutes that do not belong to anyone yet.'},
   {label:'💔 Leaving', text:'She left the key on the counter without a note. The apartment echoes differently now. I keep finding her things in drawers I forgot existed.'},
-  {label:'🌊 Ocean', text:'Standing at the edge of the water where one vast thing meets another. The horizon resolves nothing. Waves arrive and leave without explanation.'},
-  {label:'🏙️ 3am', text:'The city at three in the morning belongs to different people — the last shift workers, the restless, the ones with nowhere particular to be. The neon puddles in the rain.'},
+  {label:'🌊 Ocean',   text:'Standing at the edge of the water where one vast thing meets another. The horizon resolves nothing. Waves arrive and leave without explanation.'},
+  {label:'🏙️ 3am',    text:'The city at three in the morning belongs to different people — the last shift workers, the restless, the ones with nowhere particular to be. The neon puddles in the rain.'},
 ];
 
-/* ═══════════════════════════════════
-   STATE
-   ═══════════════════════════════════ */
-let selectedStyle = STYLES[1];
-let busy = false;
-let history = [];
+// Demo outputs — all safe ASCII apostrophes
+const DEMO_OUT = {
+  baroque:      "In the hour wherein silence doth hold dominion and the golden light doth pour forth upon the city, there existeth a stillness most divine — as though Providence doth hold its breath before the contrapuntal chorus of the day doth commence. Such morning hours are borrowed grace, a prelude written in a mode of tenderness, suspended between the night's last chord and the day's first fugal entry.",
+  jazz:         "Light comes in slow — yeah, slow like the last measure of a ballad nobody asked for but everybody needed. City holds its breath, baby, like the pause before the piano drops back in. Something borrowed about morning, something blue — these quiet bars between the sets that don't belong to the club or the street or anyone playing a role.",
+  romantic:     "The light arrives not gently but in great golden torrents, as if the sun itself cannot contain the enormity of what morning means — and the city, that vast Romantic organism of ten thousand souls, holds its collective breath in an agony of anticipation before the great orchestral tumult of the day unfolds its chromatic, inevitable drama.",
+  minimalist:   "Light. Then more light. The city breathes. The city breathes. The city breathes. Something about morning. Morning. Morning feels borrowed. A few minutes. A few quiet minutes. That don't belong. Don't belong to anyone yet.",
+  impressionist:"The light shimmers in — first the grey suggestion of it, then something like gold but not quite, dissolving at its own edges — and somewhere beneath the surface of things the city holds what might be breath, what might be the memory of breath, before the noise arrives like colour bleeding into water.",
+  hiphop:       "Light slides in slow — yeah the city catching them golden rays before the rush, hold your breath cause the day's about to press play on all its noise and chaos. Mornings feel like borrowed time, fr — a few bars of peace before the world clocks in and starts demanding answers, like who does this stillness belong to anyway.",
+  folk:         "The light comes the way it always has — grey first, then gold, slow as a river finding its way. And the city holds still for just a moment, the way a town holds still before the mill starts up or the market opens, that borrowed quiet before the day takes what it needs from everyone.",
+  ambient:      "Light... expands into the space between things. The city... exists at the edge of awareness. Something breathes or something like breathing. Morning is a texture — grey dissolving into gold dissolving into the beginning of noise. These moments do not belong to time. They exist... between.",
+};
 
-/* ═══════════════════════════════════
-   INIT
-   ═══════════════════════════════════ */
+// ═══════════════════════════════════
+// STATE
+// ═══════════════════════════════════
+let active = STYLES[1];
+let busy   = false;
+let hist   = [];
+
+// ═══════════════════════════════════
+// INIT
+// ═══════════════════════════════════
 document.addEventListener('DOMContentLoaded', () => {
   renderStyles();
   renderExamples();
-  setupTextarea();
-  selectStyle(STYLES[1].id);
+  document.getElementById('inputText').addEventListener('input', updateCounter);
+  selectStyle('jazz');
 });
 
 function renderStyles() {
-  const list = document.getElementById('styleList');
-  list.innerHTML = STYLES.map(s => `
-    <div class="style-card" id="sc-${s.id}"
-      style="--sc-rgb:${s.rgb};--sc-grad:${s.grad}"
-      onclick="selectStyle('${s.id}')">
+  document.getElementById('styleList').innerHTML = STYLES.map(s => `
+    <div class="sc" id="sc-${s.id}" style="--sc-rgb:${s.rgb};--sc-grad:${s.grad}" onclick="selectStyle('${s.id}')">
       <div class="sc-top">
         <span class="sc-emoji">${s.emoji}</span>
-        <div class="sc-names">
-          <div class="sc-name">${s.name}</div>
-          <div class="sc-era">${s.era}</div>
-        </div>
-        <div class="sc-active-dot"></div>
+        <div><div class="sc-name">${s.name}</div><div class="sc-era">${s.era}</div></div>
+        <div class="sc-dot"></div>
       </div>
       <div class="sc-desc">${s.desc}</div>
       <div class="sc-traits">${s.traits.map(t=>`<span class="sc-trait">${t}</span>`).join('')}</div>
-    </div>
-  `).join('');
+    </div>`).join('');
 }
 
 function renderExamples() {
   document.getElementById('exChips').innerHTML = EXAMPLES.map((e,i)=>
-    `<button class="chip" onclick="loadExample(${i})">${e.label}</button>`
+    `<button class="chip" onclick="loadEx(${i})">${e.label}</button>`
   ).join('');
 }
 
-function setupTextarea() {
-  const ta = document.getElementById('inputText');
-  ta.addEventListener('input', () => {
-    const l = ta.value.length, max = 900;
-    document.getElementById('charCount').textContent = `${l} / ${max}`;
-    document.getElementById('cFill').style.width = Math.min(100, l/max*100) + '%';
-  });
+function updateCounter() {
+  const l = document.getElementById('inputText').value.length;
+  document.getElementById('charCount').textContent = l + ' / 900';
+  document.getElementById('cFill').style.width = Math.min(100, l/900*100) + '%';
 }
 
-function loadExample(i) {
+function loadEx(i) {
   const ta = document.getElementById('inputText');
   ta.value = EXAMPLES[i].text;
-  ta.dispatchEvent(new Event('input'));
+  updateCounter();
 }
 
 function selectStyle(id) {
-  selectedStyle = STYLES.find(s => s.id === id);
-  document.querySelectorAll('.style-card').forEach(c => c.classList.toggle('active', c.id === `sc-${id}`));
+  active = STYLES.find(s => s.id === id);
+  document.querySelectorAll('.sc').forEach(c => c.classList.toggle('on', c.id === 'sc-'+id));
   const btn = document.getElementById('tfBtn');
-  btn.textContent = `${selectedStyle.emoji} Transform to ${selectedStyle.name}`;
-  btn.style.background = selectedStyle.grad;
-  btn.style.boxShadow = `0 4px 24px rgba(${selectedStyle.rgb},0.25)`;
+  btn.textContent = active.emoji + ' Transform to ' + active.name;
+  btn.style.background = active.grad;
+  btn.style.boxShadow  = '0 4px 22px rgba('+active.rgb+',0.25)';
 }
 
-/* ═══════════════════════════════════
-   TRANSFER — xAI Grok API
-   ═══════════════════════════════════ */
+// ═══════════════════════════════════
+// TRANSFORM  (xAI Grok API)
+// ═══════════════════════════════════
 async function doTransfer() {
   const ta = document.getElementById('inputText');
   if (!ta.value.trim()) { showToast('⚠️ Enter some text first'); return; }
   if (busy) return;
   busy = true;
 
-  const intensity = document.getElementById('s-intensity').value;
-  const creativity = document.getElementById('s-creativity').value;
-  const preserve = document.getElementById('s-preserve').value;
+  const i = document.getElementById('si').value;
+  const c = document.getElementById('sc_').value;
+  const p = document.getElementById('sp').value;
 
   const btn = document.getElementById('tfBtn');
   btn.disabled = true;
-  btn.classList.add('busy');
-  btn.innerHTML = `<div class="spin" style="display:inline-block"></div> Transforming…`;
+  btn.innerHTML = '<div class="spin"></div> Transforming…';
 
-  setOutputProcessing();
+  showProcessing();
 
+  const sysProm = active.prompt
+    .replace('{i}', i).replace('{c}', c).replace('{p}', p)
+    + '\n\nOutput ONLY the transformed text — no preamble, no meta-commentary. 3-8 sentences or equivalent in verse. Make it feel authentically of that style.';
+
+  let output = '';
   try {
-    const sysPrompt = selectedStyle.prompt
-      .replace('{intensity}', intensity)
-      .replace('{creativity}', creativity)
-      .replace('{preserve}', preserve) +
-      '\n\nOutput ONLY the transformed text — no preamble, no meta-commentary, no quotation marks wrapping it. 3-8 sentences or equivalent in verse. Make it feel authentically of that style.';
-
-    let output = '';
-
-    if (XAI_API_KEY && XAI_API_KEY !== 'YOUR_XAI_API_KEY_HERE') {
-      const resp = await fetch(XAI_API_URL, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${XAI_API_KEY}`,
-        },
-        body: JSON.stringify({
+    if (XAI_KEY && XAI_KEY !== 'YOUR_XAI_API_KEY_HERE') {
+      const resp = await fetch(XAI_URL, {
+        method:'POST',
+        headers:{'Content-Type':'application/json','Authorization':'Bearer '+XAI_KEY},
+        body:JSON.stringify({
           model: XAI_MODEL,
-          messages: [
-            { role: 'system', content: sysPrompt },
-            { role: 'user', content: `Transform this text:\n\n"${ta.value.trim()}"` }
+          messages:[
+            {role:'system', content:sysProm},
+            {role:'user',   content:'Transform this text:\n\n"'+ta.value.trim()+'"'}
           ],
-          max_tokens: 800,
-          temperature: Math.round(creativity / 100 * 1.5 * 10) / 10,
-          stream: false,
+          max_tokens:900,
+          temperature: Math.round(c/100*1.4*10)/10,
         }),
       });
-      if (!resp.ok) throw new Error(`API ${resp.status}`);
-      const data = await resp.json();
-      output = data.choices?.[0]?.message?.content || 'Unable to generate.';
+      if (!resp.ok) {
+        const err = await resp.json().catch(()=>({error:{message:'HTTP '+resp.status}}));
+        throw new Error(err.error?.message || 'API error '+resp.status);
+      }
+      const d = await resp.json();
+      output = d.choices?.[0]?.message?.content || 'Empty response from API.';
     } else {
-      // Demo mode — realistic placeholder
-      await new Promise(r => setTimeout(r, 1400));
-      output = getDemoOutput(selectedStyle.id, ta.value);
+      await new Promise(r => setTimeout(r, 1200));
+      output = DEMO_OUT[active.id] || DEMO_OUT.jazz;
     }
-
-    setOutputResult(output, ta.value);
-    addHistory(ta.value, output, selectedStyle);
-
+    showResult(output);
+    addHist(ta.value, output, active);
   } catch(e) {
-    setOutputError(e.message);
+    showError(e.message);
   } finally {
     busy = false;
     btn.disabled = false;
-    btn.classList.remove('busy');
-    selectStyle(selectedStyle.id);
+    selectStyle(active.id);
   }
 }
 
-function getDemoOutput(styleId, input) {
-  const demos = {
-    baroque: 'In the hour wherefore silence doth reign and the golden light doth pour forth upon the city, there existeth a stillness most divine — as though the Lord Himself doth hold His breath before the contrapuntal chorus of the day commence. Such morning hours are borrowed grace, a prelude written in the mode of tenderness, suspended 'twixt the night's last chord and the day's first fugal entry.',
-    jazz: 'Light comes in slow — yeah, slow like the last measure of a ballad nobody asked for but everybody needed. City holds its breath, baby, like the pause before the piano drops back in. Something borrowed about morning, something blue — these quiet bars between the sets that don\'t belong to the club or the street or anyone playing a role.',
-    romantic: 'The light arrives not gently but in great golden torrents, as if the sun itself cannot contain the enormity of what morning means — and the city, that vast Romantic organism of ten thousand souls, holds its collective breath in an agony of anticipation before the great orchestral tumult of the day unfolds its chromatic, inevitable drama.',
-    minimalist: 'Light. Then more light. The city breathes. The city breathes. The city breathes. Something about morning. Morning. Morning feels borrowed. A few minutes. A few quiet minutes. That don\'t belong. Don\'t belong to anyone yet.',
-    impressionist: 'The light shimmers in — first the grey suggestion of it, then something like gold but not quite, dissolving at its own edges — and somewhere beneath the surface of things the city holds what might be breath, what might be the memory of breath, before the noise arrives like colour bleeding into water.',
-    hiphop: 'Light slides in slow — yeah the city catching them golden rays before the rush, hold your breath cause the day\'s about to press play on all its noise and chaos. Mornings feel like borrowed time, fr — a few bars of peace before the world clocks in and starts demanding answers, like who does this stillness belong to anyway.',
-    folk: 'The light comes the way it always has — grey first, then gold, slow as a river finding its way. And the city holds still for just a moment, the way a town holds still before the mill starts up or the market opens, that borrowed quiet before the day takes what it needs from everyone.',
-    ambient: 'Light… expands into the space between things. The city… exists at the edge of awareness. Something breathes or something like breathing. Morning is a texture — grey dissolving into gold dissolving into the beginning of noise. These moments don\'t belong to time. They exist… between.',
-  };
-  return demos[styleId] || demos.jazz;
-}
-
-/* ═══════════════════════════════════
-   OUTPUT STATES
-   ═══════════════════════════════════ */
-function setOutputProcessing() {
-  document.getElementById('outputBody').innerHTML = `
-    <div class="output-empty">
-      <div class="empty-icon-ring" style="border-color:rgba(${selectedStyle.rgb},0.4);animation:none">
-        <div class="spin" style="width:28px;height:28px;border-top-color:rgb(${selectedStyle.rgb})"></div>
+function showProcessing() {
+  document.getElementById('outBody').innerHTML = `
+    <div class="out-empty">
+      <div class="out-empty-ring" style="border-color:rgba(${active.rgb},0.5);animation:none">
+        <div class="spin" style="width:26px;height:26px;border-top-color:rgb(${active.rgb})"></div>
       </div>
-      <div class="empty-title">Channeling ${selectedStyle.name}…</div>
-      <div class="empty-sub">Grok is drawing from ${selectedStyle.era}</div>
+      <div class="out-empty-title">Channeling ${active.name}…</div>
+      <div class="out-empty-sub">Drawing from ${active.era}</div>
     </div>`;
 }
 
-function setOutputResult(text, originalText) {
-  const words = text.split(/\s+/).length;
-  const complexity = Math.min(99, Math.round(40 + (text.match(/[,;:—–]/g)||[]).length * 7));
-  const styleMatch = Math.round(72 + Math.random() * 26);
-  const rhythm = parseInt(document.getElementById('s-intensity').value);
+function showResult(text) {
+  const words     = text.trim().split(/\s+/).length;
+  const complexity= Math.min(99, 40 + ((text.match(/[,;:—–]/g)||[]).length * 7));
+  const styleMatch= Math.round(72 + Math.random() * 26);
+  const intensity = parseInt(document.getElementById('si').value);
 
-  document.getElementById('outputBody').innerHTML = `
-    <div class="output-badge" style="--badge-rgb:${selectedStyle.rgb}">
-      <span class="output-badge-dot"></span>
-      ${selectedStyle.emoji} ${selectedStyle.name} Applied
+  document.getElementById('outBody').innerHTML = `
+    <div class="out-badge" style="--b-rgb:${active.rgb}">
+      <span class="out-badge-dot"></span>${active.emoji} ${active.name} Applied
     </div>
-    <div class="output-text-card" id="outTextEl"></div>
-    <div class="metrics-grid">
-      <div class="metric">
-        <div class="metric-val" style="color:rgb(${selectedStyle.rgb})">${words}</div>
-        <div class="metric-label">Words</div>
-      </div>
-      <div class="metric">
-        <div class="metric-val" style="color:var(--cyan)">${styleMatch}%</div>
-        <div class="metric-label">Style Match</div>
-      </div>
-      <div class="metric">
-        <div class="metric-val" style="color:var(--purple)">${complexity}%</div>
-        <div class="metric-label">Complexity</div>
-      </div>
-      <div class="metric">
-        <div class="metric-val" style="color:var(--green)">${rhythm}%</div>
-        <div class="metric-label">Intensity</div>
-      </div>
+    <div class="out-text-card" id="outText"></div>
+    <div class="metrics">
+      <div class="met"><div class="met-val" style="color:rgb(${active.rgb})">${words}</div><div class="met-lbl">Words</div></div>
+      <div class="met"><div class="met-val" style="color:var(--cyan)">${styleMatch}%</div><div class="met-lbl">Style Match</div></div>
+      <div class="met"><div class="met-val" style="color:var(--purple)">${complexity}%</div><div class="met-lbl">Complexity</div></div>
+      <div class="met"><div class="met-val" style="color:var(--green)">${intensity}%</div><div class="met-lbl">Intensity</div></div>
     </div>
-    <div class="output-actions">
-      <button class="out-btn primary" id="copyBtn" onclick="copyOut()">📋 Copy</button>
-      <button class="out-btn" onclick="doTransfer()">↺ Regenerate</button>
-      <button class="out-btn" onclick="useAsInput()">→ Use as Input</button>
-      <button class="out-btn" onclick="sendToLyrics()">✍️ Open in Lyrics</button>
+    <div class="out-actions">
+      <button class="obt prim" id="copyBtn" onclick="copyOut()">📋 Copy</button>
+      <button class="obt" onclick="doTransfer()">↺ Regenerate</button>
+      <button class="obt" onclick="useAsInput()">→ Use as Input</button>
+      <button class="obt" onclick="sendToLyrics()">✍️ Open in Lyrics</button>
     </div>`;
 
-  // Typewriter
-  const el = document.getElementById('outTextEl');
-  el.classList.add('streaming-cursor');
-  let i = 0;
+  // Typewriter effect
+  const el    = document.getElementById('outText');
   const chars = text.split('');
-  const speed = Math.max(6, Math.round(2200 / chars.length));
-  const type = () => {
-    if (i < chars.length) { el.textContent += chars[i++]; requestAnimationFrame(() => setTimeout(type, speed)); }
-    else el.classList.remove('streaming-cursor');
-  };
+  const speed = Math.max(5, Math.round(2400 / chars.length));
+  let idx = 0;
+  el.classList.add('cur');
+  function type() {
+    if (idx < chars.length) { el.textContent += chars[idx++]; setTimeout(type, speed); }
+    else el.classList.remove('cur');
+  }
   type();
 }
 
-function setOutputError(msg) {
-  document.getElementById('outputBody').innerHTML = `
-    <div class="output-empty">
-      <div class="empty-icon-ring" style="border-color:rgba(239,68,68,0.4);animation:none">⚠️</div>
-      <div class="empty-title" style="color:#ef4444">Transform failed</div>
-      <div class="empty-sub">${msg}<br><br>Check your API key or connection</div>
+function showError(msg) {
+  document.getElementById('outBody').innerHTML = `
+    <div class="out-empty">
+      <div class="out-empty-ring" style="border-color:rgba(239,68,68,0.4);animation:none">⚠️</div>
+      <div class="out-empty-title" style="color:#ef4444">Transform failed</div>
+      <div class="out-empty-sub">${msg}<br><br>Check your xAI API key or network connection.</div>
     </div>`;
 }
 
-/* ═══════════════════════════════════
-   ACTIONS
-   ═══════════════════════════════════ */
+// ═══════════════════════════════════
+// OUTPUT ACTIONS
+// ═══════════════════════════════════
 function copyOut() {
-  const el = document.getElementById('outTextEl');
+  const el = document.getElementById('outText');
   if (!el) return;
   navigator.clipboard.writeText(el.textContent).then(() => {
     const b = document.getElementById('copyBtn');
-    b.textContent = '✓ Copied!'; b.classList.add('copied');
-    setTimeout(() => { b.textContent = '📋 Copy'; b.classList.remove('copied'); }, 2000);
+    if (!b) return;
+    b.textContent = '✓ Copied!';
+    b.classList.add('ok');
+    setTimeout(() => { b.textContent = '📋 Copy'; b.classList.remove('ok'); }, 2000);
   });
 }
 
 function useAsInput() {
-  const el = document.getElementById('outTextEl');
+  const el = document.getElementById('outText');
   const ta = document.getElementById('inputText');
   if (el && ta) {
     ta.value = el.textContent;
-    ta.dispatchEvent(new Event('input'));
+    updateCounter();
     showToast('✓ Output loaded as new input');
   }
 }
 
 function sendToLyrics() {
-  const el = document.getElementById('outTextEl');
-  if (el) {
-    localStorage.setItem('harmonia_lyric_seed', el.textContent);
+  const el = document.getElementById('outText');
+  if (el && el.textContent) {
+    try { localStorage.setItem('harmonia_lyric_seed', el.textContent); } catch(e){}
     window.location.href = 'lyric-assistant.html';
   }
 }
 
-function addHistory(input, output, style) {
-  history.unshift({ input, output, style });
-  if (history.length > 8) history.pop();
-  renderHistory();
-}
-
-function renderHistory() {
+function addHist(inp, out, style) {
+  hist.unshift({inp, out, style});
+  if (hist.length > 8) hist.pop();
   const el = document.getElementById('histList');
-  if (!history.length) { el.innerHTML = '<span style="font-size:0.75rem;color:var(--muted2)">Nothing yet</span>'; return; }
-  el.innerHTML = history.map((h,i) => `
-    <div class="history-item" onclick="loadHistory(${i})">
+  el.innerHTML = hist.map((h,i) => `
+    <div class="hist-item" onclick="loadHist(${i})">
       <div class="h-style">${h.style.emoji} ${h.style.name}</div>
-      <div class="h-preview">${h.output}</div>
+      <div class="h-prev">${h.out}</div>
     </div>`).join('');
 }
 
-function loadHistory(i) {
-  const h = history[i];
+function loadHist(i) {
+  const h = hist[i];
   if (!h) return;
-  document.getElementById('inputText').value = h.input;
-  document.getElementById('inputText').dispatchEvent(new Event('input'));
+  const ta = document.getElementById('inputText');
+  ta.value = h.inp;
+  updateCounter();
   selectStyle(h.style.id);
-  setOutputResult(h.output, h.input);
+  showResult(h.out);
 }
 
 function showToast(msg) {
