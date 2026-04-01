@@ -15,6 +15,8 @@
 <!-- ===== NAVBAR ===== -->
 <nav class="navbar" id="navbar">
   <div class="nav-inner">
+
+    <!-- Logo -->
     <a href="home.html" class="nav-logo">
       <div class="logo-icon">
         <svg width="28" height="28" viewBox="0 0 36 36" fill="none">
@@ -32,15 +34,18 @@
       <span class="logo-text">Harmonia</span>
     </a>
 
+    <!-- Desktop Nav Links -->
     <ul class="nav-links" id="navLinks">
+
+      <!-- Training -->
       <li class="nav-item has-dropdown">
-        <button class="nav-link active-nav">
+        <button class="nav-link">
           Training
           <svg class="caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m6 9 6 6 6-6"/></svg>
         </button>
         <div class="dropdown">
           <div class="dropdown-inner">
-            <a href="learning-path.html" class="dd-item">
+            <a href="training.html" class="dd-item">
               <span class="dd-icon">🛤️</span>
               <span class="dd-content"><strong>Learning Path</strong><span>Structured curriculum</span></span>
             </a>
@@ -61,45 +66,129 @@
           </div>
         </div>
       </li>
+
+      <!-- AI Generator -->
       <li class="nav-item has-dropdown">
-        <button class="nav-link">AI Generator
+        <button class="nav-link">
+          AI Generator
           <svg class="caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m6 9 6 6 6-6"/></svg>
         </button>
         <div class="dropdown">
           <div class="dropdown-inner">
-            <a href="#" class="dd-item"><span class="dd-icon">🤖</span><span class="dd-content"><strong>AI Compose</strong><span>Generate original music</span></span></a>
-            <a href="#" class="dd-item"><span class="dd-icon">🎨</span><span class="dd-content"><strong>Style Transfer</strong><span>Reimagine your tracks</span></span><span class="dd-tag beta">Beta</span></a>
-            <a href="#" class="dd-item"><span class="dd-icon">✍️</span><span class="dd-content"><strong>Lyric Assistant</strong><span>AI-powered songwriting</span></span></a>
+            <a href="ai-composer.html" class="dd-item">
+              <span class="dd-icon">🤖</span>
+              <span class="dd-content"><strong>AI Compose</strong><span>Generate original music</span></span>
+            </a>
+            <a href="#" class="dd-item">
+              <span class="dd-icon">🎨</span>
+              <span class="dd-content"><strong>Style Transfer</strong><span>Reimagine your tracks</span></span>
+              <span class="dd-tag beta">Beta</span>
+            </a>
+            <a href="#" class="dd-item">
+              <span class="dd-icon">✍️</span>
+              <span class="dd-content"><strong>Lyric Assistant</strong><span>AI-powered songwriting</span></span>
+            </a>
           </div>
         </div>
       </li>
+
+      <!-- Music History -->
       <li class="nav-item has-dropdown">
-        <button class="nav-link">Music History
+        <button class="nav-link">
+          Music History
           <svg class="caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m6 9 6 6 6-6"/></svg>
         </button>
         <div class="dropdown">
           <div class="dropdown-inner">
-            <a href="#" class="dd-item"><span class="dd-icon">🌍</span><span class="dd-content"><strong>Genre Explorer</strong><span>From jazz to EDM</span></span></a>
-            <a href="#" class="dd-item"><span class="dd-icon">📅</span><span class="dd-content"><strong>Era Timeline</strong><span>Centuries of music</span></span></a>
-            <a href="#" class="dd-item"><span class="dd-icon">🎼</span><span class="dd-content"><strong>Composer Library</strong><span>Masters &amp; legends</span></span></a>
+            <a href="genre-explorer.html" class="dd-item">
+              <span class="dd-icon">🌍</span>
+              <span class="dd-content"><strong>Genre Explorer</strong><span>From jazz to EDM</span></span>
+            </a>
+            <a href="era-timeline.html" class="dd-item">
+              <span class="dd-icon">📅</span>
+              <span class="dd-content"><strong>Era Timeline</strong><span>Centuries of music</span></span>
+            </a>
+            <a href="composer-library.html" class="dd-item">
+              <span class="dd-icon">🎼</span>
+              <span class="dd-content"><strong>Composer Library</strong><span>Masters &amp; legends</span></span>
+            </a>
           </div>
         </div>
       </li>
+
+      <!-- 3D Anatomy -->
       <li class="nav-item has-dropdown">
-        <button class="nav-link">Dashboard
+        <button class="nav-link">
+          3D Anatomy
           <svg class="caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m6 9 6 6 6-6"/></svg>
         </button>
         <div class="dropdown">
           <div class="dropdown-inner">
-            <a href="#" class="dd-item"><span class="dd-icon">🏆</span><span class="dd-content"><strong>Leaderboard</strong><span>Top performers</span></span></a>
-            <a href="#" class="dd-item"><span class="dd-icon">📈</span><span class="dd-content"><strong>My Progress</strong><span>Track your growth</span></span></a>
-            <a href="#" class="dd-item"><span class="dd-icon">🥇</span><span class="dd-content"><strong>Achievements</strong><span>Badges &amp; rewards</span></span></a>
+            <a href="instrument-parts.html" class="dd-item">
+              <span class="dd-icon">🎹</span>
+              <span class="dd-content"><strong>Instrument Parts</strong><span>Interactive 3D models</span></span>
+            </a>
+            <a href="sound-physics.html" class="dd-item">
+              <span class="dd-icon">🔊</span>
+              <span class="dd-content"><strong>Sound Physics</strong><span>How acoustics work</span></span>
+            </a>
           </div>
         </div>
       </li>
+
+      <!-- Dashboard -->
+      <li class="nav-item has-dropdown">
+        <button class="nav-link">
+          Dashboard
+          <svg class="caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m6 9 6 6 6-6"/></svg>
+        </button>
+        <div class="dropdown">
+          <div class="dropdown-inner">
+            <a href="leaderboard.html" class="dd-item">
+              <span class="dd-icon">🏆</span>
+              <span class="dd-content"><strong>Leaderboard</strong><span>Top performers</span></span>
+            </a>
+            <a href="progress.html" class="dd-item">
+              <span class="dd-icon">📈</span>
+              <span class="dd-content"><strong>My Progress</strong><span>Track your growth</span></span>
+            </a>
+            <a href="achievements.html" class="dd-item">
+              <span class="dd-icon">🥇</span>
+              <span class="dd-content"><strong>Achievements</strong><span>Badges &amp; rewards</span></span>
+            </a>
+          </div>
+        </div>
+      </li>
+
+      <!-- Community -->
+      <li class="nav-item has-dropdown">
+        <button class="nav-link">
+          Community
+          <svg class="caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m6 9 6 6 6-6"/></svg>
+        </button>
+        <div class="dropdown">
+          <div class="dropdown-inner">
+            <a href="social-feed.html" class="dd-item">
+              <span class="dd-icon">💬</span>
+              <span class="dd-content"><strong>Social Feed</strong><span>Share your journey</span></span>
+            </a>
+            <a href="playlists.html" class="dd-item">
+              <span class="dd-icon">🎵</span>
+              <span class="dd-content"><strong>Playlists</strong><span>Community curations</span></span>
+            </a>
+            <a href="concerts.html" class="dd-item">
+              <span class="dd-icon">🎤</span>
+              <span class="dd-content"><strong>Concerts</strong><span>Live events &amp; shows</span></span>
+            </a>
+          </div>
+        </div>
+      </li>
+
     </ul>
 
+    <!-- Right Controls -->
     <div class="nav-right">
+      <!-- Search -->
       <div class="search-wrap" id="searchWrap">
         <button class="icon-btn search-toggle" id="searchToggle" onclick="toggleSearch()" aria-label="Search">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
@@ -110,10 +199,14 @@
           <button class="search-close" onclick="toggleSearch()">✕</button>
         </div>
       </div>
+
+      <!-- Theme Toggle -->
       <button class="icon-btn theme-btn" id="themeBtn" onclick="toggleTheme()" aria-label="Toggle theme">
         <svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
         <svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
       </button>
+
+      <!-- Profile -->
       <div class="profile-menu" id="profileMenu">
         <button class="profile-btn" onclick="toggleProfile()" aria-label="Profile menu">
           <div class="avatar">G</div>
@@ -123,19 +216,27 @@
         <div class="profile-dropdown" id="profileDropdown">
           <div class="pd-header">
             <div class="pd-avatar">G</div>
-            <div><div class="pd-name">Guest User</div><div class="pd-email">Not signed in</div></div>
+            <div>
+              <div class="pd-name">Guest User</div>
+              <div class="pd-email">Not signed in</div>
+            </div>
           </div>
           <hr class="pd-divider"/>
           <a href="#" class="pd-item">My Profile</a>
           <a href="#" class="pd-item">Settings</a>
+          <a href="#" class="pd-item">Help &amp; Support</a>
           <hr class="pd-divider"/>
           <a href="index.html" class="pd-item pd-signout">Sign Out</a>
         </div>
       </div>
+
+      <!-- Sign Out btn -->
       <a href="index.html" class="btn-signout">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
         Sign Out
       </a>
+
+      <!-- Hamburger -->
       <button class="hamburger" id="hamburger" onclick="toggleMobileNav()" aria-label="Menu">
         <span></span><span></span><span></span>
       </button>
@@ -143,7 +244,7 @@
   </div>
 </nav>
 
-<!-- Mobile Nav -->
+<!-- Mobile Nav Overlay -->
 <div class="mobile-overlay" id="mobileOverlay" onclick="toggleMobileNav()"></div>
 <div class="mobile-nav" id="mobileNav">
   <div class="mobile-nav-header">
@@ -151,11 +252,28 @@
     <button onclick="toggleMobileNav()">✕</button>
   </div>
   <div class="mobile-nav-links">
-    <details open><summary>Training</summary>
-      <a href="learning-path.html">Learning Path</a>
+    <details><summary>Training</summary>
+      <a href="training.html">Learning Path</a>
       <a href="theory-quiz.html">Theory Quiz <span class="dd-tag xp">+XP</span></a>
       <a href="ear-training.html">Ear Training</a>
       <a href="practice-mode.html">Practice Mode <span class="dd-tag new">New</span></a>
+    </details>
+    <details><summary>AI Generator</summary>
+      <a href="ai-composer.html">AI Compose</a>
+      <a href="#">Style Transfer <span class="dd-tag beta">Beta</span></a>
+      <a href="#">Lyric Assistant</a>
+    </details>
+    <details><summary>Music History</summary>
+      <a href="genre-explorer.html">Genre Explorer</a><a href="era-timeline.html">Era Timeline</a><a href="composer-library.html">Composer Library</a>
+    </details>
+    <details><summary>3D Anatomy</summary>
+      <a href="#">Instrument Parts</a><a href="#">Sound Physics</a>
+    </details>
+    <details><summary>Dashboard</summary>
+      <a href="#">Leaderboard</a><a href="#">My Progress</a><a href="#">Achievements</a>
+    </details>
+    <details><summary>Community</summary>
+      <a href="#">Social Feed</a><a href="#">Playlists</a><a href="#">Concerts</a>
     </details>
     <a href="index.html" class="mobile-signout">Sign Out</a>
   </div>
@@ -846,15 +964,15 @@
       </div>
       <div class="footer-col">
         <h5>Training</h5>
-        <a href="learning-path.html">Learning Path</a>
+        <a href="training.html">Learning Path</a>
         <a href="theory-quiz.html">Theory Quiz</a>
         <a href="ear-training.html">Ear Training</a>
         <a href="practice-mode.html">Practice Mode</a>
       </div>
       <div class="footer-col">
         <h5>Create &amp; Explore</h5>
-        <a href="#">AI Compose</a>
-        <a href="#">Music History</a>
+        <a href="ai-composer.html">AI Compose</a>
+        <a href="genre-explorer.html">Music History</a>
         <a href="#">3D Anatomy</a>
         <a href="#">Community</a>
       </div>
