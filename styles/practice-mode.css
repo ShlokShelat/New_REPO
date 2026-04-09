@@ -335,7 +335,7 @@
 .pm-btn-prev { background: var(--surface2); border: 1px solid var(--border); color: var(--muted); }
 .pm-btn-prev:hover:not(:disabled) { background: rgba(255,255,255,0.06); color: var(--text); }
 .pm-btn-prev:disabled { opacity: 0.4; cursor: not-allowed; }
-.pm-btn-next { background: linear-gradient(135deg, #059669, #10b981); color: black; border: none; flex: 1; justify-content: center; box-shadow: 0 4px 16px rgba(16,185,129,0.3); }
+.pm-btn-next { background: linear-gradient(135deg, #099669, #10b231); color: black; border: none; flex: 1; justify-content: center; box-shadow: 0 4px 16px rgba(16,185,129,0.3); }
 .pm-btn-next:hover:not(:disabled) { opacity: 0.9; transform: translateY(-1px); }
 .pm-btn-next:disabled { opacity: 0.45; cursor: not-allowed; transform: none !important; }
 .pm-btn-next.pm-btn-complete { background: linear-gradient(135deg, #7c3aed, #db2777); box-shadow: 0 4px 16px rgba(124,58,237,0.3); }
