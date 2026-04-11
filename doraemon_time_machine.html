@@ -1,0 +1,2272 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Doraemon's 4D Time Machine — Interactive Time Travel Experience</title>
+  <meta name="description"
+    content="Experience Doraemon's 4D Time Machine! An interactive time travel journey through history and the future. Built for CSE 519 HCI by Shlok Shelat.">
+  <meta name="theme-color" content="#29ABE2">
+  <link rel="icon"
+    href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔵</text></svg>">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Bangers&family=Patrick+Hand:ital@0;1&family=Fredoka+One&family=Nunito:wght@400;600;700;800;900&family=Orbitron:wght@400;700;900&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+  <style>
+    :root {
+      --blue: #29ABE2;
+      --blue-d: #0077B6;
+      --blue-l: #ADE8F4;
+      --blue-xl: #E0F4FD;
+      --red: #E63946;
+      --red-d: #C1121F;
+      --yellow: #FFD60A;
+      --yellow-d: #FFA200;
+      --white: #FFFEF7;
+      --black: #1A1A2E;
+      --sky: #87CEEB;
+      --cloud: #fff;
+      --shadow-comic: 4px 4px 0 var(--black);
+      --shadow-lg: 6px 6px 0 var(--black);
+      --r-sm: 8px;
+      --r-md: 12px;
+      --r-lg: 16px;
+      --r-xl: 24px;
+      --font-title: 'Bangers', cursive;
+      --font-hand: 'Patrick Hand', cursive;
+      --font-display: 'Fredoka One', cursive;
+      --font-ui: 'Nunito', sans-serif;
+      --font-tech: 'Orbitron', monospace;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html,
+    body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+    }
+
+    body {
+      font-family: var(--font-ui);
+      background: var(--sky);
+      color: var(--black);
+      cursor: default;
+    }
+
+    ::-webkit-scrollbar {
+      width: 5px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: rgba(41, 171, 226, .4);
+      border-radius: 3px;
+    }
+
+    #skyCanvas {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    .sky-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 1;
+      pointer-events: none;
+      background: linear-gradient(135deg, #87CEEB, #E0F4FD);
+      transition: background 1.2s ease;
+    }
+
+    #app {
+      position: relative;
+      z-index: 10;
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    #statusBar {
+      flex-shrink: 0;
+      height: 46px;
+      background: rgba(41, 171, 226, 0.95);
+      backdrop-filter: blur(20px);
+      border-bottom: 3px solid var(--black);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 14px;
+      box-shadow: 0 3px 0 var(--blue-d);
+      position: relative;
+      z-index: 50;
+    }
+
+    .sb-logo {
+      font-family: var(--font-title);
+      font-size: 20px;
+      color: #fff;
+      letter-spacing: 2px;
+      text-shadow: 2px 2px 0 var(--blue-d);
+      display: flex;
+      align-items: center;
+      gap: 7px;
+    }
+
+    .sb-indicators {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .sb-ind {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      padding: 3px 9px;
+      border-radius: 20px;
+      border: 2px solid rgba(255, 255, 255, 0.5);
+      background: rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(10px);
+      font-family: var(--font-hand);
+      font-size: 10px;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    .ind-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #4ade80;
+      box-shadow: 0 0 6px #4ade80;
+      animation: indPulse 2s infinite;
+    }
+
+    .ind-dot.warn {
+      background: var(--yellow);
+      box-shadow: 0 0 6px var(--yellow);
+    }
+
+    .ind-dot.danger {
+      background: var(--red);
+      box-shadow: 0 0 6px var(--red);
+    }
+
+    @keyframes indPulse {
+      0%, 100% { opacity: 1 }
+      50% { opacity: .3 }
+    }
+
+    .sb-clock {
+      font-family: var(--font-tech);
+      font-size: 10px;
+      color: rgba(255, 255, 255, .9);
+      letter-spacing: 1px;
+    }
+
+    .bell-btn {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      border: 2px solid rgba(255, 255, 255, .6);
+      background: rgba(255, 255, 255, .15);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all .2s;
+      font-size: 15px;
+      animation: bellWag 4s ease-in-out infinite;
+    }
+
+    .bell-btn:hover {
+      background: rgba(255, 255, 255, .3);
+      transform: scale(1.1);
+    }
+
+    @keyframes bellWag {
+      0%, 85%, 100% { transform: rotate(0) }
+      87% { transform: rotate(-15deg) }
+      89% { transform: rotate(15deg) }
+      91% { transform: rotate(-10deg) }
+      93% { transform: rotate(10deg) }
+    }
+
+    #soundBtn {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      border: 2px solid rgba(255, 255, 255, .6);
+      background: rgba(255, 255, 255, .15);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all .2s;
+      font-size: 15px;
+    }
+
+    #soundBtn:hover {
+      background: rgba(255, 255, 255, .3);
+      transform: scale(1.1);
+    }
+
+    #soundBtn.muted { opacity: .5; }
+
+    #progressTrack {
+      flex-shrink: 0;
+      height: 52px;
+      background: var(--yellow);
+      border-bottom: 3px solid var(--black);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0;
+      box-shadow: 0 3px 0 #cc8800;
+      position: relative;
+      z-index: 40;
+      padding: 0 12px;
+    }
+
+    .pt-node {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+      cursor: pointer;
+      transition: transform .2s;
+    }
+
+    .pt-node:hover { transform: scale(1.1); }
+
+    .pt-circle {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      border: 3px solid var(--black);
+      background: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-display);
+      font-size: 11px;
+      transition: all .3s;
+      box-shadow: 2px 2px 0 var(--black);
+    }
+
+    .pt-circle.done { background: var(--red); color: #fff; }
+
+    .pt-circle.active {
+      background: var(--blue);
+      color: #fff;
+      transform: scale(1.15);
+      box-shadow: 3px 3px 0 var(--blue-d);
+    }
+
+    .pt-label {
+      font-family: var(--font-hand);
+      font-size: 8px;
+      font-weight: 700;
+      color: var(--black);
+      white-space: nowrap;
+    }
+
+    .pt-label.active { color: var(--blue-d); }
+
+    .pt-line {
+      width: 22px;
+      height: 3px;
+      background: var(--black);
+      margin-bottom: 14px;
+      flex-shrink: 0;
+    }
+
+    .pt-line.done { background: var(--red); }
+
+    #mainContent {
+      flex: 1;
+      overflow-y: auto;
+      overflow-x: hidden;
+      position: relative;
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      padding: 10px 14px 10px;
+    }
+
+    .screen {
+      display: none;
+      width: 100%;
+      max-width: 920px;
+      animation: screenIn .4s cubic-bezier(.34, 1.56, .64, 1);
+    }
+
+    .screen.active {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    @keyframes screenIn {
+      from { opacity: 0; transform: scale(.94) translateY(12px) }
+      to { opacity: 1; transform: scale(1) translateY(0) }
+    }
+
+    .panel {
+      background: rgba(255, 254, 247, .9);
+      border: 3px solid var(--black);
+      border-radius: var(--r-lg);
+      padding: 14px 18px;
+      box-shadow: var(--shadow-lg);
+      position: relative;
+      overflow: hidden;
+      backdrop-filter: blur(20px);
+    }
+
+    .panel::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: var(--r-lg);
+      pointer-events: none;
+      background-image: radial-gradient(circle, rgba(41, 171, 226, .04) 1px, transparent 1px);
+      background-size: 14px 14px;
+    }
+
+    .panel.blue {
+      border-color: var(--blue);
+      box-shadow: 6px 6px 0 var(--blue-d);
+      background: linear-gradient(135deg, rgba(224, 244, 253, .92), rgba(255, 254, 247, .92));
+    }
+
+    .panel.red {
+      border-color: var(--red);
+      box-shadow: 6px 6px 0 var(--red-d);
+      background: linear-gradient(135deg, rgba(255, 240, 240, .92), rgba(255, 254, 247, .92));
+    }
+
+    .panel.yellow {
+      border-color: var(--yellow-d);
+      box-shadow: 6px 6px 0 #cc8800;
+      background: linear-gradient(135deg, rgba(255, 251, 230, .92), rgba(255, 254, 247, .92));
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 3px 11px;
+      border-radius: 20px;
+      border: 2px solid var(--black);
+      font-family: var(--font-hand);
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      box-shadow: 2px 2px 0 var(--black);
+      margin-bottom: 4px;
+    }
+
+    .badge.blue { background: var(--blue); color: #fff; }
+    .badge.red { background: var(--red); color: #fff; }
+    .badge.yellow { background: var(--yellow); color: var(--black); }
+    .badge.green { background: #22c55e; color: #fff; }
+
+    .stitle {
+      font-family: var(--font-title);
+      font-size: 26px;
+      letter-spacing: 2px;
+      line-height: 1.05;
+      margin-bottom: 2px;
+    }
+
+    .sdesc {
+      font-family: var(--font-hand);
+      font-size: 11px;
+      color: #666;
+      line-height: 1.5;
+    }
+
+    .row { display: flex; align-items: flex-start; gap: 10px; }
+    .col { display: flex; flex-direction: column; gap: 8px; }
+    .g2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .g3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
+    .g4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+
+    .divider {
+      border: none;
+      border-top: 2px dashed rgba(41, 171, 226, .3);
+      margin: 6px 0;
+    }
+
+    .field { display: flex; flex-direction: column; gap: 4px; }
+
+    label {
+      font-family: var(--font-hand);
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--blue-d);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    input[type=text],
+    input[type=email],
+    input[type=number],
+    select,
+    textarea {
+      background: #fff;
+      border: 2px solid var(--black);
+      border-radius: var(--r-sm);
+      color: var(--black);
+      font-family: var(--font-hand);
+      font-size: 13px;
+      padding: 8px 12px;
+      outline: none;
+      width: 100%;
+      box-shadow: 3px 3px 0 var(--black);
+      transition: all .15s;
+      -webkit-appearance: none;
+    }
+
+    input:focus,
+    select:focus {
+      border-color: var(--blue);
+      box-shadow: 3px 3px 0 var(--blue-d), 0 0 0 3px rgba(41, 171, 226, .2);
+      transform: translate(-1px, -1px);
+    }
+
+    input.error-field {
+      border-color: var(--red) !important;
+      box-shadow: 3px 3px 0 var(--red-d) !important;
+      animation: fieldShake .3s ease;
+    }
+
+    @keyframes fieldShake {
+      0%, 100% { transform: translateX(0) }
+      20%, 60% { transform: translateX(-4px) }
+      40%, 80% { transform: translateX(4px) }
+    }
+
+    input::placeholder { color: #bbb; font-style: italic; }
+    select option { background: #fff; }
+
+    .sel-wrap { position: relative; }
+
+    .sel-wrap::after {
+      content: '▼';
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 9px;
+      color: var(--blue);
+      pointer-events: none;
+      font-weight: 700;
+    }
+
+    input[type=checkbox] {
+      accent-color: var(--blue);
+      width: 16px;
+      height: 16px;
+      cursor: pointer;
+    }
+
+    .tabs {
+      display: flex;
+      border: 3px solid var(--black);
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 3px 3px 0 var(--black);
+    }
+
+    .tab {
+      flex: 1;
+      padding: 8px 10px;
+      background: #fff;
+      border: none;
+      border-right: 2px solid var(--black);
+      color: #999;
+      font-family: var(--font-hand);
+      font-size: 11px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all .15s;
+      letter-spacing: .5px;
+      text-transform: uppercase;
+    }
+
+    .tab:last-child { border-right: none; }
+    .tab:hover { background: #f0f9ff; }
+    .tab.on { background: var(--blue); color: #fff; }
+
+    .btn {
+      padding: 9px 18px;
+      border: 3px solid var(--black);
+      border-radius: var(--r-sm);
+      background: #fff;
+      color: var(--black);
+      font-family: var(--font-display);
+      font-size: 12px;
+      cursor: pointer;
+      box-shadow: var(--shadow-comic);
+      transition: all .12s;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      letter-spacing: .5px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .btn:hover { transform: translate(-2px, -2px); box-shadow: 6px 6px 0 var(--black); }
+    .btn:active { transform: translate(2px, 2px); box-shadow: 1px 1px 0 var(--black); }
+    .btn.blue { background: var(--blue); color: #fff; box-shadow: 4px 4px 0 var(--blue-d); }
+    .btn.blue:hover { box-shadow: 6px 6px 0 var(--blue-d); }
+    .btn.red { background: var(--red); color: #fff; box-shadow: 4px 4px 0 var(--red-d); }
+    .btn.red:hover { box-shadow: 6px 6px 0 var(--red-d); }
+    .btn.yellow { background: var(--yellow); color: var(--black); box-shadow: 4px 4px 0 #cc8800; }
+    .btn.yellow:hover { box-shadow: 6px 6px 0 #cc8800; }
+
+    .btn.glow { animation: glowPulse 2s ease-in-out infinite; }
+
+    @keyframes glowPulse {
+      0%, 100% { box-shadow: 4px 4px 0 var(--blue-d), 0 0 12px rgba(41, 171, 226, .3) }
+      50% { box-shadow: 4px 4px 0 var(--blue-d), 0 0 28px rgba(41, 171, 226, .7) }
+    }
+
+    .btn.big {
+      width: 100%;
+      padding: 13px;
+      font-size: 15px;
+      letter-spacing: 2px;
+      border-radius: 12px;
+      justify-content: center;
+    }
+
+    .btn-row {
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      gap: 8px;
+      margin-top: 6px;
+    }
+
+    .gadget-card {
+      padding: 10px;
+      border: 2px solid var(--black);
+      border-radius: 10px;
+      background: #fff;
+      cursor: pointer;
+      transition: all .15s;
+      box-shadow: 3px 3px 0 var(--black);
+      text-align: center;
+    }
+
+    .gadget-card:hover { transform: translate(-2px, -2px); box-shadow: 5px 5px 0 var(--black); }
+    .gadget-card.on { background: var(--blue-l); border-color: var(--blue); box-shadow: 3px 3px 0 var(--blue-d); }
+    .gadget-icon { font-size: 24px; margin-bottom: 3px; }
+    .gadget-title { font-family: var(--font-display); font-size: 11px; color: var(--black); }
+    .gadget-sub { font-family: var(--font-hand); font-size: 9px; color: #777; margin-top: 1px; }
+
+    .bubble {
+      position: relative;
+      background: #fff;
+      border: 3px solid var(--black);
+      border-radius: 14px;
+      padding: 8px 12px;
+      font-family: var(--font-hand);
+      font-size: 12px;
+      color: var(--black);
+      box-shadow: 3px 3px 0 var(--black);
+      line-height: 1.5;
+      animation: bubbleIn .4s cubic-bezier(.34, 1.56, .64, 1);
+    }
+
+    @keyframes bubbleIn {
+      from { opacity: 0; transform: scale(.7) }
+      to { opacity: 1; transform: scale(1) }
+    }
+
+    .bubble b { font-family: var(--font-display); font-size: 13px; color: var(--blue-d); display: block; margin-bottom: 2px; }
+
+    .bubble.right::after,
+    .bubble.right::before {
+      content: '';
+      position: absolute;
+      bottom: -13px;
+      right: 18px;
+      width: 0;
+      height: 0;
+    }
+
+    .bubble.right::after { border-left: 7px solid transparent; border-right: 11px solid transparent; border-top: 13px solid var(--black); }
+    .bubble.right::before { bottom: -9px; right: 20px; border-left: 5px solid transparent; border-right: 9px solid transparent; border-top: 11px solid #fff; z-index: 1; }
+
+    .bubble.left::after,
+    .bubble.left::before {
+      content: '';
+      position: absolute;
+      bottom: -13px;
+      left: 18px;
+      width: 0;
+      height: 0;
+    }
+
+    .bubble.left::after { border-left: 11px solid transparent; border-right: 7px solid transparent; border-top: 13px solid var(--black); }
+    .bubble.left::before { bottom: -9px; left: 20px; border-left: 9px solid transparent; border-right: 5px solid transparent; border-top: 11px solid #fff; z-index: 1; }
+
+    .chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 5px; }
+
+    .chip {
+      padding: 4px 10px;
+      border: 2px solid var(--black);
+      border-radius: 20px;
+      background: #fff;
+      font-family: var(--font-hand);
+      font-size: 10px;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 2px 2px 0 var(--black);
+      transition: all .12s;
+      display: flex;
+      align-items: center;
+      gap: 3px;
+      white-space: nowrap;
+    }
+
+    .chip:hover { transform: translate(-1px, -1px); box-shadow: 3px 3px 0 var(--black); }
+    .chip.on { background: var(--blue-l); border-color: var(--blue); box-shadow: 2px 2px 0 var(--blue-d); }
+
+    .dest-page-header { text-align: center; padding: 4px 0 8px; }
+
+    .dest-search-wrap {
+      position: relative;
+      margin-bottom: 12px;
+      max-width: 520px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .dest-search-input {
+      background: #fff;
+      border: 3px solid var(--black);
+      border-radius: 30px;
+      font-family: var(--font-hand);
+      font-size: 14px;
+      padding: 10px 38px 10px 50px;
+      width: 100%;
+      box-shadow: 4px 4px 0 var(--black);
+      outline: none;
+      transition: all .15s;
+      font-weight: 700;
+    }
+
+    .dest-search-input:focus {
+      border-color: var(--blue);
+      box-shadow: 4px 4px 0 var(--blue-d), 0 0 0 4px rgba(41, 171, 226, .15);
+    }
+
+    .dest-search-icon { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); font-size: 16px; pointer-events: none; }
+
+    .dest-search-clear {
+      position: absolute;
+      right: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      cursor: pointer;
+      font-size: 18px;
+      color: #bbb;
+      display: none;
+      line-height: 1;
+    }
+
+    .dest-search-clear.show { display: block; }
+
+    .dest-autocomplete {
+      position: absolute;
+      top: calc(100% + 6px);
+      left: 0;
+      right: 0;
+      background: #fff;
+      border: 3px solid var(--black);
+      border-radius: 16px;
+      box-shadow: 5px 5px 0 var(--black);
+      z-index: 100;
+      max-height: 220px;
+      overflow-y: auto;
+      display: none;
+    }
+
+    .dest-autocomplete.show { display: block; }
+
+    .dest-ac-item {
+      padding: 10px 14px;
+      cursor: pointer;
+      font-family: var(--font-hand);
+      font-size: 13px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      border-bottom: 1px solid rgba(0, 0, 0, .06);
+      transition: background .1s;
+    }
+
+    .dest-ac-item:last-child { border-bottom: none; }
+    .dest-ac-item:hover, .dest-ac-item.focused { background: var(--blue-xl); }
+    .dest-ac-item .ac-icon { font-size: 22px; flex-shrink: 0; }
+    .dest-ac-item .ac-name { font-weight: 700; color: var(--black); }
+    .dest-ac-item .ac-sub { font-size: 10px; color: #888; }
+    .dest-ac-item .ac-badge { margin-left: auto; font-size: 9px; padding: 3px 8px; border-radius: 10px; font-weight: 700; flex-shrink: 0; }
+    .dest-ac-item .ac-badge.historical { background: #fef9c3; color: #854d0e; border: 1px solid #ca8a04; }
+    .dest-ac-item .ac-badge.future { background: var(--blue-xl); color: var(--blue-d); border: 1px solid var(--blue); }
+    .dest-ac-item .ac-badge.custom { background: #f0fdf4; color: #15803d; border: 1px solid #16a34a; }
+
+    .dest-cat-tabs { display: flex; gap: 6px; justify-content: center; flex-wrap: wrap; margin-bottom: 12px; }
+
+    .dest-cat-tab {
+      padding: 5px 14px;
+      border: 2px solid var(--black);
+      border-radius: 20px;
+      background: #fff;
+      font-family: var(--font-hand);
+      font-size: 11px;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 2px 2px 0 var(--black);
+      transition: all .15s;
+    }
+
+    .dest-cat-tab:hover { transform: translate(-1px, -1px); box-shadow: 3px 3px 0 var(--black); }
+    .dest-cat-tab.on { background: var(--blue); color: #fff; box-shadow: 2px 2px 0 var(--blue-d); }
+
+    .dest-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    @media(max-width:800px) {
+      .dest-grid { grid-template-columns: repeat(3, 1fr); }
+    }
+
+    .dest-card {
+      border: 2px solid var(--black);
+      border-radius: 14px;
+      overflow: hidden;
+      cursor: pointer;
+      transition: all .2s;
+      box-shadow: 3px 3px 0 var(--black);
+      background: #fff;
+      position: relative;
+    }
+
+    .dest-card:hover { transform: translate(-3px, -3px); box-shadow: 6px 6px 0 var(--black); }
+    .dest-card.on { border-color: var(--blue); box-shadow: 4px 4px 0 var(--blue-d); background: var(--blue-xl); }
+
+    .dest-card.on::after {
+      content: '✓';
+      position: absolute;
+      top: 6px;
+      right: 7px;
+      background: var(--blue);
+      color: #fff;
+      border-radius: 50%;
+      width: 18px;
+      height: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 10px;
+      font-weight: 700;
+      border: 2px solid var(--black);
+      font-family: var(--font-display);
+    }
+
+    .dest-card-img { height: 64px; display: flex; align-items: center; justify-content: center; font-size: 32px; position: relative; overflow: hidden; }
+    .dest-card-body { padding: 7px 9px 9px; }
+    .dest-card-title { font-family: var(--font-display); font-size: 11px; color: var(--black); line-height: 1.2; }
+    .dest-card-sub { font-family: var(--font-hand); font-size: 9px; color: #999; margin-top: 2px; }
+    .dest-card-era { font-family: var(--font-hand); font-size: 9px; font-weight: 700; margin-top: 3px; padding: 2px 6px; border-radius: 6px; display: inline-block; }
+    .dest-card-era.past { background: #fef9c3; color: #854d0e; }
+    .dest-card-era.future { background: var(--blue-xl); color: var(--blue-d); }
+    .dest-card-era.present { background: #dcfce7; color: #15803d; }
+    .dest-card-era.prehistoric { background: #fce7f3; color: #9d174d; }
+
+    .dest-selected-card {
+      background: linear-gradient(135deg, var(--blue-xl), #fff);
+      border: 3px solid var(--blue);
+      border-radius: 14px;
+      padding: 12px 16px;
+      box-shadow: 4px 4px 0 var(--blue-d);
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      animation: cardIn .4s cubic-bezier(.34, 1.56, .64, 1);
+    }
+
+    @keyframes cardIn {
+      from { transform: scale(.9); opacity: 0 }
+      to { transform: scale(1); opacity: 1 }
+    }
+
+    .dest-selected-icon { font-size: 42px; flex-shrink: 0; }
+    .dest-selected-title { font-family: var(--font-title); font-size: 20px; color: var(--black); letter-spacing: 2px; }
+    .dest-selected-sub { font-family: var(--font-hand); font-size: 11px; color: #666; margin-top: 2px; }
+    .dest-selected-coords { font-family: var(--font-tech); font-size: 10px; color: var(--blue-d); margin-top: 4px; display: flex; gap: 10px; }
+
+    .pilot-card {
+      padding: 10px 14px;
+      border-radius: 10px;
+      border: 3px solid var(--black);
+      background: linear-gradient(135deg, var(--blue), var(--blue-d));
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      box-shadow: 5px 5px 0 var(--black);
+      animation: cardIn .5s cubic-bezier(.34, 1.56, .64, 1);
+      margin-bottom: 10px;
+    }
+
+    .pilot-av { width: 42px; height: 42px; border-radius: 50%; border: 3px solid #fff; background: #fff; display: flex; align-items: center; justify-content: center; font-family: var(--font-title); font-size: 16px; color: var(--blue); flex-shrink: 0; }
+    .pilot-name { font-family: var(--font-title); font-size: 15px; color: #fff; letter-spacing: 2px; }
+    .pilot-det { font-family: var(--font-hand); font-size: 10px; color: var(--blue-l); }
+    .pilot-badge { padding: 3px 8px; border-radius: 20px; border: 2px solid #fff; background: var(--yellow); color: var(--black); font-family: var(--font-hand); font-size: 9px; font-weight: 700; margin-left: auto; flex-shrink: 0; }
+
+    input[type=range] {
+      -webkit-appearance: none;
+      width: 100%;
+      height: 12px;
+      background: #fff;
+      border-radius: 6px;
+      border: 2px solid var(--black);
+      outline: none;
+      padding: 0;
+      box-shadow: 2px 2px 0 var(--black);
+    }
+
+    input[type=range]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      background: var(--blue);
+      border: 3px solid var(--black);
+      cursor: pointer;
+      box-shadow: 2px 2px 0 var(--black);
+      transition: transform .1s;
+    }
+
+    input[type=range]::-webkit-slider-thumb:hover { transform: scale(1.2); }
+
+    .era-badge { display: inline-flex; align-items: center; gap: 5px; padding: 4px 12px; border: 2px solid var(--black); border-radius: 20px; font-family: var(--font-hand); font-size: 11px; font-weight: 700; box-shadow: 2px 2px 0 var(--black); }
+    .era-safe { background: #dcfce7; color: #15803d; border-color: #16a34a; }
+    .era-warn { background: var(--yellow); color: var(--black); }
+    .era-danger { background: var(--red); color: #fff; animation: shake .3s infinite; }
+
+    @keyframes shake {
+      0%, 100% { transform: translateX(0) }
+      25% { transform: translateX(-3px) }
+      75% { transform: translateX(3px) }
+    }
+
+    .year-hint { font-family: var(--font-hand); font-size: 10px; color: #888; margin-top: 2px; }
+    .year-hint.warn { color: #c2410c; }
+
+    .dora-display { display: flex; align-items: center; gap: 10px; padding: 9px 12px; background: var(--yellow); border: 2px solid var(--black); border-radius: 10px; box-shadow: 3px 3px 0 var(--black); }
+    .dora-display-val { font-family: var(--font-title); font-size: 20px; color: var(--black); }
+    .dora-display-lbl { font-family: var(--font-hand); font-size: 10px; color: #555; }
+
+    .cc { padding: 9px 12px; background: #fff; border: 2px solid var(--black); border-radius: 10px; box-shadow: 3px 3px 0 var(--black); }
+    .cc-lbl { font-family: var(--font-hand); font-size: 10px; color: #aaa; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 2px; }
+    .cc-val { font-family: var(--font-display); font-size: 13px; color: var(--blue-d); }
+
+    .safety { display: flex; align-items: center; gap: 10px; padding: 11px 14px; border: 3px solid var(--red); border-radius: 12px; background: #fff5f5; cursor: pointer; box-shadow: 4px 4px 0 var(--red-d); transition: all .2s; user-select: none; margin-top: 8px; }
+    .safety.open { border-color: var(--blue); background: #f0f9ff; box-shadow: 4px 4px 0 var(--blue-d); }
+    .safety-icon { font-size: 28px; transition: all .3s; }
+    .safety-title { font-family: var(--font-display); font-size: 13px; }
+    .safety-sub { font-family: var(--font-hand); font-size: 10px; color: #888; }
+
+    .panic-btn {
+      width: 100%;
+      padding: 12px;
+      background: var(--red);
+      color: #fff;
+      border: 3px solid var(--black);
+      border-radius: 12px;
+      font-family: var(--font-title);
+      font-size: 18px;
+      letter-spacing: 2px;
+      cursor: pointer;
+      box-shadow: 5px 5px 0 var(--red-d);
+      transition: all .15s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      animation: panicPulse 1.5s ease-in-out infinite;
+      margin-top: 8px;
+    }
+
+    .panic-btn:hover { transform: translate(-2px, -2px); box-shadow: 7px 7px 0 var(--red-d); }
+
+    @keyframes panicPulse {
+      0%, 100% { box-shadow: 5px 5px 0 var(--red-d), 0 0 0 rgba(230, 57, 70, 0) }
+      50% { box-shadow: 5px 5px 0 var(--red-d), 0 0 20px rgba(230, 57, 70, .5) }
+    }
+
+    .energy-bar { width: 100%; height: 9px; background: #eee; border: 2px solid var(--black); border-radius: 5px; overflow: hidden; box-shadow: 1px 1px 0 var(--black); }
+    .energy-fill { height: 100%; background: linear-gradient(90deg, #22c55e, #86efac); border-radius: 3px; transition: width .5s; }
+    .energy-fill.warn { background: linear-gradient(90deg, var(--yellow-d), var(--yellow)); }
+    .energy-fill.danger { background: linear-gradient(90deg, var(--red), #f87171); animation: energyFlash 1s infinite; }
+
+    @keyframes energyFlash {
+      0%, 100% { opacity: 1 }
+      50% { opacity: .5 }
+    }
+
+    #bottomBar { flex-shrink: 0; height: 36px; background: rgba(255, 255, 255, .92); backdrop-filter: blur(20px); border-top: 3px solid var(--black); box-shadow: 0 -3px 0 var(--blue-d); display: flex; align-items: center; justify-content: space-between; padding: 0 14px; position: relative; z-index: 40; }
+    .bb-text { font-family: var(--font-hand); font-size: 10px; color: #888; }
+    .bb-mission { font-family: var(--font-display); font-size: 11px; color: var(--blue-d); }
+
+    #floatingDora { position: fixed; bottom: 48px; right: 14px; z-index: 300; display: flex; flex-direction: column; align-items: flex-end; gap: 7px; }
+
+    #doraBubble {
+      background: #fff;
+      border: 3px solid var(--black);
+      border-radius: 12px;
+      padding: 7px 10px;
+      max-width: 180px;
+      font-family: var(--font-hand);
+      font-size: 11px;
+      line-height: 1.4;
+      box-shadow: 3px 3px 0 var(--black);
+      animation: bubbleIn .4s cubic-bezier(.34, 1.56, .64, 1);
+      position: relative;
+    }
+
+    #doraBubble::after { content: ''; position: absolute; bottom: -13px; right: 24px; width: 0; height: 0; border-left: 7px solid transparent; border-right: 11px solid transparent; border-top: 13px solid var(--black); }
+    #doraBubble::before { content: ''; position: absolute; bottom: -9px; right: 26px; width: 0; height: 0; border-left: 5px solid transparent; border-right: 9px solid transparent; border-top: 11px solid #fff; z-index: 1; }
+
+    #doraAvatar { width: 54px; height: 54px; cursor: pointer; filter: drop-shadow(2px 2px 0px var(--black)); animation: doraFloat 3s ease-in-out infinite; transition: transform .2s; }
+    #doraAvatar:hover { transform: scale(1.15); }
+
+    @keyframes doraFloat {
+      0%, 100% { transform: translateY(0) }
+      50% { transform: translateY(-7px) }
+    }
+
+    #toastArea { position: fixed; bottom: 48px; right: 200px; z-index: 500; display: flex; flex-direction: column; gap: 7px; align-items: flex-end; }
+
+    .toast { padding: 9px 14px; border: 3px solid var(--black); border-radius: 10px; font-family: var(--font-hand); font-size: 12px; font-weight: 700; box-shadow: var(--shadow-comic); max-width: 300px; display: flex; align-items: center; gap: 7px; animation: toastIn .35s cubic-bezier(.34, 1.56, .64, 1); transition: all .3s; }
+    .toast.out { animation: toastOut .3s ease forwards; }
+    .toast.success { background: #dcfce7; color: #15803d; border-color: #16a34a; }
+    .toast.error { background: #fee2e2; color: var(--red-d); border-color: var(--red); }
+    .toast.info { background: var(--blue-xl); color: var(--blue-d); border-color: var(--blue); }
+    .toast.warn { background: #fef9c3; color: #854d0e; border-color: var(--yellow-d); }
+    .toast.loading { background: #f3f4f6; color: #374151; border-color: #9ca3af; }
+
+    @keyframes toastIn {
+      from { opacity: 0; transform: translateX(40px) scale(.8) }
+      to { opacity: 1; transform: translateX(0) scale(1) }
+    }
+
+    @keyframes toastOut {
+      from { opacity: 1; transform: translateX(0) }
+      to { opacity: 0; transform: translateX(40px) }
+    }
+
+    #drawerOverlay { display: none; position: fixed; inset: 0; z-index: 400; background: rgba(0, 0, 0, .5); backdrop-filter: blur(4px); animation: fadeIn .2s ease; }
+    #drawerOverlay.show { display: block; }
+
+    @keyframes fadeIn {
+      from { opacity: 0 }
+      to { opacity: 1 }
+    }
+
+    #drawer { position: fixed; bottom: 0; left: 0; right: 0; z-index: 401; background: rgba(255, 254, 247, .97); backdrop-filter: blur(30px); border-top: 4px solid var(--black); border-radius: 22px 22px 0 0; box-shadow: 0 -8px 40px rgba(0, 0, 0, .2); transition: transform .35s cubic-bezier(.32, .72, 0, 1); transform: translateY(100%); max-height: 72vh; overflow-y: auto; padding: 0 22px 28px; }
+    #drawer.show { transform: translateY(0); }
+    .drawer-handle { width: 38px; height: 5px; background: rgba(0, 0, 0, .2); border-radius: 3px; margin: 11px auto 14px; cursor: grab; }
+    .drawer-title { font-family: var(--font-title); font-size: 22px; letter-spacing: 2px; margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
+    .drawer-item { padding: 11px 14px; border: 2px solid var(--black); border-radius: 10px; background: #fff; margin-bottom: 7px; cursor: pointer; transition: all .15s; box-shadow: 3px 3px 0 var(--black); display: flex; align-items: center; gap: 10px; }
+    .drawer-item:hover { transform: translate(-2px, -2px); box-shadow: 5px 5px 0 var(--black); }
+    .drawer-item-icon { font-size: 20px; flex-shrink: 0; }
+    .drawer-item-title { font-family: var(--font-display); font-size: 13px; color: var(--black); }
+    .drawer-item-sub { font-family: var(--font-hand); font-size: 10px; color: #888; }
+
+    #portalOverlay { display: none; position: fixed; inset: 0; z-index: 600; align-items: center; justify-content: center; background: #000; }
+    #portalOverlay.show { display: flex; }
+    #portalCanvas { display: block; }
+
+    #tunnelOverlay { display: none; position: fixed; inset: 0; z-index: 600; align-items: center; justify-content: center; flex-direction: column; gap: 18px; background: #000; }
+    #tunnelOverlay.show { display: flex; }
+    #tunnelCanvas { display: block; border-radius: 50%; border: 4px solid var(--yellow); }
+
+    .tunnel-txt { font-family: var(--font-title); font-size: 32px; color: var(--yellow); letter-spacing: 5px; text-shadow: 0 0 30px var(--yellow); animation: tunnelPulse 1s ease-in-out infinite; }
+
+    @keyframes tunnelPulse {
+      0%, 100% { opacity: 1; transform: scale(1) }
+      50% { opacity: .7; transform: scale(1.03) }
+    }
+
+    .tunnel-sub { font-family: var(--font-hand); font-size: 13px; color: rgba(255, 255, 255, .7); letter-spacing: 2px; text-align: center; }
+
+    #successOverlay { display: none; position: fixed; inset: 0; z-index: 700; background: linear-gradient(135deg, var(--blue-d), #0a2a4a); align-items: center; justify-content: center; flex-direction: column; gap: 14px; padding: 24px; }
+    #successOverlay.show { display: flex; }
+    .success-title { font-family: var(--font-title); font-size: 44px; color: var(--yellow); letter-spacing: 6px; text-shadow: 4px 4px 0 rgba(0, 0, 0, .3); text-align: center; }
+    .success-dora { animation: successBounce 1s ease-in-out infinite alternate; }
+
+    @keyframes successBounce {
+      from { transform: translateY(0) scale(1) }
+      to { transform: translateY(-18px) scale(1.05) }
+    }
+
+    .success-fact { background: rgba(255, 255, 255, .12); border: 2px solid rgba(255, 255, 255, .3); border-radius: 12px; padding: 12px 18px; max-width: 480px; width: 100%; font-family: var(--font-hand); color: #fff; line-height: 1.8; text-align: center; font-size: 12px; }
+    #successCanvas { position: absolute; inset: 0; pointer-events: none; }
+
+    #copterOverlay { display: none; position: fixed; inset: 0; z-index: 600; pointer-events: none; align-items: center; justify-content: center; }
+    #copterOverlay.show { display: flex; }
+    #copterEl { position: absolute; font-size: 48px; animation: copterFly 1.4s cubic-bezier(.68, -0.55, .265, 1.55) forwards; filter: drop-shadow(4px 4px 0px rgba(0, 0, 0, .3)); }
+
+    @keyframes copterFly {
+      0% { transform: translate(0, 0) rotate(0) scale(.5); opacity: 0 }
+      20% { opacity: 1; transform: translate(-100px, -60px) rotate(-15deg) scale(1.2) }
+      60% { transform: translate(200px, -120px) rotate(10deg) scale(1.1) }
+      85% { transform: translate(500px, -80px) rotate(5deg) scale(.9); opacity: 1 }
+      100% { transform: translate(1200px, 100px) rotate(-20deg) scale(.5); opacity: 0 }
+    }
+
+    #loadingOverlay { display: none; position: fixed; inset: 0; z-index: 800; background: rgba(0, 0, 0, .6); backdrop-filter: blur(8px); align-items: center; justify-content: center; flex-direction: column; gap: 14px; }
+    #loadingOverlay.show { display: flex; }
+    .loading-title { font-family: var(--font-title); font-size: 26px; color: #fff; letter-spacing: 3px; }
+    .loading-sub { font-family: var(--font-hand); font-size: 12px; color: rgba(255, 255, 255, .7); letter-spacing: 2px; }
+    .copter-spinner { display: inline-flex; align-items: center; justify-content: center; font-size: 22px; animation: copterSpin 1s linear infinite; }
+
+    @keyframes copterSpin {
+      from { transform: rotate(0) }
+      to { transform: rotate(360deg) }
+    }
+
+    .err-glyph { font-family: var(--font-title); font-size: 38px; text-align: center; padding: 8px 0; }
+    .err-glyph.glitch { animation: glitch 2s ease-in-out infinite; }
+
+    @keyframes glitch {
+      0%, 90%, 100% { transform: translate(0); filter: none }
+      91% { transform: translate(-3px, 1px); filter: hue-rotate(90deg) }
+      93% { transform: translate(3px, -1px); filter: hue-rotate(-90deg) }
+      95% { transform: translate(-2px, 0); filter: saturate(3) }
+      97% { transform: translate(2px, 2px); filter: none }
+    }
+
+    .screen-shake { animation: screenShake .5s ease-in-out; }
+
+    @keyframes screenShake {
+      0%, 100% { transform: translateX(0) }
+      10%, 50%, 90% { transform: translateX(-6px) }
+      30%, 70% { transform: translateX(6px) }
+    }
+
+    .door-wrap { width: 84px; flex-shrink: 0; display: flex; flex-direction: column; align-items: center; gap: 5px; cursor: pointer; }
+
+    .door { width: 84px; height: 118px; border: 4px solid var(--black); border-radius: 42px 42px 0 0; background: linear-gradient(180deg, #FF6B9D, #FF4081); box-shadow: 5px 5px 0 var(--black); position: relative; overflow: hidden; transition: all .5s cubic-bezier(.34, 1.56, .64, 1); cursor: pointer; }
+    .door.open { background: linear-gradient(180deg, var(--blue), var(--blue-d)); box-shadow: 5px 5px 0 var(--blue-d); transform: perspective(300px) rotateY(-35deg); }
+    .door-shine { position: absolute; top: 10px; left: 9px; width: 10px; height: 32px; background: rgba(255, 255, 255, .3); border-radius: 5px; transform: rotate(-10deg); }
+    .door-knob { width: 10px; height: 10px; border-radius: 50%; background: var(--yellow); border: 2px solid var(--black); position: absolute; right: 9px; top: 50%; transform: translateY(-50%); }
+    .door-lbl { font-family: var(--font-hand); font-size: 9px; font-weight: 700; color: #fff; text-align: center; line-height: 1.3; position: absolute; bottom: 8px; left: 50%; transform: translateX(-50%); white-space: nowrap; }
+    .door-txt { font-family: var(--font-hand); font-size: 9px; color: #888; text-align: center; }
+
+    .prog-bar-wrap { width: 100%; height: 4px; background: rgba(0, 0, 0, .08); border-radius: 2px; overflow: hidden; position: absolute; bottom: 0; left: 0; }
+    .prog-bar-fill { height: 100%; background: var(--blue); border-radius: 2px; transition: width .5s ease; }
+
+    #confirmGrid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 7px; margin-bottom: 8px; }
+
+    .hidden { display: none !important; }
+
+    body[data-dest="egypt"] .sky-overlay { background: linear-gradient(135deg, #c2a55c, #e8d5a3, #c2a55c) !important; }
+    body[data-dest="moon"] .sky-overlay { background: linear-gradient(135deg, #1a1a2e, #16213e, #0f3460) !important; }
+    body[data-dest="tokyo"] .sky-overlay { background: linear-gradient(135deg, #1a0533, #2d1b69, #11022e) !important; }
+    body[data-dest="florence"] .sky-overlay { background: linear-gradient(135deg, #c8956c, #e8a87c, #f2c5a0) !important; }
+    body[data-dest="nobita"] .sky-overlay { background: linear-gradient(135deg, #fff9e6, #ffe4b5, #ffd700) !important; }
+    body[data-dest="cretaceous"] .sky-overlay { background: linear-gradient(135deg, #2d5016, #4a7a1e, #6b9e2a) !important; }
+    body[data-dest="rome"] .sky-overlay { background: linear-gradient(135deg, #8b6914, #d4a84b, #8b6914) !important; }
+    body[data-dest="space"] .sky-overlay { background: linear-gradient(135deg, #000010, #000044) !important; }
+    body[data-dest="atlantis"] .sky-overlay { background: linear-gradient(135deg, #006994, #0099cc) !important; }
+    body[data-dest="aztec"] .sky-overlay { background: linear-gradient(135deg, #c0392b, #e74c3c) !important; }
+
+    #particleCanvas { position: fixed; inset: 0; z-index: 2; pointer-events: none; opacity: 0; transition: opacity .8s; }
+    #particleCanvas.show { opacity: 1; }
+
+    #destMapWrap { margin-bottom: 12px; border: 3px solid var(--black); border-radius: 14px; overflow: hidden; box-shadow: 4px 4px 0 var(--black); position: relative; }
+    #destMap { height: 280px; width: 100%; z-index: 1; cursor: crosshair !important; }
+
+    .map-label { position: absolute; bottom: 8px; left: 8px; z-index: 1000; padding: 5px 12px; background: rgba(255, 254, 247, .95); border: 2px solid var(--black); border-radius: 8px; font-family: var(--font-hand); font-size: 11px; font-weight: 700; color: var(--blue-d); box-shadow: 2px 2px 0 var(--black); backdrop-filter: blur(10px); pointer-events: none; }
+
+    .map-hint { position: absolute; top: 8px; right: 8px; z-index: 1000; padding: 4px 10px; background: rgba(41, 171, 226, .9); border: 2px solid var(--black); border-radius: 8px; font-family: var(--font-hand); font-size: 10px; font-weight: 700; color: #fff; box-shadow: 2px 2px 0 var(--black); pointer-events: none; animation: pulse 2s infinite; }
+
+    @keyframes markerPulse {
+      0%, 100% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.15); opacity: .85; }
+    }
+
+    .leaflet-popup-content-wrapper { border-radius: 10px !important; border: 2px solid var(--black) !important; box-shadow: 3px 3px 0 var(--black) !important; font-family: var(--font-hand) !important; }
+    .leaflet-popup-tip { border-top-color: #fff !important; }
+
+    .dest-marker-icon { display: flex; align-items: center; justify-content: center; width: 36px; height: 36px; font-size: 22px; border-radius: 50%; background: rgba(255, 254, 247, .92); border: 2px solid var(--black); box-shadow: 2px 2px 0 var(--black); cursor: pointer; transition: transform .2s; }
+    .dest-marker-icon:hover { transform: scale(1.2); }
+    .dest-marker-selected { background: var(--yellow) !important; animation: markerPulse 1.5s infinite; }
+
+    @media(max-width:640px) {
+      .row { flex-direction: column; }
+      #statusBar { padding: 0 8px; }
+      .sb-indicators { gap: 4px; }
+      .sb-ind span { display: none; }
+      .sb-logo div:first-child { font-size: 16px; }
+      .stitle { font-size: 20px; }
+      #floatingDora { bottom: 42px; right: 8px; }
+      #doraAvatar { width: 42px; height: 42px; }
+      #doraBubble { max-width: 140px; font-size: 10px; }
+      .dest-grid { grid-template-columns: repeat(2, 1fr); }
+      .g2, .g3 { grid-template-columns: 1fr; }
+      #confirmGrid { grid-template-columns: repeat(2, 1fr); }
+      .dest-search-input { font-size: 13px; padding: 8px 34px 8px 46px; }
+      #destMap { height: 220px; }
+      .panel { padding: 10px 12px; }
+      .bubble { display: none; }
+      [style*="width:170px"], [style*="width:140px"], [style*="width:150px"] { display: none !important; }
+    }
+  </style>
+</head>
+
+<body>
+  <canvas id="skyCanvas"></canvas>
+  <div class="sky-overlay" id="skyOverlay"></div>
+  <canvas id="particleCanvas"></canvas>
+  <div id="portalOverlay"><canvas id="portalCanvas" width="600" height="600"></canvas></div>
+  <div id="tunnelOverlay">
+    <canvas id="tunnelCanvas" width="320" height="320"></canvas>
+    <div class="tunnel-txt" id="tunnelTxt">TIME TRAVEL!</div>
+    <div class="tunnel-sub" id="tunnelSub">Calculating spacetime coordinates...</div>
+  </div>
+  <div id="copterOverlay">
+    <div id="copterEl">🚁</div>
+  </div>
+  <div id="successOverlay">
+    <canvas id="successCanvas"></canvas>
+    <div class="success-dora" id="successDoraSvg"></div>
+    <div class="success-title">AMAZING! WE MADE IT!</div>
+    <div id="successMsg" style="font-family:var(--font-display);font-size:16px;color:var(--blue-l);text-align:center;letter-spacing:2px;"></div>
+    <div class="success-fact" id="successFact"></div>
+    <button class="btn yellow" style="font-size:14px;padding:11px 26px;" onclick="resetAll()">🏠 Return Home & Start New Journey</button>
+  </div>
+  <div id="loadingOverlay">
+    <div class="copter-spinner" style="font-size:44px;">🚁</div>
+    <div class="loading-title" id="loadingTitle">LOADING...</div>
+    <div class="loading-sub" id="loadingSub">Please wait...</div>
+  </div>
+  <div id="drawerOverlay" onclick="closeDrawer()"></div>
+  <div id="drawer">
+    <div class="drawer-handle"></div>
+    <div class="drawer-title" id="drawerTitle">Options</div>
+    <div id="drawerContent"></div>
+  </div>
+  <div id="toastArea"></div>
+  <div id="floatingDora">
+    <div id="doraBubble" class="hidden"></div>
+    <svg id="doraAvatar" viewBox="0 0 100 110" xmlns="http://www.w3.org/2000/svg" onclick="toggleDoraTip()">
+      <circle cx="50" cy="44" r="40" fill="#29ABE2" stroke="#1A1A2E" stroke-width="2.5" />
+      <ellipse cx="50" cy="58" rx="28" ry="22" fill="white" stroke="#1A1A2E" stroke-width="2" />
+      <path d="M37 56 Q50 70 63 56" stroke="#1A1A2E" stroke-width="2" fill="none" stroke-linecap="round" />
+      <circle cx="50" cy="48" r="6" fill="#FFD60A" stroke="#1A1A2E" stroke-width="1.5" />
+      <circle cx="50" cy="50" r="2" fill="#1A1A2E" />
+      <line x1="34" y1="46" x2="66" y2="46" stroke="#E63946" stroke-width="3.5" stroke-linecap="round" />
+      <circle cx="38" cy="37" r="9" fill="white" stroke="#1A1A2E" stroke-width="2" />
+      <circle cx="62" cy="37" r="9" fill="white" stroke="#1A1A2E" stroke-width="2" />
+      <circle cx="39" cy="38" r="5" fill="#1A1A2E" />
+      <circle cx="63" cy="38" r="5" fill="#1A1A2E" />
+      <circle cx="41" cy="36" r="2" fill="white" />
+      <circle cx="65" cy="36" r="2" fill="white" />
+      <circle cx="50" cy="50" r="5.5" fill="#E63946" stroke="#1A1A2E" stroke-width="1.5" />
+      <line x1="53" y1="51" x2="72" y2="46" stroke="#1A1A2E" stroke-width="1.5" stroke-linecap="round" />
+      <line x1="53" y1="53.5" x2="74" y2="53.5" stroke="#1A1A2E" stroke-width="1.5" stroke-linecap="round" />
+      <line x1="47" y1="51" x2="28" y2="46" stroke="#1A1A2E" stroke-width="1.5" stroke-linecap="round" />
+      <line x1="47" y1="53.5" x2="26" y2="53.5" stroke="#1A1A2E" stroke-width="1.5" stroke-linecap="round" />
+      <ellipse cx="50" cy="92" rx="38" ry="18" fill="#29ABE2" stroke="#1A1A2E" stroke-width="2.5" />
+      <ellipse cx="50" cy="98" rx="26" ry="14" fill="white" stroke="#1A1A2E" stroke-width="2" />
+      <path d="M33 93 Q50 106 67 93" stroke="#1A1A2E" stroke-width="2" fill="none" stroke-linecap="round" />
+      <ellipse cx="18" cy="88" rx="12" ry="18" fill="#29ABE2" stroke="#1A1A2E" stroke-width="2" transform="rotate(-15 18 88)" />
+      <ellipse cx="82" cy="88" rx="12" ry="18" fill="#29ABE2" stroke="#1A1A2E" stroke-width="2" transform="rotate(15 82 88)" />
+      <circle cx="12" cy="103" r="8" fill="#29ABE2" stroke="#1A1A2E" stroke-width="2" />
+      <circle cx="88" cy="103" r="8" fill="#29ABE2" stroke="#1A1A2E" stroke-width="2" />
+    </svg>
+  </div>
+
+  <div id="app">
+    <div id="statusBar">
+      <div class="sb-logo">
+        <span>🔵</span>
+        <div>
+          <div>DORAEMON'S TIME MACHINE</div>
+          <div style="font-family:var(--font-hand);font-size:8px;color:rgba(255,255,255,.7);letter-spacing:2px;">4D POCKET NAVIGATION SYSTEM</div>
+        </div>
+      </div>
+      <div class="sb-indicators">
+        <div class="sb-ind">
+          <div class="ind-dot" id="reactorDot"></div><span id="reactorTxt">REACTOR</span>
+        </div>
+        <div class="sb-ind"><svg width="12" height="10" viewBox="0 0 14 12" fill="none">
+            <rect x="1" y="4" width="2" height="8" rx="1" fill="white" opacity=".4" />
+            <rect x="4" y="2" width="2" height="10" rx="1" fill="white" opacity=".7" />
+            <rect x="7" y="0" width="2" height="12" rx="1" fill="white" />
+            <rect x="10" y="1" width="2" height="11" rx="1" fill="white" opacity=".5" />
+          </svg><span>SIGNAL</span></div>
+        <div class="sb-ind">
+          <div class="ind-dot warn" id="stabilityDot"></div><span id="stabilityTxt">STABLE</span>
+        </div>
+        <div class="sb-ind">🍩 <span id="dorayakiHud">∞ DKU</span></div>
+      </div>
+      <div class="sb-clock" id="sbClock">--:--:--</div>
+      <div id="soundBtn" onclick="toggleSound()" title="Toggle Sound">🔊</div>
+      <div class="bell-btn" onclick="openDrawer('settings')" title="Settings">🔔</div>
+    </div>
+
+    <div id="progressTrack"></div>
+
+    <div id="mainContent">
+
+      <div class="screen active" id="screen-1">
+        <div class="row" style="align-items:flex-start;gap:12px;">
+          <div class="panel blue" style="flex:1;">
+            <div class="badge blue">📋 STEP 1 — INITIALIZATION</div>
+            <div class="stitle">IDENTIFY YOURSELF, NAVIGATOR!</div>
+            <div class="sdesc">Register your pilot profile before activating the Time Machine.</div>
+            <hr class="divider">
+            <div id="pilotCardArea"></div>
+            <div class="g2" style="margin-bottom:10px;">
+              <div class="field"><label>👤 Full Name</label><input type="text" id="pName" placeholder="e.g. Nobita Nobi" oninput="clearError(this)" /><span class="field-err hidden" style="font-family:var(--font-hand);font-size:10px;color:var(--red);"></span></div>
+              <div class="field"><label>📧 Email Address</label><input type="email" id="pEmail" placeholder="nobita@future.net" oninput="clearError(this)" /><span class="field-err hidden" style="font-family:var(--font-hand);font-size:10px;color:var(--red);"></span></div>
+            </div>
+            <div class="field" style="margin-bottom:10px;">
+              <label>🎫 Pilot Mode</label>
+              <div class="tabs">
+                <button class="tab on" onclick="setTab(this,'mode','GUEST')">🎒 Guest</button>
+                <button class="tab" onclick="setTab(this,'mode','LICENSED')">🪪 Licensed</button>
+                <button class="tab" onclick="setTab(this,'mode','AGENT')">🕵️ Temporal Agent</button>
+              </div>
+            </div>
+            <div class="field">
+              <label>⭐ Clearance Level</label>
+              <div class="g3">
+                <div class="gadget-card on" onclick="pickGadget(this,'clearance','I')">
+                  <div class="gadget-icon">🌸</div>
+                  <div class="gadget-title">CLASS I</div>
+                  <div class="gadget-sub">Past &lt;100 yrs</div>
+                </div>
+                <div class="gadget-card" onclick="pickGadget(this,'clearance','II')">
+                  <div class="gadget-icon">🌍</div>
+                  <div class="gadget-title">CLASS II</div>
+                  <div class="gadget-sub">±1000 years</div>
+                </div>
+                <div class="gadget-card" onclick="pickGadget(this,'clearance','III')">
+                  <div class="gadget-icon">🌌</div>
+                  <div class="gadget-title">CLASS III</div>
+                  <div class="gadget-sub">Unrestricted</div>
+                </div>
+              </div>
+            </div>
+            <div class="btn-row">
+              <button class="btn" onclick="demoErrParadox()">⚡ Test Paradox</button>
+              <button class="btn" onclick="openDrawer('info')">ℹ️ Help</button>
+              <button class="btn blue glow" onclick="doS1()">AUTHENTICATE ▶</button>
+            </div>
+            <div class="prog-bar-wrap">
+              <div class="prog-bar-fill" style="width:14%"></div>
+            </div>
+          </div>
+          <div style="flex-shrink:0;width:170px;display:flex;flex-direction:column;align-items:center;gap:8px;margin-top:8px;">
+            <div class="bubble right"><b>Doraemon Says:</b>"Welcome! I'm Doraemon from the 22nd century. Let's register you before we travel through time!" 🐱</div>
+            <svg viewBox="0 0 120 200" width="120" xmlns="http://www.w3.org/2000/svg" style="filter:drop-shadow(3px 3px 0 var(--black));">
+              <circle cx="60" cy="68" r="54" fill="#29ABE2" stroke="#1A1A2E" stroke-width="3" />
+              <ellipse cx="60" cy="84" rx="40" ry="37" fill="white" stroke="#1A1A2E" stroke-width="2.5" />
+              <path d="M42 82 Q60 100 78 82" stroke="#1A1A2E" stroke-width="2.5" fill="none" stroke-linecap="round" />
+              <circle cx="60" cy="60" r="9" fill="#FFD60A" stroke="#1A1A2E" stroke-width="2" />
+              <circle cx="60" cy="63" r="3" fill="#1A1A2E" />
+              <line x1="36" y1="58" x2="84" y2="58" stroke="#E63946" stroke-width="5" stroke-linecap="round" />
+              <circle cx="44" cy="48" r="13" fill="white" stroke="#1A1A2E" stroke-width="2.5" />
+              <circle cx="76" cy="48" r="13" fill="white" stroke="#1A1A2E" stroke-width="2.5" />
+              <circle cx="46" cy="50" r="7" fill="#1A1A2E" />
+              <circle cx="78" cy="50" r="7" fill="#1A1A2E" />
+              <circle cx="49" cy="47" r="3" fill="white" />
+              <circle cx="81" cy="47" r="3" fill="white" />
+              <circle cx="60" cy="72" r="8" fill="#E63946" stroke="#1A1A2E" stroke-width="2" />
+              <line x1="64" y1="74" x2="100" y2="66" stroke="#1A1A2E" stroke-width="2" stroke-linecap="round" />
+              <line x1="64" y1="78" x2="103" y2="78" stroke="#1A1A2E" stroke-width="2" stroke-linecap="round" />
+              <line x1="56" y1="74" x2="20" y2="66" stroke="#1A1A2E" stroke-width="2" stroke-linecap="round" />
+              <line x1="56" y1="78" x2="17" y2="78" stroke="#1A1A2E" stroke-width="2" stroke-linecap="round" />
+              <ellipse cx="60" cy="153" rx="50" ry="44" fill="#29ABE2" stroke="#1A1A2E" stroke-width="3" />
+              <ellipse cx="60" cy="163" rx="36" ry="30" fill="white" stroke="#1A1A2E" stroke-width="2.5" />
+              <path d="M42 160 Q60 176 78 160" stroke="#1A1A2E" stroke-width="2.5" fill="none" stroke-linecap="round" />
+              <ellipse cx="22" cy="148" rx="13" ry="22" fill="#29ABE2" stroke="#1A1A2E" stroke-width="2.5" transform="rotate(-20 22 148)" />
+              <ellipse cx="98" cy="148" rx="13" ry="22" fill="#29ABE2" stroke="#1A1A2E" stroke-width="2.5" transform="rotate(20 98 148)" />
+              <circle cx="14" cy="167" r="10" fill="#29ABE2" stroke="#1A1A2E" stroke-width="2" />
+              <circle cx="106" cy="167" r="10" fill="#29ABE2" stroke="#1A1A2E" stroke-width="2" />
+              <ellipse cx="44" cy="194" rx="20" ry="10" fill="#29ABE2" stroke="#1A1A2E" stroke-width="2.5" />
+              <ellipse cx="76" cy="194" rx="20" ry="10" fill="#29ABE2" stroke="#1A1A2E" stroke-width="2.5" />
+              <ellipse cx="44" cy="198" rx="22" ry="8" fill="white" stroke="#1A1A2E" stroke-width="2" />
+              <ellipse cx="76" cy="198" rx="22" ry="8" fill="white" stroke="#1A1A2E" stroke-width="2" />
+            </svg>
+          </div>
+        </div>
+      </div>
+
+      <div class="screen" id="screen-2">
+        <div class="panel" style="border-color:var(--red);box-shadow:6px 6px 0 var(--red-d);">
+          <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:10px;flex-wrap:wrap;">
+            <div>
+              <div class="badge red">🚪 STEP 2 — ANYWHERE DOOR</div>
+              <div class="stitle">WHERE SHALL WE GO?</div>
+              <div class="sdesc">Search or pick a famous destination from the list below.</div>
+            </div>
+            <div class="door-wrap" onclick="animateDoor()" style="margin-top:4px;">
+              <div class="door" id="anywhereDoor">
+                <div class="door-shine"></div>
+                <div class="door-knob"></div>
+                <div class="door-lbl" id="doorLbl">ANYWHERE<br>DOOR</div>
+              </div>
+              <div class="door-txt" id="doorTxt">Click to open!</div>
+            </div>
+          </div>
+          <hr class="divider">
+          <div class="dest-search-wrap">
+            <span class="dest-search-icon"></span>
+            <input type="text" class="dest-search-input" id="destSearchInput" placeholder="Search destinations... e.g. Egypt, Moon, Rome, Tokyo..." autocomplete="off" oninput="onDestSearch(this.value)" onkeydown="onDestSearchKey(event)" />
+            <span class="dest-search-clear" id="destSearchClear" onclick="clearDestSearch()">✕</span>
+            <div class="dest-autocomplete" id="destAutocomplete"></div>
+          </div>
+          <div class="dest-cat-tabs">
+            <div class="dest-cat-tab on" onclick="filterDest('all',this)">🌍 All</div>
+            <div class="dest-cat-tab" onclick="filterDest('historical',this)">🏺 Historical</div>
+            <div class="dest-cat-tab" onclick="filterDest('future',this)">🚀 Future</div>
+            <div class="dest-cat-tab" onclick="filterDest('prehistoric',this)">🦕 Prehistoric</div>
+            <div class="dest-cat-tab" onclick="filterDest('present',this)">🏠 Present</div>
+          </div>
+          <div id="destMapWrap">
+            <div id="destMap"></div>
+            <div class="map-label" id="mapLabel">📍 Click on map or select a card to set destination</div>
+            <div class="map-hint">🖱️ Click map to pick location</div>
+          </div>
+          <div class="dest-grid" id="destCardGrid"></div>
+          <div id="destSelectedPanel" style="display:none;margin-bottom:10px;">
+            <div class="dest-selected-card" id="destSelectedCard">
+              <div class="dest-selected-icon" id="dsIcon">🌍</div>
+              <div style="flex:1;">
+                <div class="dest-selected-title" id="dsTitle">—</div>
+                <div class="dest-selected-sub" id="dsSub">—</div>
+                <div class="dest-selected-coords">
+                  <span id="dsLat">—</span>
+                  <span>|</span>
+                  <span id="dsLon">—</span>
+                  <span>|</span>
+                  <span id="dsEra">—</span>
+                </div>
+              </div>
+              <div>
+                <div style="background:#22c55e;color:#fff;border:2px solid var(--black);border-radius:8px;padding:4px 10px;font-family:var(--font-display);font-size:11px;box-shadow:2px 2px 0 var(--black);">✓ SELECTED</div>
+              </div>
+            </div>
+          </div>
+          <div id="s2DoraTip" style="display:none;padding:8px 12px;background:rgba(41,171,226,.1);border:2px dashed var(--blue);border-radius:10px;font-family:var(--font-hand);font-size:11px;color:var(--blue-d);margin-bottom:8px;"></div>
+          <div class="btn-row">
+            <button class="btn" onclick="goTo(1)">◀ Back</button>
+            <button class="btn" onclick="openDrawer('saved')">⭐ Saved Trips</button>
+            <button class="btn red glow" onclick="doS2()">LOCK DESTINATION 🔒</button>
+          </div>
+          <div class="prog-bar-wrap">
+            <div class="prog-bar-fill" style="width:28%"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="screen" id="screen-3">
+        <div class="panel yellow">
+          <div class="badge yellow">⏰ STEP 3 — TIME CLOTH CALIBRATION</div>
+          <div class="stitle">WHEN DO YOU WANT TO GO?</div>
+          <div class="sdesc">Pick a direction first, then set your year. Spin the dial or type a year!</div>
+          <hr class="divider">
+          <div class="row" style="gap:14px;align-items:flex-start;">
+            <div style="flex:1;">
+              <div class="field" style="margin-bottom:8px;">
+                <label>📅 Direction of Travel</label>
+                <div class="tabs">
+                  <button class="tab on" id="tPastBtn" onclick="setDir('PAST',this)">⬅ PAST</button>
+                  <button class="tab" id="tFutBtn" onclick="setDir('FUTURE',this)">FUTURE ➡</button>
+                </div>
+                <div style="font-family:var(--font-hand);font-size:10px;color:#888;margin-top:3px;" id="dirHint">Past mode: year must be before 2026.</div>
+              </div>
+              <div class="g3" style="margin-bottom:4px;">
+                <div class="field"><label>📆 Day</label><input type="number" id="tDay" min="1" max="31" value="15" oninput="onTC()" /></div>
+                <div class="field"><label>🌙 Month</label>
+                  <div class="sel-wrap"><select id="tMonth" onchange="onTC()">
+                      <option value="1">Jan</option>
+                      <option value="2">Feb</option>
+                      <option value="3">Mar</option>
+                      <option value="4" selected>Apr</option>
+                      <option value="5">May</option>
+                      <option value="6">Jun</option>
+                      <option value="7">Jul</option>
+                      <option value="8">Aug</option>
+                      <option value="9">Sep</option>
+                      <option value="10">Oct</option>
+                      <option value="11">Nov</option>
+                      <option value="12">Dec</option>
+                    </select></div>
+                </div>
+                <div class="field"><label>🗓 Year</label><input type="number" id="tYear" min="-9999999" max="99999" value="1969" oninput="onTC()" /></div>
+              </div>
+              <div class="year-hint" id="yearHint">🟢 Safe era — no paradox risk.</div>
+              <div style="margin:7px 0;padding:9px 12px;border:2px dashed var(--black);border-radius:10px;background:rgba(255,255,255,.6);">
+                <div style="font-family:var(--font-hand);font-size:10px;font-weight:700;margin-bottom:4px;">⚠️ DANGER ZONES:</div>
+                <div style="font-family:var(--font-hand);font-size:10px;color:#555;line-height:1.9;">
+                  🔴 <b>CRITICAL</b>: Before 4,000,000,000 BC (Big Bang era)<br>
+                  🟠 <b>PARADOX</b>: 2000–2026 AD (your own lifetime!)<br>
+                  🟢 <b>SAFE</b>: All other historical / future eras
+                </div>
+              </div>
+              <div class="g2" style="gap:7px;">
+                <div style="padding:8px 11px;background:#fff;border:2px solid var(--black);border-radius:8px;box-shadow:2px 2px 0 var(--black);">
+                  <div style="font-family:var(--font-hand);font-size:9px;color:#aaa;margin-bottom:2px;">PARADOX RISK</div>
+                  <div style="font-family:var(--font-display);font-size:13px;color:var(--blue-d);" id="paradoxRisk">LOW</div>
+                  <div class="energy-bar" style="margin-top:4px;">
+                    <div class="energy-fill" id="paradoxBar" style="width:10%"></div>
+                  </div>
+                </div>
+                <div style="padding:8px 11px;background:#fff;border:2px solid var(--black);border-radius:8px;box-shadow:2px 2px 0 var(--black);">
+                  <div style="font-family:var(--font-hand);font-size:9px;color:#aaa;margin-bottom:2px;">TEMPORAL STABILITY</div>
+                  <div style="font-family:var(--font-display);font-size:13px;color:var(--blue-d);" id="tempStab">OPTIMAL</div>
+                  <div class="energy-bar" style="margin-top:4px;">
+                    <div class="energy-fill" id="stabBar" style="width:90%"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div style="display:flex;flex-direction:column;align-items:center;gap:7px;flex-shrink:0;">
+              <div class="bubble left" style="max-width:130px;font-size:10px;text-align:center;">"Drag to spin the Time Cloth dial!"</div>
+              <canvas id="timeDial" width="138" height="138" style="border:3px solid var(--black);border-radius:50%;box-shadow:5px 5px 0 var(--black);cursor:ns-resize;display:block;background:#fffbe6;"></canvas>
+              <div style="font-family:var(--font-title);font-size:16px;color:var(--blue-d);letter-spacing:2px;text-align:center;" id="dialReadout">1969 AD</div>
+              <div class="era-badge era-safe" id="eraBadge">✅ SAFE ERA</div>
+              <button class="btn yellow" style="font-size:10px;padding:5px 12px;" onclick="resetDial()">⟳ RESET</button>
+            </div>
+          </div>
+          <div class="btn-row">
+            <button class="btn" onclick="goTo(2)">◀ Back</button>
+            <button class="btn" onclick="openDrawer('advanced')">⚙️ Advanced</button>
+            <button class="btn blue glow" onclick="doS3()">SET THE TIME! ⏰</button>
+          </div>
+          <div class="prog-bar-wrap">
+            <div class="prog-bar-fill" style="width:42%"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="screen" id="screen-4">
+        <div class="row" style="align-items:flex-start;gap:10px;">
+          <div class="panel blue" style="flex:1;">
+            <div class="badge blue">💡 STEP 4 — BIG LIGHT DURATION</div>
+            <div class="stitle">HOW LONG TO STAY?</div>
+            <div class="sdesc">Slide right to stay longer! Energy cost scales with time.</div>
+            <hr class="divider">
+            <div class="g2" style="margin-bottom:10px;">
+              <div>
+                <div style="display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:4px;">
+                  <label>☀️ Days</label>
+                  <div style="font-family:var(--font-title);font-size:28px;color:var(--blue);line-height:1;" id="dDays">3</div>
+                </div>
+                <input type="range" id="dDaysR" min="0" max="365" value="3" step="1" oninput="onDur()" />
+                <div style="display:flex;justify-content:space-between;margin-top:3px;font-family:var(--font-hand);font-size:9px;color:#aaa;">
+                  <span>0</span><span>365</span>
+                </div>
+              </div>
+              <div>
+                <div style="display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:4px;">
+                  <label>🌙 Hours</label>
+                  <div style="font-family:var(--font-title);font-size:28px;color:var(--blue);line-height:1;" id="dHrs">6</div>
+                </div>
+                <input type="range" id="dHrsR" min="0" max="23" value="6" step="1" oninput="onDur()" />
+                <div style="display:flex;justify-content:space-between;margin-top:3px;font-family:var(--font-hand);font-size:9px;color:#aaa;">
+                  <span>0</span><span>23</span>
+                </div>
+              </div>
+            </div>
+            <canvas id="sizeCanvas" height="54" style="border:2px solid var(--black);border-radius:8px;background:#f0f9ff;box-shadow:2px 2px 0 var(--black);margin-bottom:8px;display:block;width:100%;"></canvas>
+            <div class="g2" style="gap:8px;">
+              <div class="dora-display">
+                <span style="font-size:24px;">🍩</span>
+                <div>
+                  <div class="dora-display-val" id="doraCost">3.25</div>
+                  <div class="dora-display-lbl">Dorayaki Energy Units</div>
+                </div>
+              </div>
+              <div style="padding:9px 12px;background:#fff;border:2px solid var(--black);border-radius:10px;box-shadow:3px 3px 0 var(--black);">
+                <div style="font-family:var(--font-hand);font-size:9px;color:#aaa;margin-bottom:2px;">TRAVEL STABILITY</div>
+                <div style="font-family:var(--font-display);font-size:13px;" id="durStab">⚡ OPTIMAL</div>
+                <div class="energy-bar" style="margin-top:4px;">
+                  <div class="energy-fill" id="durBar" style="width:90%"></div>
+                </div>
+              </div>
+            </div>
+            <div class="btn-row">
+              <button class="btn" onclick="goTo(3)">◀ Back</button>
+              <button class="btn" onclick="undoDur()" style="font-size:11px;">↩ Undo</button>
+              <button class="btn blue glow" onclick="doS4()">CONFIRM DURATION ✅</button>
+            </div>
+            <div class="prog-bar-wrap">
+              <div class="prog-bar-fill" style="width:56%"></div>
+            </div>
+          </div>
+          <div style="flex-shrink:0;width:140px;display:flex;flex-direction:column;align-items:center;gap:7px;margin-top:10px;">
+            <div class="bubble right" style="font-size:10px;max-width:130px;">"Slide right to use the Big Light! The longer you stay, the more energy it costs!"</div>
+            <canvas id="bigLightCanvas" width="120" height="150" style="display:block;"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <div class="screen" id="screen-5">
+        <div class="panel red">
+          <div class="badge red">🔒 STEP 5 — RETURN PROTOCOL</div>
+          <div class="stitle">SET RETURN ANCHOR!</div>
+          <div class="sdesc">Configure your emergency return settings. Stay safe out there!</div>
+          <hr class="divider">
+          <div class="g2" style="margin-bottom:10px;">
+            <div class="field"><label>🏠 Return Location</label><input type="text" id="rLoc" value="Nobita's Room, Desk Drawer" oninput="clearError(this)" /></div>
+            <div class="field"><label>⏱ Return Timing</label>
+              <div class="sel-wrap"><select id="rTime">
+                  <option value="exact">Exact departure time</option>
+                  <option value="5min">5 min after departure</option>
+                  <option value="nextday">Next morning</option>
+                  <option selected value="same">Same calendar day</option>
+                </select></div>
+            </div>
+          </div>
+          <div class="safety" id="safetyPanel" onclick="toggleSafety()">
+            <div class="safety-icon" id="safetyIcon">🔒</div>
+            <div>
+              <div class="safety-title" id="safetyTitle">EMERGENCY RECALL — SAFETY LOCK ENGAGED</div>
+              <div class="safety-sub" id="safetySub">Click to override. Default anchor: Nobita's Desk Drawer.</div>
+            </div>
+          </div>
+          <div class="panic-btn" onclick="triggerPanic()">🚨 EMERGENCY PANIC RETURN 🚨</div>
+          <div style="margin-top:8px;padding:9px 12px;border:2px dashed var(--black);border-radius:10px;background:rgba(255,255,255,.7);">
+            <div style="font-family:var(--font-hand);font-size:11px;font-weight:700;margin-bottom:4px;">📜 Temporal Navigation Accords</div>
+            <div style="font-family:var(--font-hand);font-size:10px;color:#555;line-height:1.8;">I will not alter historical events, meet my past/future self, or create paradoxes. Violations result in immediate recall and license suspension.</div>
+            <label style="display:flex;align-items:center;gap:8px;margin-top:7px;cursor:pointer;font-family:var(--font-hand);font-size:11px;font-weight:700;color:var(--blue-d);">
+              <input type="checkbox" id="termsChk" />I AGREE TO ALL TERMS!
+            </label>
+          </div>
+          <div class="btn-row">
+            <button class="btn" onclick="goTo(4)">◀ Back</button>
+            <button class="btn" onclick="openDrawer('emergency')">🆘 Emergency Options</button>
+            <button class="btn red glow" onclick="doS5()">SET RETURN VECTOR 🔐</button>
+          </div>
+          <div class="prog-bar-wrap">
+            <div class="prog-bar-fill" style="width:70%"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="screen" id="screen-6">
+        <div class="panel" style="border-color:var(--blue);box-shadow:6px 6px 0 var(--blue-d);">
+          <div class="row" style="align-items:flex-start;gap:10px;">
+            <div style="flex:1;">
+              <div class="badge green">🚀 MISSION BRIEFING — FINAL</div>
+              <div class="stitle">ALL SYSTEMS GO!</div>
+              <hr class="divider">
+              <div id="confirmGrid" style="margin-bottom:8px;"></div>
+              <div style="padding:9px 12px;background:#dcfce7;border:2px solid #16a34a;border-radius:10px;box-shadow:3px 3px 0 #15803d;display:flex;align-items:center;gap:10px;margin-bottom:8px;">
+                <span style="font-size:20px;">✅</span>
+                <div>
+                  <div style="font-family:var(--font-display);font-size:12px;color:#15803d;">CAUSALITY CLEARANCE PASSED</div>
+                  <div style="font-family:var(--font-hand);font-size:10px;color:#555;" id="clearMsg">All parameters nominal!</div>
+                </div>
+              </div>
+              <div style="display:flex;gap:8px;">
+                <button class="btn" onclick="goTo(5)" style="flex:0 0 auto;">◀ Back</button>
+                <button class="btn blue big glow" id="launchBtn" onclick="doLaunch()" style="flex:1;">🚀 LAUNCH! TIME TRAVEL! 🚀</button>
+              </div>
+            </div>
+            <div style="flex-shrink:0;width:150px;display:flex;flex-direction:column;align-items:center;gap:7px;">
+              <div class="bubble right" style="font-size:10px;"><b>Ready to go!</b>"Everything is set! Hold on tight!" 🎉</div>
+              <svg viewBox="0 0 120 200" width="120" xmlns="http://www.w3.org/2000/svg" style="animation:doraFloat 1s ease-in-out infinite;filter:drop-shadow(3px 3px 0 var(--black));">
+                <circle cx="60" cy="68" r="54" fill="#29ABE2" stroke="#1A1A2E" stroke-width="3" />
+                <ellipse cx="60" cy="84" rx="40" ry="37" fill="white" stroke="#1A1A2E" stroke-width="2.5" />
+                <path d="M44 88 Q60 102 76 88" stroke="#1A1A2E" stroke-width="2.5" fill="none" stroke-linecap="round" />
+                <circle cx="60" cy="60" r="9" fill="#FFD60A" stroke="#1A1A2E" stroke-width="2" />
+                <circle cx="60" cy="63" r="3" fill="#1A1A2E" />
+                <line x1="36" y1="58" x2="84" y2="58" stroke="#E63946" stroke-width="5" stroke-linecap="round" />
+                <circle cx="44" cy="48" r="13" fill="white" stroke="#1A1A2E" stroke-width="2.5" />
+                <circle cx="76" cy="48" r="13" fill="white" stroke="#1A1A2E" stroke-width="2.5" />
+                <circle cx="46" cy="50" r="7" fill="#1A1A2E" />
+                <circle cx="78" cy="50" r="7" fill="#1A1A2E" />
+                <circle cx="49" cy="47" r="3" fill="white" />
+                <circle cx="81" cy="47" r="3" fill="white" />
+                <circle cx="60" cy="72" r="8" fill="#E63946" stroke="#1A1A2E" stroke-width="2" />
+                <line x1="64" y1="74" x2="100" y2="66" stroke="#1A1A2E" stroke-width="2" stroke-linecap="round" />
+                <line x1="64" y1="78" x2="103" y2="78" stroke="#1A1A2E" stroke-width="2" stroke-linecap="round" />
+                <line x1="56" y1="74" x2="20" y2="66" stroke="#1A1A2E" stroke-width="2" stroke-linecap="round" />
+                <line x1="56" y1="78" x2="17" y2="78" stroke="#1A1A2E" stroke-width="2" stroke-linecap="round" />
+                <ellipse cx="60" cy="153" rx="50" ry="44" fill="#29ABE2" stroke="#1A1A2E" stroke-width="3" />
+                <ellipse cx="60" cy="163" rx="36" ry="30" fill="white" stroke="#1A1A2E" stroke-width="2.5" />
+                <path d="M10 120 Q2 95 18 88 Q36 82 30 112" fill="#29ABE2" stroke="#1A1A2E" stroke-width="2.5" />
+                <circle cx="7" cy="120" r="9" fill="#29ABE2" stroke="#1A1A2E" stroke-width="2" />
+                <path d="M110 120 Q118 95 102 88 Q84 82 90 112" fill="#29ABE2" stroke="#1A1A2E" stroke-width="2.5" />
+                <circle cx="113" cy="120" r="9" fill="#29ABE2" stroke="#1A1A2E" stroke-width="2" />
+                <text x="5" y="40" font-size="14" fill="#FFD60A">★</text>
+                <text x="108" y="35" font-size="12" fill="#FFD60A">✦</text>
+              </svg>
+            </div>
+          </div>
+          <div class="prog-bar-wrap">
+            <div class="prog-bar-fill" style="width:84%"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="screen" id="screen-err-paradox">
+        <div class="panel red screen-shake">
+          <div style="text-align:center;padding:6px 0;">
+            <svg viewBox="0 0 100 90" width="80" xmlns="http://www.w3.org/2000/svg" style="display:inline-block;">
+              <circle cx="50" cy="45" r="42" fill="#E63946" stroke="#1A1A2E" stroke-width="3" />
+              <circle cx="35" cy="36" r="11" fill="white" stroke="#1A1A2E" stroke-width="2" />
+              <circle cx="65" cy="36" r="11" fill="white" stroke="#1A1A2E" stroke-width="2" />
+              <line x1="27" y1="27" x2="43" y2="33" stroke="#1A1A2E" stroke-width="3" stroke-linecap="round" />
+              <line x1="73" y1="27" x2="57" y2="33" stroke="#1A1A2E" stroke-width="3" stroke-linecap="round" />
+              <circle cx="36" cy="38" r="6" fill="#1A1A2E" />
+              <circle cx="64" cy="38" r="6" fill="#1A1A2E" />
+              <circle cx="50" cy="56" r="7" fill="#E63946" stroke="#1A1A2E" stroke-width="1.5" />
+              <path d="M34 70 Q50 60 66 70" stroke="#1A1A2E" stroke-width="3" fill="none" stroke-linecap="round" />
+            </svg>
+          </div>
+          <div class="err-glyph glitch" style="color:var(--red);">⚡ TIME PARADOX! ⚡</div>
+          <div style="font-family:var(--font-hand);font-size:10px;letter-spacing:2px;color:rgba(230,57,70,.8);text-align:center;margin-bottom:7px;">ERR TMP-0451 // TIME PARADOX DETECTED!</div>
+          <div style="background:#fee2e2;border:2px solid var(--red);border-radius:10px;padding:12px 16px;box-shadow:3px 3px 0 var(--red-d);font-family:var(--font-hand);font-size:12px;line-height:1.8;text-align:center;margin-bottom:10px;">
+            <b>"WAIT!! You can't do that!!"</b><br><br>
+            <span id="paradoxDetail">You tried to travel to a time when YOU already exist! Meeting your past self creates a causality loop!</span><br><br>
+            <span style="color:var(--blue-d);" id="paradoxFix">🔵 Try a year before 2000 or after 2030!</span>
+          </div>
+          <div style="display:flex;gap:10px;justify-content:center;">
+            <button class="btn red" onclick="goTo(3)">↩ Fix The Time</button>
+            <button class="btn" onclick="goTo(1)">⟳ Restart</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="screen" id="screen-err-missing">
+        <div class="panel yellow">
+          <div style="text-align:center;padding:6px 0;"><svg viewBox="0 0 100 90" width="80" xmlns="http://www.w3.org/2000/svg" style="display:inline-block;">
+              <circle cx="50" cy="45" r="42" fill="#FFD60A" stroke="#1A1A2E" stroke-width="3" />
+              <circle cx="35" cy="38" r="11" fill="white" stroke="#1A1A2E" stroke-width="2" />
+              <circle cx="65" cy="38" r="11" fill="white" stroke="#1A1A2E" stroke-width="2" />
+              <circle cx="36" cy="39" r="6" fill="#1A1A2E" />
+              <circle cx="64" cy="39" r="6" fill="#1A1A2E" />
+              <circle cx="50" cy="54" r="7" fill="#E63946" stroke="#1A1A2E" stroke-width="1.5" />
+              <path d="M34 68 Q50 62 66 68" stroke="#1A1A2E" stroke-width="2.5" fill="none" stroke-linecap="round" />
+              <text x="68" y="16" font-family="Bangers,cursive" font-size="22" fill="#1A1A2E">?</text>
+            </svg></div>
+          <div class="err-glyph" style="color:var(--yellow-d);">OOPS! WAIT!</div>
+          <div style="font-family:var(--font-hand);font-size:9px;letter-spacing:2px;color:#888;text-align:center;margin-bottom:7px;">WARN INP-0042 // INCOMPLETE DATA</div>
+          <div style="background:#fef9c3;border:2px solid var(--yellow-d);border-radius:10px;padding:12px 16px;box-shadow:3px 3px 0 #cc8800;font-family:var(--font-hand);font-size:12px;line-height:1.8;text-align:center;margin-bottom:10px;">
+            <b>"Uh-oh! Something's missing!"</b><br><br>
+            <span style="color:var(--red);" id="missingDetail">Required fields are missing!</span>
+          </div>
+          <div style="display:flex;justify-content:center;">
+            <button class="btn yellow" id="missingBack">← Complete My Data</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="bottomBar">
+      <div class="bb-text" id="bbStep">SEQUENCE 1 OF 6</div>
+      <div class="bb-mission" id="bbMission">🎒 AWAITING PILOT AUTHENTICATION</div>
+      <div class="bb-text">AU2240025 · SHLOK SHELAT · CSE 519 HCI</div>
+    </div>
+  </div>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+    integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+  <script>
+    let audioCtx = null, soundEnabled = true;
+    function getAudioCtx() { if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)(); if (audioCtx.state === 'suspended') audioCtx.resume(); return audioCtx; }
+    function playSound(type) {
+      if (!soundEnabled) return;
+      try {
+        const ctx = getAudioCtx(), now = ctx.currentTime;
+        const osc = (freq, type2, dur, gain = .3) => { const o = ctx.createOscillator(), g = ctx.createGain(); o.connect(g); g.connect(ctx.destination); o.type = type2; o.frequency.value = freq; g.gain.setValueAtTime(gain, now); g.gain.exponentialRampToValueAtTime(.001, now + dur); o.start(now); o.stop(now + dur); };
+        if (type === 'click') { const o = ctx.createOscillator(), g = ctx.createGain(); o.connect(g); g.connect(ctx.destination); o.type = 'sine'; o.frequency.setValueAtTime(880, now); o.frequency.exponentialRampToValueAtTime(440, now + .1); g.gain.setValueAtTime(.25, now); g.gain.exponentialRampToValueAtTime(.001, now + .15); o.start(now); o.stop(now + .15); }
+        else if (type === 'success') { [523, 659, 784, 1047].forEach((f, i) => { const o = ctx.createOscillator(), g = ctx.createGain(); o.connect(g); g.connect(ctx.destination); o.type = 'sine'; o.frequency.value = f; const t = now + i * .12; g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(.35, t + .05); g.gain.exponentialRampToValueAtTime(.001, t + .3); o.start(t); o.stop(t + .35); }); }
+        else if (type === 'error') { osc(200, 'sawtooth', .4, .35); }
+        else if (type === 'paradox') { for (let i = 0; i < 3; i++) { const o = ctx.createOscillator(), g = ctx.createGain(); o.connect(g); g.connect(ctx.destination); o.type = 'sawtooth'; o.frequency.value = 330 - i * 30; const t = now + i * .15; g.gain.setValueAtTime(.35, t); g.gain.exponentialRampToValueAtTime(.001, t + .3); o.start(t); o.stop(t + .35); } }
+        else if (type === 'portal') { const o = ctx.createOscillator(), g = ctx.createGain(), f = ctx.createBiquadFilter(); o.connect(f); f.connect(g); g.connect(ctx.destination); o.type = 'sine'; f.type = 'bandpass'; f.frequency.value = 800; f.Q.value = 10; o.frequency.setValueAtTime(100, now); o.frequency.exponentialRampToValueAtTime(1200, now + .8); o.frequency.exponentialRampToValueAtTime(200, now + 1.4); g.gain.setValueAtTime(0, now); g.gain.linearRampToValueAtTime(.45, now + .3); g.gain.exponentialRampToValueAtTime(.001, now + 1.5); o.start(now); o.stop(now + 1.5); }
+        else if (type === 'doorOpen') { const o = ctx.createOscillator(), g = ctx.createGain(); o.connect(g); g.connect(ctx.destination); o.type = 'sine'; o.frequency.setValueAtTime(200, now); o.frequency.exponentialRampToValueAtTime(600, now + .3); o.frequency.exponentialRampToValueAtTime(400, now + .6); g.gain.setValueAtTime(.35, now); g.gain.exponentialRampToValueAtTime(.001, now + .7); o.start(now); o.stop(now + .7); }
+        else if (type === 'tunnel') { const o = ctx.createOscillator(), g = ctx.createGain(); o.connect(g); g.connect(ctx.destination); o.type = 'sawtooth'; o.frequency.setValueAtTime(60, now); o.frequency.linearRampToValueAtTime(400, now + 3); o.frequency.linearRampToValueAtTime(80, now + 6); g.gain.setValueAtTime(0, now); g.gain.linearRampToValueAtTime(.2, now + .5); g.gain.setValueAtTime(.2, now + 5); g.gain.exponentialRampToValueAtTime(.001, now + 6.2); o.start(now); o.stop(now + 6.3); }
+        else if (type === 'launch') { osc(110, 'square', .6, .5); }
+        else if (type === 'arrival') { [523, 659, 784, 1047, 1318].forEach((f, i) => { const o = ctx.createOscillator(), g = ctx.createGain(); o.connect(g); g.connect(ctx.destination); o.type = i % 2 === 0 ? 'sine' : 'triangle'; o.frequency.value = f; const t = now + i * .07; g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(.25, t + .1); g.gain.exponentialRampToValueAtTime(.001, t + .8); o.start(t); o.stop(t + .85); }); }
+        else if (type === 'pin') { osc(750, 'sine', .2, .2); }
+        else if (type === 'warn') { osc(380, 'square', .35, .28); }
+        else if (type === 'dial') { osc(300 + Math.random() * 200, 'sine', .08, .1); }
+        else if (type === 'panic') { for (let i = 0; i < 5; i++) { const o = ctx.createOscillator(), g = ctx.createGain(); o.connect(g); g.connect(ctx.destination); o.type = 'square'; o.frequency.value = i % 2 === 0 ? 880 : 660; const t = now + i * .12; g.gain.setValueAtTime(.35, t); g.gain.exponentialRampToValueAtTime(.001, t + .1); o.start(t); o.stop(t + .12); } }
+        else if (type === 'unlock') { [440, 554, 659].forEach((f, i) => { const o = ctx.createOscillator(), g = ctx.createGain(); o.connect(g); g.connect(ctx.destination); o.type = 'sine'; o.frequency.value = f; const t = now + i * .1; g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(.25, t + .05); g.gain.exponentialRampToValueAtTime(.001, t + .25); o.start(t); o.stop(t + .3); }); }
+      } catch (e) { }
+    }
+    function toggleSound() { soundEnabled = !soundEnabled; const btn = document.getElementById('soundBtn'); btn.textContent = soundEnabled ? '🔊' : '🔇'; btn.classList.toggle('muted', !soundEnabled); if (soundEnabled) playSound('click'); }
+
+    const DESTINATIONS = [
+      { key: 'egypt', icon: '🏺', name: 'Ancient Egypt', sub: 'Egypt, Africa', era: '30 BC – 3100 BC', lat: '30.06', lon: '31.25', type: 'historical', bg: 'linear-gradient(135deg,#c8a84b,#f0d080)', suggestYear: -1350, suggestDir: 'PAST' },
+      { key: 'moon', icon: '🌕', name: 'Moon Base Alpha', sub: "Earth's Moon, Space", era: '22nd Century', lat: '0', lon: '0', type: 'future', bg: 'linear-gradient(135deg,#1a1a2e,#3a3a6e)', suggestYear: 2147, suggestDir: 'FUTURE' },
+      { key: 'tokyo', icon: '🌆', name: 'Future Tokyo', sub: 'Japan, Asia', era: '22nd Century AD', lat: '35.67', lon: '139.65', type: 'future', bg: 'linear-gradient(135deg,#2d0050,#800080)', suggestYear: 2147, suggestDir: 'FUTURE' },
+      { key: 'florence', icon: '🎨', name: 'Renaissance Florence', sub: 'Tuscany, Italy', era: '15th Century AD', lat: '43.77', lon: '11.25', type: 'historical', bg: 'linear-gradient(135deg,#8b5e3c,#d4a56a)', suggestYear: 1503, suggestDir: 'PAST' },
+      { key: 'nobita', icon: '🛏', name: "Nobita's Room", sub: 'Nerima, Tokyo', era: 'Present Day', lat: '35.71', lon: '139.79', type: 'present', bg: 'linear-gradient(135deg,#ffe066,#ffd700)', suggestYear: 2026, suggestDir: 'FUTURE' },
+      { key: 'cretaceous', icon: '🦕', name: 'Cretaceous Era', sub: 'Earth, 66 Million BC', era: '66 Million BC', lat: '20', lon: '0', type: 'prehistoric', bg: 'linear-gradient(135deg,#2d5016,#6b9e2a)', suggestYear: -66000000, suggestDir: 'PAST' },
+      { key: 'rome', icon: '🏛', name: 'Ancient Rome', sub: 'Italy, Europe', era: '1st Century BC', lat: '41.90', lon: '12.49', type: 'historical', bg: 'linear-gradient(135deg,#8b6914,#d4a84b)', suggestYear: -44, suggestDir: 'PAST' },
+      { key: 'space', icon: '🚀', name: 'Deep Space Station', sub: 'Milky Way, Orion Arm', era: 'Far Future', lat: '0', lon: '0', type: 'future', bg: 'linear-gradient(135deg,#000010,#000044)', suggestYear: 5000, suggestDir: 'FUTURE' },
+      { key: 'atlantis', icon: '🌊', name: 'Atlantis', sub: 'Atlantic Ocean (Legend)', era: '9600 BC', lat: '30', lon: '-30', type: 'prehistoric', bg: 'linear-gradient(135deg,#006994,#0099cc)', suggestYear: -9600, suggestDir: 'PAST' },
+      { key: 'aztec', icon: '🗿', name: 'Aztec Empire', sub: 'Mexico, Americas', era: '15th Century AD', lat: '19.43', lon: '-99.13', type: 'historical', bg: 'linear-gradient(135deg,#c0392b,#e74c3c)', suggestYear: 1450, suggestDir: 'PAST' },
+    ];
+    const DEST_FACTS = { egypt: "Ancient Egypt (30°N, 31°E) — Home of the Pharaohs! The Great Pyramid was completed around 2560 BC. Don't disturb the mummies!", moon: "Moon Base Alpha — Earth's faithful companion, 384,400 km away. Gravity is 1/6th of Earth — you'll feel like floating!", tokyo: "Future Tokyo (35°N, 140°E) — A metropolis of neon and technology! Flying cars and AI assistants everywhere.", florence: "Renaissance Florence — Birthplace of the Renaissance! You might run into Leonardo da Vinci!", nobita: "Nobita's Room — Home sweet home! Cozy, a little messy, but always welcoming.", cretaceous: "Cretaceous Era (66 million BC) — Age of the Dinosaurs! T-Rex, Triceratops, and more. Approach with extreme caution!", rome: "Ancient Rome — Eternal City at its peak! Julius Caesar, the Colosseum, and incredible engineering.", space: "Deep Space Station — The final frontier! Nebulae, black holes, and alien civilizations await.", atlantis: "Legendary Atlantis — A civilization lost to time! Plato described it as a naval empire. Is it myth or reality?", aztec: "Aztec Empire — Magnificent temples and rich culture! Tenochtitlan was one of the largest cities of its time." };
+    const DORA_TIPS_DEST = { egypt: "Ancient Egypt! The pyramids await! Let's pick a year around 1350 BC.", moon: "Moon Base Alpha! Zero gravity adventures! Year ~2147 works great.", tokyo: "Future Tokyo! Flying cars and neon everywhere! Year ~2147.", florence: "Renaissance Florence! Meet the great masters of art! Year ~1503.", nobita: "Home sweet home! The desk drawer is always cozy.", cretaceous: "T-Rex territory! Extreme caution advised! 66 million BC!", rome: "Ancient Rome! Veni, vidi, vici! Year ~44 BC.", space: "Deep space! The final frontier! Year ~5000.", atlantis: "Legendary Atlantis! Is it myth or reality? 9600 BC.", aztec: "The Aztec Empire! Tenochtitlan was magnificent! Year ~1450." };
+
+    const S = { cur: 1, name: '', email: '', mode: 'GUEST', clearance: 'I', destName: '', destLat: '', destLon: '', destKey: '', dir: 'PAST', day: 15, month: 4, year: 1969, days: 3, hrs: 6, pDays: 3, pHrs: 6, rLoc: "Nobita's Room, Desk Drawer", rTime: 'same', safeOn: true, terms: false };
+    const CURRENT_YEAR = 2026;
+    const STEPS = ['PILOT ID', 'DESTINATION', 'TIME ERA', 'DURATION', 'RETURN', 'LAUNCH'];
+    const MISSIONS = ['🎒 AWAITING PILOT AUTH', '🌍 LOCKING DESTINATION', '⏰ CALIBRATING TIME CLOTH', '⚡ CALCULATING ENERGY', '🔒 SETTING RETURN', '🚀 READY FOR LAUNCH!'];
+    let destFilter = 'all';
+
+    function tick() { document.getElementById('sbClock').textContent = new Date().toLocaleTimeString('en-IN', { hour12: false }); }
+    setInterval(tick, 1000); tick();
+
+    (function () {
+      const c = document.getElementById('skyCanvas'), ctx = c.getContext('2d');
+      const clouds = [];
+      function resize() { c.width = window.innerWidth; c.height = window.innerHeight; }
+      resize(); window.addEventListener('resize', resize);
+      for (let i = 0; i < 5; i++) clouds.push({ x: Math.random() * window.innerWidth, y: 20 + Math.random() * window.innerHeight * .3, w: 80 + Math.random() * 130, s: .3 + Math.random() * .5, op: .5 + Math.random() * .5 });
+      function drawCloud(ctx, x, y, w, op) { ctx.save(); ctx.globalAlpha = op; ctx.fillStyle = '#fff'; ctx.beginPath(); ctx.ellipse(x, y, w / 2, w / 6, 0, 0, Math.PI * 2); ctx.fill(); ctx.beginPath(); ctx.ellipse(x - w * .15, y - w * .08, w * .22, w * .15, 0, 0, Math.PI * 2); ctx.fill(); ctx.beginPath(); ctx.ellipse(x + w * .1, y - w * .1, w * .18, w * .12, 0, 0, Math.PI * 2); ctx.fill(); ctx.restore(); }
+      let stars = []; for (let i = 0; i < 80; i++) stars.push({ x: Math.random(), y: Math.random(), r: .5 + Math.random() * 2, tw: Math.random() * Math.PI * 2 });
+      function frame() {
+        c.width = window.innerWidth; ctx.clearRect(0, 0, c.width, c.height);
+        if (['moon', 'tokyo', 'space'].includes(document.body.dataset.dest)) { stars.forEach(s => { s.tw += .02; ctx.globalAlpha = .4 + .4 * Math.sin(s.tw); ctx.fillStyle = document.body.dataset.dest === 'tokyo' ? `hsl(${200 + Math.random() * 60},100%,70%)` : 'white'; ctx.beginPath(); ctx.arc(s.x * c.width, s.y * c.height * .8, s.r, 0, Math.PI * 2); ctx.fill(); }); ctx.globalAlpha = 1; }
+        if (!['moon', 'tokyo', 'space'].includes(document.body.dataset.dest)) clouds.forEach(cl => { cl.x += cl.s; if (cl.x > c.width + 200) cl.x = -200; drawCloud(ctx, cl.x, cl.y, cl.w, cl.op); });
+        requestAnimationFrame(frame);
+      }
+      frame();
+    })();
+
+    const pCanvas = document.getElementById('particleCanvas'), pCtx = pCanvas.getContext('2d');
+    let particles = [], pAnimId = null;
+    function resizePC() { pCanvas.width = window.innerWidth; pCanvas.height = window.innerHeight; }
+    resizePC(); window.addEventListener('resize', resizePC);
+    function setDestParticles(key) {
+      cancelAnimationFrame(pAnimId); pCtx.clearRect(0, 0, pCanvas.width, pCanvas.height); pCanvas.classList.remove('show'); particles = []; if (!key) return;
+      if (['egypt', 'rome', 'aztec', 'atlantis'].includes(key)) { const col = 'rgba(194,165,92,'; for (let i = 0; i < 80; i++) particles.push({ x: Math.random() * pCanvas.width, y: Math.random() * pCanvas.height, vx: (Math.random() - .5) * .5, vy: .2 + Math.random() * .4, s: 1 + Math.random() * 3, op: Math.random(), color: col }); pCanvas.classList.add('show'); function sf() { pCtx.clearRect(0, 0, pCanvas.width, pCanvas.height); particles.forEach(p => { p.x += p.vx; p.y += p.vy; if (p.y > pCanvas.height) { p.y = 0; p.x = Math.random() * pCanvas.width; } pCtx.globalAlpha = p.op; pCtx.fillStyle = p.color + '1)'; pCtx.beginPath(); pCtx.arc(p.x, p.y, p.s, 0, Math.PI * 2); pCtx.fill(); }); pCtx.globalAlpha = 1; pAnimId = requestAnimationFrame(sf); } sf(); }
+      else if (['moon', 'tokyo', 'space'].includes(key)) { const c = key === 'tokyo' ? ['rgba(255,0,255,', 'rgba(0,255,255,'] : ['rgba(255,255,255,', 'rgba(200,200,255,']; for (let i = 0; i < 50; i++) particles.push({ x: Math.random() * pCanvas.width, y: Math.random() * pCanvas.height, vy: -.1 - .2 * Math.random(), s: 1 + Math.random() * 3, op: Math.random(), color: c[Math.floor(Math.random() * c.length)], tw: Math.random() * Math.PI * 2 }); pCanvas.classList.add('show'); function spf() { pCtx.clearRect(0, 0, pCanvas.width, pCanvas.height); particles.forEach(p => { p.tw += .02; p.y += p.vy; if (p.y < 0) { p.y = pCanvas.height; p.x = Math.random() * pCanvas.width; } const a = .2 + .8 * Math.abs(Math.sin(p.tw)); pCtx.globalAlpha = a; pCtx.fillStyle = p.color + '1)'; if (key === 'tokyo') { pCtx.fillRect(p.x, p.y, 1, 6 + Math.random() * 8); } else { pCtx.beginPath(); pCtx.arc(p.x, p.y, p.s, 0, Math.PI * 2); pCtx.fill(); } }); pCtx.globalAlpha = 1; pAnimId = requestAnimationFrame(spf); } spf(); }
+      else if (['nobita', 'cretaceous'].includes(key)) { const col = key === 'nobita' ? 'rgba(255,215,0,' : 'rgba(100,180,60,'; for (let i = 0; i < 30; i++) particles.push({ x: Math.random() * pCanvas.width, y: Math.random() * pCanvas.height, vy: -.1 - .15 * Math.random(), vx: (Math.random() - .5) * .3, s: 2 + Math.random() * 4, op: Math.random() * .6, color: col }); pCanvas.classList.add('show'); function wf() { pCtx.clearRect(0, 0, pCanvas.width, pCanvas.height); particles.forEach(p => { p.y += p.vy; p.x += p.vx; p.op -= .001; if (p.op <= 0) { p.y = pCanvas.height + 10; p.x = Math.random() * pCanvas.width; p.op = Math.random() * .6; } pCtx.globalAlpha = p.op; pCtx.fillStyle = p.color + '1)'; pCtx.beginPath(); pCtx.arc(p.x, p.y, p.s, 0, Math.PI * 2); pCtx.fill(); }); pCtx.globalAlpha = 1; pAnimId = requestAnimationFrame(wf); } wf(); }
+    }
+
+    let acFocusIdx = -1;
+    function renderDestCards() {
+      const grid = document.getElementById('destCardGrid'); if (!grid) return;
+      const filtered = destFilter === 'all' ? DESTINATIONS : DESTINATIONS.filter(d => d.type === destFilter);
+      grid.innerHTML = filtered.map(d => `
+    <div class="dest-card ${S.destKey === d.key ? 'on' : ''}" onclick="selectDestination('${d.key}')">
+      <div class="dest-card-img" style="background:${d.bg}">${d.icon}</div>
+      <div class="dest-card-body">
+        <div class="dest-card-title">${d.name}</div>
+        <div class="dest-card-sub">${d.sub}</div>
+        <div class="dest-card-era ${d.type}">${d.era}</div>
+      </div>
+    </div>`).join('');
+    }
+    function filterDest(cat, el) {
+      destFilter = cat;
+      document.querySelectorAll('.dest-cat-tab').forEach(t => t.classList.remove('on'));
+      el.classList.add('on');
+      renderDestCards();
+      playSound('click');
+    }
+    function selectDestination(key) {
+      const d = DESTINATIONS.find(x => x.key === key); if (!d) return;
+      S.destName = d.name; S.destLat = d.lat; S.destLon = d.lon; S.destKey = key;
+      document.body.dataset.dest = key;
+      setDestParticles(key);
+      document.getElementById('destSearchInput').value = d.name;
+      document.getElementById('destSearchClear').classList.add('show');
+      const panel = document.getElementById('destSelectedPanel');
+      panel.style.display = 'block';
+      document.getElementById('dsIcon').textContent = d.icon;
+      document.getElementById('dsTitle').textContent = d.name;
+      document.getElementById('dsSub').textContent = d.sub;
+      document.getElementById('dsLat').textContent = parseFloat(d.lat).toFixed(2) + '° Lat';
+      document.getElementById('dsLon').textContent = parseFloat(d.lon).toFixed(2) + '° Lon';
+      document.getElementById('dsEra').textContent = d.era;
+      const tip = document.getElementById('s2DoraTip');
+      const tipTxt = DORA_TIPS_DEST[key];
+      if (tipTxt) { tip.innerHTML = `💬 <b>Doraemon:</b> "${tipTxt}"`; tip.style.display = 'block'; }
+      renderDestCards();
+      updateDestMap(parseFloat(d.lat), parseFloat(d.lon), d.name, d.icon);
+      if (d.suggestDir) { S.dir = d.suggestDir; document.getElementById('tPastBtn').classList.toggle('on', S.dir === 'PAST'); document.getElementById('tFutBtn').classList.toggle('on', S.dir === 'FUTURE'); document.getElementById('dirHint').textContent = S.dir === 'PAST' ? `Past mode: year must be before ${CURRENT_YEAR}.` : `Future mode: year must be after ${CURRENT_YEAR}.`; }
+      if (d.suggestYear) { document.getElementById('tYear').value = d.suggestYear; S.year = d.suggestYear; }
+      playSound('pin');
+      toast(`📍 ${d.name} selected!`, 'success', 2000);
+      if (d.suggestYear && d.suggestDir) { setTimeout(() => toast(`💡 Time auto-set to ${Math.abs(d.suggestYear)} ${d.suggestYear < 0 ? 'BC' : 'AD'} (${d.suggestDir})!`, 'info', 3000), 600); }
+    }
+    let destSearchTimer = null;
+    function onDestSearch(val) {
+      document.getElementById('destSearchClear').classList.toggle('show', val.length > 0);
+      if (!val.trim()) { hideAutocomplete(); return; }
+      const lower = val.toLowerCase();
+      const matches = DESTINATIONS.filter(d => d.name.toLowerCase().includes(lower) || d.sub.toLowerCase().includes(lower) || d.era.toLowerCase().includes(lower) || d.key.toLowerCase().includes(lower));
+      showAutocomplete(matches, val);
+      clearTimeout(destSearchTimer);
+      destSearchTimer = setTimeout(() => {
+        fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(val)}&format=json&limit=5&accept-language=en`)
+          .then(r => r.json())
+          .then(data => {
+            const remoteMatches = data.map((d, i) => {
+              const name = d.name || d.display_name.split(',')[0];
+              let sub = d.display_name;
+              if (sub.length > 40) sub = sub.substring(0, 40) + '...';
+              return { key: `remote-${i}`, isRemote: true, icon: '📍', name: name, displayName: d.display_name, sub: sub, lat: d.lat, lon: d.lon, type: 'present', era: 'Present Day' };
+            });
+            const allMatches = [...matches, ...remoteMatches];
+            showAutocomplete(allMatches, val);
+          }).catch(e => console.log(e));
+      }, 400);
+    }
+    function showAutocomplete(matches, query) {
+      const ac = document.getElementById('destAutocomplete');
+      if (!matches.length) { ac.innerHTML = `<div class="dest-ac-item" onclick="setCustomDest('${query.replace(/'/g, "\\'")}')"><span class="ac-icon">📍</span><div><div class="ac-name">"${query}"</div><div class="ac-sub">Set as custom destination</div></div><span class="ac-badge custom">CUSTOM</span></div>`; ac.classList.add('show'); acFocusIdx = -1; return; }
+      ac.innerHTML = matches.map((d, i) => {
+        if (d.isRemote) {
+          const cleanName = d.displayName.replace(/'/g, "\\'").replace(/"/g, "&quot;");
+          return `<div class="dest-ac-item" data-idx="${i}" onclick="selectRemoteDest('${d.lat}', '${d.lon}', '${cleanName}');hideAutocomplete()"><span class="ac-icon">${d.icon}</span><div><div class="ac-name">${d.name}</div><div class="ac-sub">${d.sub}</div></div><span class="ac-badge custom">MAP</span></div>`;
+        }
+        return `<div class="dest-ac-item" data-idx="${i}" onclick="selectDestination('${d.key}');hideAutocomplete()"><span class="ac-icon">${d.icon}</span><div><div class="ac-name">${d.name}</div><div class="ac-sub">${d.sub} · ${d.era}</div></div><span class="ac-badge ${d.type === 'future' ? 'future' : 'historical'}">${d.type.toUpperCase()}</span></div>`
+      }).join('');
+      ac.classList.add('show'); acFocusIdx = -1;
+    }
+    function selectRemoteDest(lat, lon, name) {
+      if (destMap) {
+        const dLat = parseFloat(lat);
+        const dLon = parseFloat(lon);
+        if (destClickMarker) { destMap.removeLayer(destClickMarker); destClickMarker = null; }
+        allDestMarkers.forEach(m => {
+          const el = m.getElement();
+          if (el) el.querySelector('.dest-marker-icon')?.classList.remove('dest-marker-selected');
+        });
+        const clickIcon = L.divIcon({ className: '', html: `<div class="dest-marker-icon dest-marker-selected">📍</div>`, iconSize: [36, 36], iconAnchor: [18, 18], popupAnchor: [0, -20] });
+        destClickMarker = L.marker([dLat, dLon], { icon: clickIcon }).addTo(destMap);
+        const shortName = name.split(',')[0];
+        destClickMarker.bindPopup(`<div style="text-align:center;padding:4px;">
+                <div style="font-family:'Fredoka One',cursive;font-size:13px;color:#1A1A2E;">📍 ${shortName}</div>
+                <div style="font-family:'Orbitron',monospace;font-size:9px;color:#0077B6;margin-top:2px;">${dLat.toFixed(2)}°, ${dLon.toFixed(2)}°</div>
+            </div>`).openPopup();
+        setTimeout(() => destMap.invalidateSize(), 100);
+        destMap.flyTo([dLat, dLon], 8, { duration: 1.2 });
+      }
+      const shortName = name.split(',')[0];
+      setMapSelectedLocation(lat, lon, name, '📍');
+      document.getElementById('destSearchInput').value = shortName;
+      playSound('pin');
+      toast(`📍 ${shortName} selected!`, 'success', 2500);
+    }
+    function hideAutocomplete() { document.getElementById('destAutocomplete').classList.remove('show'); acFocusIdx = -1; }
+    function onDestSearchKey(e) { const items = document.querySelectorAll('#destAutocomplete .dest-ac-item'); if (e.key === 'ArrowDown') { e.preventDefault(); acFocusIdx = Math.min(acFocusIdx + 1, items.length - 1); items.forEach((el, i) => el.classList.toggle('focused', i === acFocusIdx)); } else if (e.key === 'ArrowUp') { e.preventDefault(); acFocusIdx = Math.max(acFocusIdx - 1, 0); items.forEach((el, i) => el.classList.toggle('focused', i === acFocusIdx)); } else if (e.key === 'Enter' && acFocusIdx >= 0) { items[acFocusIdx]?.click(); } else if (e.key === 'Escape') hideAutocomplete(); }
+    function clearDestSearch() { document.getElementById('destSearchInput').value = ''; document.getElementById('destSearchClear').classList.remove('show'); hideAutocomplete(); S.destName = ''; S.destLat = ''; S.destLon = ''; S.destKey = ''; document.body.removeAttribute('data-dest'); setDestParticles(null); hideDestMap(); document.getElementById('destSelectedPanel').style.display = 'none'; document.getElementById('s2DoraTip').style.display = 'none'; renderDestCards(); }
+    function setCustomDest(name) { S.destName = name; S.destKey = 'custom'; S.destLat = '0'; S.destLon = '0'; document.getElementById('destSearchInput').value = name; hideAutocomplete(); const panel = document.getElementById('destSelectedPanel'); panel.style.display = 'block'; document.getElementById('dsIcon').textContent = '📍'; document.getElementById('dsTitle').textContent = name; document.getElementById('dsSub').textContent = 'Custom Destination'; document.getElementById('dsLat').textContent = '— Lat'; document.getElementById('dsLon').textContent = '— Lon'; document.getElementById('dsEra').textContent = 'Custom'; toast(`📍 Custom destination: "${name}"`, 'info', 2000); }
+    document.addEventListener('click', e => { if (!e.target.closest('.dest-search-wrap')) hideAutocomplete(); });
+
+    function renderProgress() {
+      const t = document.getElementById('progressTrack'); t.innerHTML = '';
+      STEPS.forEach((lbl, i) => {
+        const n = document.createElement('div'); n.className = 'pt-node';
+        const act = S.cur === i + 1, done = S.cur > i + 1;
+        n.innerHTML = `<div class="pt-circle ${act ? 'active' : done ? 'done' : ''}">${done ? '✓' : i + 1}</div><div class="pt-label ${act ? 'active' : ''}">${lbl}</div>`;
+        n.onclick = () => { if (done || act) { playSound('click'); goTo(i + 1); } };
+        t.appendChild(n);
+        if (i < 5) { const l = document.createElement('div'); l.className = 'pt-line' + (done ? ' done' : ''); t.appendChild(l); }
+      });
+    }
+
+    function goTo(n) {
+      document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+      const el = document.getElementById('screen-' + n);
+      if (el) { el.classList.add('active'); S.cur = n; }
+      document.getElementById('mainContent').scrollTop = 0;
+      renderProgress();
+      if (n >= 1 && n <= 6) { document.getElementById('bbStep').textContent = `SEQUENCE ${n} OF 6`; document.getElementById('bbMission').textContent = MISSIONS[n - 1] || ''; }
+      if (n === 2) { renderDestCards(); setTimeout(() => { initInteractiveMap(); if (destMap) destMap.invalidateSize(); }, 300); }
+      if (n === 3) { initDial(); setTimeout(() => { onTC(); updateTCStats(); }, 100); }
+      if (n === 4) { drawBigLight(parseInt(document.getElementById('dDaysR')?.value || 3)); drawSizeCanvas(parseInt(document.getElementById('dDaysR')?.value || 3)); }
+      if (n === 6) fillConfirm();
+      updateDoraHint(n);
+    }
+    function showErr(type, backTo, msg) {
+      document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+      document.getElementById('screen-err-' + type).classList.add('active');
+      S.cur = 0; renderProgress();
+      if (type === 'missing') { document.getElementById('missingDetail').textContent = 'Missing: ' + msg; document.getElementById('missingBack').onclick = () => { playSound('click'); goTo(backTo); }; }
+      if (type === 'paradox') playSound('paradox');
+      if (type === 'missing') playSound('error');
+      document.getElementById('mainContent').scrollTop = 0;
+    }
+
+    function showFieldError(el, msg) { el.classList.add('error-field'); const err = el.parentElement.querySelector('.field-err'); if (err) { err.textContent = msg; err.classList.remove('hidden'); } }
+    function clearError(el) { el.classList.remove('error-field'); const err = el.parentElement.querySelector('.field-err'); if (err) err.classList.add('hidden'); }
+
+    function toast(msg, type = 'info', dur = 3000) { const area = document.getElementById('toastArea'); const el = document.createElement('div'); const icons = { success: '✅', error: '❌', info: '💬', warn: '⚠️', loading: '🚁' }; el.className = `toast ${type}`; el.innerHTML = `<span style="font-size:15px;">${icons[type] || 'ℹ️'}</span><span>${msg}</span>`; area.appendChild(el); setTimeout(() => { el.classList.add('out'); setTimeout(() => el.remove(), 350); }, dur); return el; }
+    function toastLoad(msg) { return toast(msg, 'loading', 60000); }
+    function killToast(el) { if (el) { el.classList.add('out'); setTimeout(() => el.remove(), 350); } }
+
+    function showLoad(title, sub) { document.getElementById('loadingTitle').textContent = title; document.getElementById('loadingSub').textContent = sub; document.getElementById('loadingOverlay').classList.add('show'); }
+    function hideLoad() { document.getElementById('loadingOverlay').classList.remove('show'); }
+
+    function setTab(btn, key, val) { btn.closest('.tabs').querySelectorAll('.tab').forEach(b => b.classList.remove('on')); btn.classList.add('on'); S[key] = val; playSound('click'); }
+    function pickGadget(card, key, val) { card.closest('.g3').querySelectorAll('.gadget-card').forEach(c => c.classList.remove('on')); card.classList.add('on'); S[key] = val; playSound('click'); }
+
+    let doorOpen = false;
+    function animateDoor() {
+      const door = document.getElementById('anywhereDoor'); doorOpen = !doorOpen; playSound('doorOpen');
+      if (doorOpen) { door.classList.add('open'); document.getElementById('doorLbl').textContent = 'OPEN!'; document.getElementById('doorTxt').textContent = 'Through here to anywhere!'; toast('🚪 Anywhere Door opened!', 'info', 2000); showPortal(1200); }
+      else { door.classList.remove('open'); document.getElementById('doorLbl').innerHTML = 'ANYWHERE<br>DOOR'; document.getElementById('doorTxt').textContent = 'Click to open!'; }
+    }
+    function showPortal(ms) {
+      const ov = document.getElementById('portalOverlay'), c = document.getElementById('portalCanvas'), ctx = c.getContext('2d');
+      ov.classList.add('show'); playSound('portal');
+      let t = 0, stop = false;
+      function frame() { if (stop) return; ctx.clearRect(0, 0, 600, 600); ctx.fillStyle = 'rgba(0,0,0,.96)'; ctx.fillRect(0, 0, 600, 600); for (let r = 10; r < 280; r += 18) { const a = t * (r * .015), hue = (t * 2 + r * 1.5) % 360; const g = ctx.createRadialGradient(300, 300, r - 8, 300, 300, r + 8); g.addColorStop(0, `hsla(${hue},100%,70%,0)`); g.addColorStop(.5, `hsla(${hue},100%,70%,.6)`); g.addColorStop(1, `hsla(${hue},100%,70%,0)`); ctx.strokeStyle = g; ctx.lineWidth = 3; ctx.beginPath(); ctx.arc(300, 300, r, a, a + Math.PI * 1.5); ctx.stroke(); } const cg = ctx.createRadialGradient(300, 300, 0, 300, 300, 60); cg.addColorStop(0, 'rgba(41,171,226,.9)'); cg.addColorStop(.5, 'rgba(41,171,226,.3)'); cg.addColorStop(1, 'transparent'); ctx.fillStyle = cg; ctx.beginPath(); ctx.arc(300, 300, 60, 0, Math.PI * 2); ctx.fill(); ctx.globalAlpha = 1; t += .08; requestAnimationFrame(frame); }
+      frame(); setTimeout(() => { stop = true; ov.classList.remove('show'); }, ms);
+    }
+
+    function copterTransition(cb) { const ov = document.getElementById('copterOverlay'), el = document.getElementById('copterEl'); ov.classList.add('show'); el.style.animation = 'none'; void el.offsetWidth; el.style.animation = 'copterFly 1.4s cubic-bezier(.68,-.55,.265,1.55) forwards'; setTimeout(() => { ov.classList.remove('show'); if (cb) cb(); }, 1200); }
+
+    let dialAngle = 0, dialDrag = false, dialY0 = 0, dialA0 = 0, lastDialSound = 0, dialInitYear = 1969;
+    function initDial() {
+      const c = document.getElementById('timeDial'); if (c._init) return; c._init = true; drawDial();
+      c.addEventListener('mousedown', e => { dialDrag = true; dialY0 = e.clientY; dialA0 = dialAngle; dialInitYear = parseInt(document.getElementById('tYear').value) || CURRENT_YEAR; });
+      window.addEventListener('mousemove', e => { if (!dialDrag) return; dialAngle = dialA0 + (dialY0 - e.clientY) / 120 * Math.PI * 2; const dy = Math.round((dialY0 - e.clientY) * .5); const ny = Math.max(-9999999, Math.min(99999, dialInitYear + dy)); document.getElementById('tYear').value = ny; onTC(); drawDial(); const now = Date.now(); if (now - lastDialSound > 120) { playSound('dial'); lastDialSound = now; } });
+      window.addEventListener('mouseup', () => dialDrag = false);
+      c.addEventListener('touchstart', e => { dialDrag = true; dialY0 = e.touches[0].clientY; dialA0 = dialAngle; dialInitYear = parseInt(document.getElementById('tYear').value) || CURRENT_YEAR; e.preventDefault(); }, { passive: false });
+      window.addEventListener('touchmove', e => { if (!dialDrag) return; dialAngle = dialA0 + (dialY0 - e.touches[0].clientY) / 120 * Math.PI * 2; const dy = Math.round((dialY0 - e.touches[0].clientY) * .5); const ny = Math.max(-9999999, Math.min(99999, dialInitYear + dy)); document.getElementById('tYear').value = ny; onTC(); drawDial(); }, { passive: true });
+      window.addEventListener('touchend', () => dialDrag = false);
+    }
+    function getTimeValidation(yr, dir) {
+      if (dir === 'PAST') {
+        if (yr >= CURRENT_YEAR) return { valid: false, type: 'direction', msg: `Past mode: year must be before ${CURRENT_YEAR}!`, fix: `Set a year before ${CURRENT_YEAR}.` };
+        if (yr >= 2000 && yr < CURRENT_YEAR) return { valid: false, type: 'paradox', msg: `Year ${yr} overlaps your lifetime — paradox risk!`, fix: 'Try a year before 2000.' };
+        if (yr < -4000000000) return { valid: false, type: 'danger', msg: "Before the Big Bang! Universe doesn't exist yet!", fix: 'Try a year after 4 billion BC.' };
+      } else { if (yr <= CURRENT_YEAR) return { valid: false, type: 'direction', msg: `Future mode: year must be after ${CURRENT_YEAR}!`, fix: `Set a year after ${CURRENT_YEAR}.` }; }
+      return { valid: true };
+    }
+    function drawDial() {
+      const c = document.getElementById('timeDial'); if (!c) return;
+      const ctx = c.getContext('2d'), w = c.width, h = c.height, cx = w / 2, cy = h / 2, r = w / 2 - 5;
+      ctx.clearRect(0, 0, w, h); const bg = ctx.createRadialGradient(cx, cy, 0, cx, cy, r); bg.addColorStop(0, '#fffff0'); bg.addColorStop(1, '#fff9c4'); ctx.fillStyle = bg; ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI * 2); ctx.fill();
+      const yr = parseInt(document.getElementById('tYear').value) || 1969; const v = getTimeValidation(yr, S.dir);
+      if (!v.valid) { ctx.strokeStyle = v.type === 'paradox' ? 'rgba(255,100,0,.4)' : 'rgba(230,57,70,.4)'; ctx.lineWidth = 8; ctx.beginPath(); ctx.arc(cx, cy, r - 5, -.3, 1.5); ctx.stroke(); }
+      ctx.beginPath(); for (let i = 0; i < 360; i++) { const a = (i / 360) * Math.PI * 8 + dialAngle, sr = (i / 360) * (r - 16); ctx.lineTo(cx + Math.cos(a) * sr, cy + Math.sin(a) * sr); } ctx.strokeStyle = 'rgba(41,171,226,.2)'; ctx.lineWidth = 1; ctx.stroke();
+      for (let i = 0; i < 12; i++) { const a = (i / 12) * Math.PI * 2 + dialAngle, inner = i % 3 === 0 ? r - 14 : r - 8; ctx.beginPath(); ctx.moveTo(cx + Math.cos(a) * inner, cy + Math.sin(a) * inner); ctx.lineTo(cx + Math.cos(a) * (r - 2), cy + Math.sin(a) * (r - 2)); ctx.strokeStyle = i % 3 === 0 ? '#29ABE2' : 'rgba(41,171,226,.35)'; ctx.lineWidth = i % 3 === 0 ? 2.5 : 1.5; ctx.stroke(); }
+      const na = dialAngle - Math.PI / 2; ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(cx + Math.cos(na) * (r - 16), cy + Math.sin(na) * (r - 16)); ctx.strokeStyle = v.valid ? '#E63946' : '#FF6600'; ctx.lineWidth = 2.5; ctx.lineCap = 'round'; ctx.stroke();
+      ctx.beginPath(); ctx.arc(cx, cy, 6, 0, Math.PI * 2); ctx.fillStyle = '#FFD60A'; ctx.fill(); ctx.strokeStyle = '#1A1A2E'; ctx.lineWidth = 2; ctx.stroke();
+    }
+    function onTC() {
+      const yr = parseInt(document.getElementById('tYear').value) || 1969, absYr = Math.abs(yr), suffix = yr < 0 ? 'BC' : 'AD';
+      document.getElementById('dialReadout').textContent = (absYr > 1000000 ? `${(absYr / 1000000).toFixed(1)}M` : absYr) + ` ${suffix}`;
+      const v = getTimeValidation(yr, S.dir), b = document.getElementById('eraBadge'), hint = document.getElementById('yearHint');
+      if (!v.valid) { b.className = 'era-badge ' + (v.type === 'danger' ? 'era-danger' : 'era-warn'); b.textContent = v.type === 'direction' ? '⚠️ WRONG DIRECTION!' : v.type === 'paradox' ? '⚠️ PARADOX ZONE!' : '🔴 DANGER!'; hint.textContent = `⚠️ ${v.msg}`; hint.className = 'year-hint warn'; }
+      else { b.className = 'era-badge era-safe'; b.textContent = '✅ SAFE ERA'; hint.textContent = yr < 0 ? `🟢 ${Math.abs(yr).toLocaleString()} BC — safe historical era.` : yr > CURRENT_YEAR ? `🟢 ${yr} AD — future destination, safe.` : '🟢 Safe era.'; hint.className = 'year-hint'; }
+      updateTCStats(); drawDial();
+    }
+    function updateTCStats() {
+      const yr = parseInt(document.getElementById('tYear').value) || 1969, v = getTimeValidation(yr, S.dir);
+      const risk = !v.valid ? (v.type === 'direction' ? 60 : 85) : 15, stab = !v.valid ? 20 : 90;
+      document.getElementById('paradoxRisk').textContent = risk > 60 ? 'HIGH ⚠️' : risk > 30 ? 'MEDIUM' : 'LOW ✅'; document.getElementById('paradoxRisk').style.color = risk > 60 ? '#E63946' : risk > 30 ? '#FFA200' : '#15803d';
+      document.getElementById('paradoxBar').style.width = risk + '%'; document.getElementById('paradoxBar').className = 'energy-fill' + (risk > 60 ? ' danger' : risk > 30 ? ' warn' : '');
+      document.getElementById('tempStab').textContent = stab > 70 ? 'OPTIMAL ✅' : stab > 40 ? 'MODERATE' : 'UNSTABLE ⚠️'; document.getElementById('stabBar').style.width = stab + '%';
+      document.getElementById('stabilityTxt').textContent = stab > 70 ? 'STABLE' : stab > 40 ? 'MODERATE' : 'UNSTABLE'; document.getElementById('stabilityDot').className = 'ind-dot' + (stab > 70 ? '' : stab > 40 ? ' warn' : ' danger');
+    }
+    function resetDial() { dialAngle = 0; document.getElementById('tDay').value = 15; document.getElementById('tMonth').value = 4; document.getElementById('tYear').value = S.dir === 'PAST' ? 1969 : 2147; onTC(); playSound('click'); toast('⟳ Dials reset!', 'info', 2000); }
+    function setDir(d, btn) { S.dir = d; document.getElementById('tPastBtn').classList.toggle('on', d === 'PAST'); document.getElementById('tFutBtn').classList.toggle('on', d === 'FUTURE'); document.getElementById('dirHint').textContent = d === 'PAST' ? `Past mode: year must be before ${CURRENT_YEAR}.` : `Future mode: year must be after ${CURRENT_YEAR}.`; const yr = parseInt(document.getElementById('tYear').value) || 1969; if (d === 'PAST' && yr >= CURRENT_YEAR) { document.getElementById('tYear').value = 1969; toast('Year auto-adjusted for Past mode', 'info', 2000); } if (d === 'FUTURE' && yr <= CURRENT_YEAR) { document.getElementById('tYear').value = 2147; toast('Year auto-adjusted for Future mode', 'info', 2000); } onTC(); playSound('click'); }
+
+    function drawBigLight(days) { const c = document.getElementById('bigLightCanvas'); if (!c) return; const ctx = c.getContext('2d'); ctx.clearRect(0, 0, 120, 150); ctx.fillStyle = '#888'; ctx.fillRect(50, 88, 20, 52); ctx.strokeStyle = '#1A1A2E'; ctx.lineWidth = 2; ctx.strokeRect(50, 88, 20, 52); const glowR = Math.min(44, 18 + days * 0.12); const g = ctx.createRadialGradient(60, 50, 0, 60, 50, glowR + 10); g.addColorStop(0, 'rgba(255,220,50,1)'); g.addColorStop(.5, 'rgba(255,180,0,.6)'); g.addColorStop(1, 'transparent'); ctx.fillStyle = g; ctx.beginPath(); ctx.arc(60, 50, glowR + 10, 0, Math.PI * 2); ctx.fill(); ctx.fillStyle = '#FFD60A'; ctx.strokeStyle = '#1A1A2E'; ctx.lineWidth = 2.5; ctx.beginPath(); ctx.arc(60, 50, glowR, 0, Math.PI * 2); ctx.fill(); ctx.stroke(); const rays = days > 200 ? 10 : days > 50 ? 7 : 4; for (let i = 0; i < rays; i++) { const a = (i / rays) * Math.PI * 2; ctx.strokeStyle = 'rgba(255,200,0,.6)'; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(60 + Math.cos(a) * (glowR + 2), 50 + Math.sin(a) * (glowR + 2)); ctx.lineTo(60 + Math.cos(a) * (glowR + 14), 50 + Math.sin(a) * (glowR + 14)); ctx.stroke(); } ctx.fillStyle = '#1A1A2E'; ctx.font = 'bold 12px Fredoka One,cursive'; ctx.textAlign = 'center'; ctx.fillText(days > 50 ? 'BIG!' : 'Small', 60, 54); }
+    function drawSizeCanvas(days) { const c = document.getElementById('sizeCanvas'); if (!c) return; const ctx = c.getContext('2d'); const w = c.width = c.offsetWidth || 400, h = 54; c.height = h; ctx.clearRect(0, 0, w, h); const sc = .3 + days / 365 * 1.4; ctx.font = `${Math.round(18 * sc)}px serif`; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText('🏠', w / 2, h / 2); ctx.font = '10px Patrick Hand,cursive'; ctx.fillStyle = '#888'; ctx.textAlign = 'left'; ctx.textBaseline = 'top'; ctx.fillText(days > 200 ? 'VERY LONG STAY — High energy cost!' : days > 50 ? 'Extended stay — Moderate cost' : 'Short visit — Low cost', 6, 3); }
+    function onDur() { const d = parseInt(document.getElementById('dDaysR').value) || 0, h = parseInt(document.getElementById('dHrsR').value) || 0; document.getElementById('dDays').textContent = d; document.getElementById('dHrs').textContent = h; S.days = d; S.hrs = h; const cost = (d + h * .042).toFixed(2); document.getElementById('doraCost').textContent = cost; document.getElementById('dorayakiHud').textContent = cost + ' DKU'; const stab = d > 200 ? '💥 UNSTABLE' : d > 60 ? '⚠️ MODERATE' : '⚡ OPTIMAL'; document.getElementById('durStab').textContent = stab; document.getElementById('durStab').style.color = d > 200 ? '#E63946' : d > 60 ? '#FFA200' : '#15803d'; document.getElementById('durBar').style.width = (d > 200 ? 20 : d > 60 ? 55 : 90) + '%'; document.getElementById('durBar').className = 'energy-fill' + (d > 200 ? ' danger' : d > 60 ? ' warn' : ''); drawBigLight(d); drawSizeCanvas(d); }
+    function undoDur() { document.getElementById('dDaysR').value = S.pDays; document.getElementById('dHrsR').value = S.pHrs; onDur(); playSound('click'); toast('↩ Duration reverted!', 'info', 2000); }
+
+    function toggleSafety() { S.safeOn = !S.safeOn; document.getElementById('safetyIcon').textContent = S.safeOn ? '🔒' : '🔓'; document.getElementById('safetyTitle').textContent = S.safeOn ? 'EMERGENCY RECALL — SAFETY LOCK ENGAGED' : 'SAFETY LOCK — DISENGAGED (MANUAL)'; document.getElementById('safetySub').textContent = S.safeOn ? "Click to override. Default: Nobita's Desk Drawer." : '⚠️ Manual override active! You\'re on your own!'; document.getElementById('safetyPanel').classList.toggle('open', !S.safeOn); playSound(S.safeOn ? 'unlock' : 'warn'); toast(S.safeOn ? '🔒 Safety lock re-engaged!' : '⚠️ Safety lock disengaged!', S.safeOn ? 'success' : 'error', 2500); }
+    function triggerPanic() { playSound('panic'); showLoad('🚨 EMERGENCY RECALL!', 'Activating panic return sequence...'); setTimeout(() => { hideLoad(); playSound('success'); toast('🏠 Emergency return activated! Returning to ' + S.rLoc, 'warn', 4000); }, 2200); }
+
+    function fillConfirm() {
+      S.day = parseInt(document.getElementById('tDay').value) || 15;
+      S.month = parseInt(document.getElementById('tMonth').value) || 4;
+      S.year = parseInt(document.getElementById('tYear').value) || 1969;
+      S.days = parseInt(document.getElementById('dDaysR').value) || 3;
+      S.hrs = parseInt(document.getElementById('dHrsR').value) || 6;
+      S.rLoc = document.getElementById('rLoc').value || "Nobita's Room, Desk Drawer";
+      S.rTime = document.getElementById('rTime').value || 'same';
+      const MN = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+      const yr = parseInt(S.year) || 1969, absYr = Math.abs(yr), suffix = yr < 0 ? 'BC' : 'AD';
+      const rows = [['👤 Pilot', S.name || '—'], ['🎫 Mode', S.mode], ['⭐ Class', `CLASS ${S.clearance}`], ['📍 Destination', S.destName || '—'], ['🗺 Coords', S.destLat ? `${parseFloat(S.destLat).toFixed(1)}°, ${parseFloat(S.destLon).toFixed(1)}°` : '—'], [`${S.dir === 'PAST' ? '⬅' : '➡'} Direction`, S.dir], ['📅 Date', `${S.day} ${MN[S.month - 1]} ${absYr} ${suffix}`], ['☀️ Stay', `${S.days}d ${S.hrs}h`], ['🍩 Cost', `${(S.days + S.hrs * .042).toFixed(2)} DKU`], ['🏠 Return', S.rLoc]];
+      document.getElementById('confirmGrid').innerHTML = rows.map(([l, v]) => `<div class="cc"><div class="cc-lbl">${l}</div><div class="cc-val">${v}</div></div>`).join('');
+      document.getElementById('clearMsg').textContent = `All nominal! No paradox. Enjoy ${S.destName || 'your destination'}, ${S.name || 'Pilot'}!`;
+    }
+
+    function showTunnel(doneCallback) {
+      const ov = document.getElementById('tunnelOverlay'), c = document.getElementById('tunnelCanvas'), ctx = c.getContext('2d'); ov.classList.add('show'); playSound('tunnel');
+      let t = 0, stop = false;
+      const msgs = ['Calculating spacetime coordinates...', 'Charging temporal flux capacitors...', 'Warping local causality field...', 'Opening wormhole aperture...', 'TEMPORAL JUMP ENGAGED!', 'Arriving at destination...'];
+      let mi = 0; const iv = setInterval(() => { document.getElementById('tunnelSub').textContent = msgs[Math.min(mi++, msgs.length - 1)]; }, 900);
+      const yr = parseInt(S.year) || 1969, dir = S.dir;
+      function frame() { if (stop) return; ctx.clearRect(0, 0, 320, 320); ctx.fillStyle = '#000'; ctx.fillRect(0, 0, 320, 320); for (let r = 20; r < 155; r += 12) { const hue = (t * 3 + r * 2.5) % 360, a = t * (r * .012); ctx.strokeStyle = `hsla(${hue},100%,65%,.7)`; ctx.lineWidth = r < 60 ? 3 : r < 110 ? 2 : 1.5; ctx.beginPath(); ctx.arc(160, 160, r, a, a + Math.PI * 1.7); ctx.stroke(); } ctx.fillStyle = 'rgba(255,220,50,1)'; ctx.font = 'bold 22px Bangers,cursive'; ctx.textAlign = 'center'; const dispYr = Math.round(yr + (CURRENT_YEAR - yr) * (1 - Math.min(t / 4, 1))); ctx.fillText((Math.abs(dispYr) > 1000000 ? `${(Math.abs(dispYr) / 1000000).toFixed(1)}M` : `${Math.abs(dispYr)}`) + (dispYr < 0 ? ' BC' : ' AD'), 160, 168); document.getElementById('tunnelTxt').textContent = dir === 'PAST' ? 'GOING BACK IN TIME!' : 'LEAPING INTO THE FUTURE!'; t += .08; requestAnimationFrame(frame); }
+      frame(); setTimeout(() => { stop = true; clearInterval(iv); ov.classList.remove('show'); if (doneCallback) doneCallback(); }, 6000);
+    }
+
+    function showSuccess() {
+      const ov = document.getElementById('successOverlay'), c = document.getElementById('successCanvas'); c.width = window.innerWidth; c.height = window.innerHeight; ov.classList.add('show'); playSound('arrival');
+      const ctx = c.getContext('2d'); const fws = []; let fwT = 0;
+      function spawnFW() { const colors = ['#FFD60A', '#29ABE2', '#E63946', '#fff', '#22c55e']; const cx = 100 + Math.random() * (window.innerWidth - 200), cy = 80 + Math.random() * (window.innerHeight * .5), col = colors[Math.floor(Math.random() * colors.length)]; for (let i = 0; i < 25; i++) { const a = Math.random() * Math.PI * 2, sp = 2 + Math.random() * 6; fws.push({ x: cx, y: cy, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp, life: 1, col }); } } spawnFW();
+      let stop = false; function fwFrame() { if (stop) return; ctx.fillStyle = 'rgba(0,0,0,.15)'; ctx.fillRect(0, 0, c.width, c.height); fws.forEach((p, i) => { p.x += p.vx; p.y += p.vy; p.vy += .08; p.life -= .015; if (p.life <= 0) { fws.splice(i, 1); return; } ctx.globalAlpha = p.life; ctx.fillStyle = p.col; ctx.beginPath(); ctx.arc(p.x, p.y, 2.5, 0, Math.PI * 2); ctx.fill(); }); ctx.globalAlpha = 1; fwT++; if (fwT % 40 === 0) spawnFW(); requestAnimationFrame(fwFrame); } fwFrame();
+      const MN = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']; const yr = parseInt(S.year) || 1969;
+      document.getElementById('successMsg').textContent = `Arrived at ${S.destName || 'destination'}! ${S.day} ${MN[S.month - 1]} ${Math.abs(yr)} ${yr < 0 ? 'BC' : 'AD'}`;
+      document.getElementById('successFact').innerHTML = `<b>Did You Know?</b><br>${DEST_FACTS[S.destKey] || "Amazing! You've arrived safely. Doraemon's 4D Time Machine is truly remarkable!"}`;
+      document.getElementById('successDoraSvg').innerHTML = `<svg viewBox="0 0 100 110" width="90" xmlns="http://www.w3.org/2000/svg"><circle cx="50" cy="44" r="40" fill="#29ABE2" stroke="#fff" stroke-width="2"/><ellipse cx="50" cy="58" rx="28" ry="22" fill="white" stroke="#fff" stroke-width="2"/><path d="M37 62 Q50 74 63 62" stroke="#fff" stroke-width="2.5" fill="none" stroke-linecap="round"/><circle cx="50" cy="48" r="7" fill="#FFD60A" stroke="#fff" stroke-width="1.5"/><line x1="34" y1="46" x2="66" y2="46" stroke="#E63946" stroke-width="4" stroke-linecap="round"/><circle cx="38" cy="37" r="10" fill="white" stroke="#fff" stroke-width="2"/><circle cx="62" cy="37" r="10" fill="white" stroke="#fff" stroke-width="2"/><circle cx="39" cy="38" r="5.5" fill="#1A1A2E"/><circle cx="63" cy="38" r="5.5" fill="#1A1A2E"/><circle cx="41" cy="36" r="2.2" fill="white"/><circle cx="65" cy="36" r="2.2" fill="white"/><circle cx="50" cy="52" r="6" fill="#E63946" stroke="#fff" stroke-width="1.5"/></svg>`;
+    }
+
+    function doS1() {
+      const n = document.getElementById('pName'), e = document.getElementById('pEmail'); let hasErr = false;
+      if (!n.value.trim()) { showFieldError(n, 'Name is required'); hasErr = true; }
+      if (!e.value.trim()) { showFieldError(e, 'Email is required'); hasErr = true; }
+      else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e.value.trim())) { showFieldError(e, 'Enter a valid email'); hasErr = true; }
+      if (hasErr) { playSound('error'); return; }
+      S.name = n.value.trim(); S.email = e.value.trim();
+      const initials = S.name.split(' ').map(w => w[0] || '').join('').toUpperCase().slice(0, 2) || '??';
+      document.getElementById('pilotCardArea').innerHTML = `<div class="pilot-card"><div class="pilot-av">${initials}</div><div><div class="pilot-name">${S.name.toUpperCase()}</div><div class="pilot-det">${S.email} · ${S.mode} · CLASS ${S.clearance}</div></div><div class="pilot-badge">VERIFIED ✓</div></div>`;
+      playSound('success'); const lt = toastLoad('Authenticating pilot identity...');
+      setTimeout(() => { killToast(lt); toast(`✅ Welcome aboard, ${S.name}!`, 'success'); goTo(2); }, 1400);
+    }
+    function doS2() {
+      if (!S.destName) { playSound('error'); const input = document.getElementById('destSearchInput'); input.classList.add('error-field'); setTimeout(() => input.classList.remove('error-field'), 1000); toast('⚠️ Please select a destination!', 'error'); return; }
+      playSound('success'); const lt = toastLoad('Locking destination coordinates...');
+      setTimeout(() => { killToast(lt); toast(`🌍 ${S.destName} confirmed!`, 'success'); showPortal(800); setTimeout(() => copterTransition(() => goTo(3)), 300); }, 1000);
+    }
+    function getMaxDaysInMonth(m, y) { if ([4, 6, 9, 11].includes(m)) return 30; if (m === 2) { if (y <= 0) return 29; return (y % 4 === 0 && (y % 100 !== 0 || y % 400 === 0)) ? 29 : 28; } return 31; }
+    function doS3() {
+      const yr = parseInt(document.getElementById('tYear').value) || 1969; S.year = yr; const v = getTimeValidation(yr, S.dir);
+      if (!v.valid) { document.getElementById('paradoxDetail').textContent = v.msg; document.getElementById('paradoxFix').textContent = `🔵 ${v.fix}`; showErr('paradox', 3); return; }
+      S.day = parseInt(document.getElementById('tDay').value) || 1; S.month = parseInt(document.getElementById('tMonth').value) || 1;
+      const maxDay = getMaxDaysInMonth(S.month, yr);
+      if (S.day > maxDay) { S.day = maxDay; document.getElementById('tDay').value = maxDay; toast(`📅 Day adjusted to ${maxDay} for this month`, 'warn', 2000); }
+      if (S.day < 1) { S.day = 1; document.getElementById('tDay').value = 1; }
+      const MN = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+      playSound('success'); const lt = toastLoad('Calibrating time cloth dials...');
+      setTimeout(() => { killToast(lt); toast(`⏰ Time set: ${S.day} ${MN[S.month - 1]} ${Math.abs(yr)} ${yr < 0 ? 'BC' : 'AD'}!`, 'success'); goTo(4); }, 1000);
+    }
+    function doS4() { S.pDays = S.days; S.pHrs = S.hrs; playSound('success'); toast(`✅ Duration: ${S.days}d ${S.hrs}h confirmed!`, 'success'); goTo(5); }
+    function doS5() {
+      const l = document.getElementById('rLoc'), tc = document.getElementById('termsChk'); let hasErr = false;
+      if (!l.value.trim()) { showFieldError(l, 'Return location required'); hasErr = true; playSound('error'); }
+      if (!tc.checked) { toast('📜 Please agree to the Temporal Navigation Accords!', 'error'); playSound('error'); hasErr = true; }
+      if (hasErr) return;
+      S.rLoc = l.value.trim(); S.rTime = document.getElementById('rTime').value; playSound('unlock'); toast('🔐 Return vector confirmed!', 'success'); goTo(6);
+    }
+    function doLaunch() { playSound('launch'); const lt = toastLoad('🚀 Initiating temporal jump...'); setTimeout(() => { killToast(lt); showTunnel(() => showSuccess()); }, 500); }
+    function demoErrParadox() { document.getElementById('paradoxDetail').textContent = 'You tried to travel to a time when YOU already exist! Meeting your past self creates a causality loop!'; document.getElementById('paradoxFix').textContent = '🔵 Try a year before 2000 or after 2030!'; showErr('paradox', 1); }
+
+    function resetAll() {
+      document.getElementById('successOverlay').classList.remove('show');
+      document.body.removeAttribute('data-dest'); setDestParticles(null); hideDestMap();
+      S.cur = 1; S.name = ''; S.email = ''; S.destName = ''; S.destKey = ''; S.destLat = ''; S.destLon = '';
+      S.dir = 'PAST'; S.day = 15; S.month = 4; S.year = 1969; S.days = 3; S.hrs = 6; S.pDays = 3; S.pHrs = 6;
+      S.rLoc = "Nobita's Room, Desk Drawer"; S.rTime = 'same'; S.safeOn = true; S.terms = false; S.mode = 'GUEST'; S.clearance = 'I';
+      document.getElementById('pName').value = ''; document.getElementById('pEmail').value = ''; document.getElementById('pilotCardArea').innerHTML = '';
+      document.getElementById('destSearchInput').value = ''; document.getElementById('destSearchClear').classList.remove('show');
+      document.getElementById('destSelectedPanel').style.display = 'none'; document.getElementById('s2DoraTip').style.display = 'none';
+      document.getElementById('termsChk').checked = false;
+      document.getElementById('rLoc').value = "Nobita's Room, Desk Drawer";
+      document.getElementById('tPastBtn').classList.add('on'); document.getElementById('tFutBtn').classList.remove('on');
+      document.getElementById('dirHint').textContent = `Past mode: year must be before ${CURRENT_YEAR}.`;
+      document.getElementById('tYear').value = 1969; document.getElementById('tDay').value = 15; document.getElementById('tMonth').value = 4;
+      document.getElementById('safetyIcon').textContent = '🔒';
+      document.getElementById('safetyTitle').textContent = 'EMERGENCY RECALL — SAFETY LOCK ENGAGED';
+      document.getElementById('safetySub').textContent = "Click to override. Default anchor: Nobita's Desk Drawer.";
+      document.getElementById('safetyPanel').classList.remove('open');
+      document.getElementById('dDaysR').value = 3; document.getElementById('dHrsR').value = 6;
+      document.querySelectorAll('#screen-1 .tabs .tab').forEach((t, i) => t.classList.toggle('on', i === 0));
+      document.querySelectorAll('#screen-1 .gadget-card').forEach((c, i) => c.classList.toggle('on', i === 0));
+      document.getElementById('dorayakiHud').textContent = '∞ DKU';
+      goTo(1); toast('🏠 Welcome back! Ready for a new adventure?', 'info');
+    }
+
+    function openDrawer(type) {
+      playSound('click'); const ov = document.getElementById('drawerOverlay'), dr = document.getElementById('drawer'); const title = document.getElementById('drawerTitle'), content = document.getElementById('drawerContent');
+      ov.classList.add('show'); dr.classList.add('show');
+      if (type === 'saved') { title.innerHTML = '⭐ Saved Trips & Favourites'; content.innerHTML = DESTINATIONS.map(d => `<div class="drawer-item" data-dest-key="${d.key}"><div class="drawer-item-icon">${d.icon}</div><div><div class="drawer-item-title">${d.name}</div><div class="drawer-item-sub">${d.sub} · ${d.era}</div></div><div style="margin-left:auto;font-size:18px;">▶</div></div>`).join(''); content.querySelectorAll('.drawer-item').forEach(item => { item.addEventListener('click', () => { const key = item.dataset.destKey; selectDestination(key); closeDrawer(); toast((DESTINATIONS.find(d => d.key === key)?.name || 'Destination') + ' loaded!', 'success', 2000); }); }); }
+      else if (type === 'emergency') { title.innerHTML = '🆘 Emergency Options'; content.innerHTML = `<div class="drawer-item" onclick="triggerPanic();closeDrawer();"><div class="drawer-item-icon">🚨</div><div><div class="drawer-item-title">Panic Return — NOW!</div><div class="drawer-item-sub">Immediately return to ${S.rLoc || 'home base'}</div></div></div><div class="drawer-item" onclick="playSound('warn');toast('📡 SOS beacon activated! Doraemon is on his way!','warn',4000);closeDrawer();"><div class="drawer-item-icon">📡</div><div><div class="drawer-item-title">Send SOS Beacon</div><div class="drawer-item-sub">Alert Doraemon in 22nd century</div></div></div><div class="drawer-item" onclick="playSound('success');toast('🚔 Time Patrol contacted!','info',3000);closeDrawer();"><div class="drawer-item-icon">🚔</div><div><div class="drawer-item-title">Contact Time Patrol</div><div class="drawer-item-sub">22nd-century law enforcement</div></div></div>`; }
+      else if (type === 'advanced') { title.innerHTML = '⚙️ Advanced Time Settings'; content.innerHTML = `<div class="drawer-item"><div class="drawer-item-icon">🌡</div><div><div class="drawer-item-title">Temporal Precision Mode</div><div class="drawer-item-sub">Set exact time to the minute</div></div><input type="time" style="margin-left:auto;border:2px solid #ccc;border-radius:6px;padding:4px 8px;font-family:var(--font-hand);"/></div><div class="drawer-item"><div class="drawer-item-icon">🔁</div><div><div class="drawer-item-title">Loop Mode</div><div class="drawer-item-sub">Return to this moment after stay</div></div><input type="checkbox" style="margin-left:auto;" checked/></div><div class="drawer-item"><div class="drawer-item-icon">🧲</div><div><div class="drawer-item-title">Causality Shield</div><div class="drawer-item-sub">Prevent unintended timeline changes</div></div><input type="checkbox" style="margin-left:auto;" checked/></div><div class="drawer-item"><div class="drawer-item-icon">💫</div><div><div class="drawer-item-title">Stealth Mode</div><div class="drawer-item-sub">Arrive invisibly to locals</div></div><input type="checkbox" style="margin-left:auto;"/></div>`; }
+      else if (type === 'settings') { title.innerHTML = '🔔 System Settings'; content.innerHTML = `<div class="drawer-item" onclick="toggleSound();closeDrawer();"><div class="drawer-item-icon">${soundEnabled ? '🔊' : '🔇'}</div><div><div class="drawer-item-title">Sound Effects</div><div class="drawer-item-sub">Toggle synthesized sound effects</div></div><div style="margin-left:auto;font-family:var(--font-display);font-size:12px;color:var(--blue-d);">${soundEnabled ? 'ON' : 'OFF'}</div></div><div class="drawer-item" onclick="playSound('success');toast('🍩 Dorayaki energy replenished!','success',3000);closeDrawer();"><div class="drawer-item-icon">🍩</div><div><div class="drawer-item-title">Refuel Dorayaki Energy</div><div class="drawer-item-sub">Current: Unlimited DKU</div></div></div>`; }
+      else if (type === 'info') { title.innerHTML = 'ℹ️ How To Use'; content.innerHTML = `<div class="drawer-item"><div class="drawer-item-icon">1️⃣</div><div><div class="drawer-item-title">Register as Pilot</div><div class="drawer-item-sub">Enter name & email, pick clearance level</div></div></div><div class="drawer-item"><div class="drawer-item-icon">2️⃣</div><div><div class="drawer-item-title">Choose Destination</div><div class="drawer-item-sub">Search or click a destination card</div></div></div><div class="drawer-item"><div class="drawer-item-icon">3️⃣</div><div><div class="drawer-item-title">Set the Time Era</div><div class="drawer-item-sub">Select Past/Future first, then set year</div></div></div><div class="drawer-item"><div class="drawer-item-icon">4️⃣</div><div><div class="drawer-item-title">Duration</div><div class="drawer-item-sub">Use sliders for stay length</div></div></div><div class="drawer-item"><div class="drawer-item-icon">5️⃣</div><div><div class="drawer-item-title">Return Protocol</div><div class="drawer-item-sub">Set return location, agree to accords</div></div></div><div class="drawer-item"><div class="drawer-item-icon">🚀</div><div><div class="drawer-item-title">LAUNCH!</div><div class="drawer-item-sub">Review all settings and go!</div></div></div>`; }
+    }
+    function closeDrawer() { document.getElementById('drawerOverlay').classList.remove('show'); document.getElementById('drawer').classList.remove('show'); }
+
+    const DORA_TIPS = { 1: '"Hi! Enter your name and email to register, then pick your clearance level!"', 2: '"Search for a destination or click any of the location cards below!"', 3: '"Pick PAST or FUTURE first — then the year validates automatically! Spin the dial!"', 4: '"Slide right for longer stays — watch the Dorayaki energy cost!"', 5: '"Set where you want to return and agree to the accords! Safety first!"', 6: '"Everything looks great! Hit the big blue button and let\'s GO! Hold on tight!"' };
+    let tipVisible = false;
+    function toggleDoraTip() { const b = document.getElementById('doraBubble'); tipVisible = !tipVisible; if (tipVisible) { b.textContent = DORA_TIPS[S.cur] || '"I\'m here to help! Just tap me!"'; b.classList.remove('hidden'); playSound('click'); } else b.classList.add('hidden'); }
+    function updateDoraHint(n) { const b = document.getElementById('doraBubble'); if (tipVisible) b.textContent = DORA_TIPS[n] || '"Great job! Keep going!"'; }
+
+    let destMap = null, destClickMarker = null, allDestMarkers = [], destMapReady = false;
+
+    function initInteractiveMap() {
+      if (destMap) return;
+      const container = document.getElementById('destMap');
+      if (!container) return;
+      destMap = L.map('destMap', { center: [20, 10], zoom: 2, minZoom: 2, maxZoom: 18, zoomControl: true, scrollWheelZoom: true, worldCopyJump: true });
+      L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/">CARTO</a>',
+        subdomains: 'abcd', maxZoom: 20
+      }).addTo(destMap);
+      DESTINATIONS.forEach(d => {
+        const icon = L.divIcon({ className: '', html: `<div class="dest-marker-icon" title="${d.name}">${d.icon}</div>`, iconSize: [36, 36], iconAnchor: [18, 18], popupAnchor: [0, -20] });
+        const marker = L.marker([parseFloat(d.lat), parseFloat(d.lon)], { icon: icon }).addTo(destMap);
+        marker.bindPopup(`<div style="text-align:center;padding:4px;">
+      <div style="font-family:'Fredoka One',cursive;font-size:14px;color:#1A1A2E;">${d.icon} ${d.name}</div>
+      <div style="font-family:'Patrick Hand',cursive;font-size:11px;color:#666;margin:2px 0;">${d.sub}</div>
+      <div style="font-family:'Orbitron',monospace;font-size:9px;color:#0077B6;">${parseFloat(d.lat).toFixed(2)}°, ${parseFloat(d.lon).toFixed(2)}°</div>
+      <button onclick="selectDestination('${d.key}')" style="margin-top:6px;padding:4px 14px;background:#29ABE2;color:#fff;border:2px solid #1A1A2E;border-radius:6px;font-family:'Fredoka One',cursive;font-size:11px;cursor:pointer;box-shadow:2px 2px 0 #1A1A2E;">Select ${d.name}</button>
+    </div>`, { maxWidth: 220 });
+        marker._destKey = d.key;
+        allDestMarkers.push(marker);
+      });
+      destMap.on('click', function (e) {
+        const lat = e.latlng.lat.toFixed(4);
+        const lon = e.latlng.lng.toFixed(4);
+        const nearby = DESTINATIONS.find(d => {
+          const dlat = Math.abs(parseFloat(d.lat) - e.latlng.lat);
+          const dlon = Math.abs(parseFloat(d.lon) - e.latlng.lng);
+          return dlat < 2 && dlon < 2;
+        });
+        if (nearby) { selectDestination(nearby.key); return; }
+        placeCustomMarker(e.latlng.lat, e.latlng.lng);
+      });
+      destMapReady = true;
+      setTimeout(() => destMap.invalidateSize(), 200);
+    }
+
+    function placeCustomMarker(lat, lon) {
+      if (destClickMarker) { destMap.removeLayer(destClickMarker); destClickMarker = null; }
+      allDestMarkers.forEach(m => {
+        const el = m.getElement();
+        if (el) el.querySelector('.dest-marker-icon')?.classList.remove('dest-marker-selected');
+      });
+      const clickIcon = L.divIcon({ className: '', html: `<div class="dest-marker-icon dest-marker-selected">📍</div>`, iconSize: [36, 36], iconAnchor: [18, 18], popupAnchor: [0, -20] });
+      destClickMarker = L.marker([lat, lon], { icon: clickIcon }).addTo(destMap);
+      destClickMarker.bindPopup(`<div style="text-align:center;padding:4px;"><div style="font-family:'Fredoka One',cursive;font-size:13px;color:#1A1A2E;">📍 Loading location...</div></div>`).openPopup();
+      fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json&zoom=10&accept-language=en`)
+        .then(r => r.json())
+        .then(data => {
+          const name = data.address?.city || data.address?.town || data.address?.village || data.address?.state || data.address?.country || 'Unknown Location';
+          const country = data.address?.country || '';
+          const displayName = country && name !== country ? `${name}, ${country}` : name;
+          setMapSelectedLocation(lat, lon, displayName, '📍');
+          destClickMarker.setPopupContent(`<div style="text-align:center;padding:4px;">
+        <div style="font-family:'Fredoka One',cursive;font-size:13px;color:#1A1A2E;">📍 ${displayName}</div>
+        <div style="font-family:'Orbitron',monospace;font-size:9px;color:#0077B6;margin-top:2px;">${parseFloat(lat).toFixed(2)}°, ${parseFloat(lon).toFixed(2)}°</div>
+      </div>`).openPopup();
+          playSound('pin');
+          toast(`📍 ${displayName} selected from map!`, 'success', 2500);
+        })
+        .catch(() => {
+          const name = `Location (${parseFloat(lat).toFixed(2)}°, ${parseFloat(lon).toFixed(2)}°)`;
+          setMapSelectedLocation(lat, lon, name, '📍');
+          destClickMarker.setPopupContent(`<div style="text-align:center;padding:4px;">
+        <div style="font-family:'Fredoka One',cursive;font-size:13px;color:#1A1A2E;">📍 Custom Location</div>
+        <div style="font-family:'Orbitron',monospace;font-size:9px;color:#0077B6;margin-top:2px;">${parseFloat(lat).toFixed(2)}°, ${parseFloat(lon).toFixed(2)}°</div>
+      </div>`).openPopup();
+          playSound('pin');
+          toast(`📍 Custom location selected!`, 'success', 2500);
+        });
+    }
+
+    function setMapSelectedLocation(lat, lon, name, icon) {
+      S.destName = name; S.destKey = 'custom'; S.destLat = lat; S.destLon = lon;
+      document.getElementById('destSearchInput').value = name;
+      document.getElementById('destSearchClear').classList.add('show');
+      const panel = document.getElementById('destSelectedPanel');
+      panel.style.display = 'block';
+      document.getElementById('dsIcon').textContent = icon || '📍';
+      document.getElementById('dsTitle').textContent = name;
+      document.getElementById('dsSub').textContent = 'Custom Map Selection';
+      document.getElementById('dsLat').textContent = parseFloat(lat).toFixed(2) + '° Lat';
+      document.getElementById('dsLon').textContent = parseFloat(lon).toFixed(2) + '° Lon';
+      document.getElementById('dsEra').textContent = 'Any Era';
+      const ml = document.getElementById('mapLabel');
+      if (ml) ml.textContent = `📍 ${name} — ${parseFloat(lat).toFixed(2)}°, ${parseFloat(lon).toFixed(2)}°`;
+    }
+
+    function updateDestMap(lat, lon, name, icon) {
+      if (!destMap || !destMapReady) return;
+      setTimeout(() => destMap.invalidateSize(), 100);
+      const zoom = (parseFloat(lat) === 0 && parseFloat(lon) === 0) ? 3 : 6;
+      destMap.flyTo([parseFloat(lat), parseFloat(lon)], zoom, { duration: 1.2 });
+      if (destClickMarker) { destMap.removeLayer(destClickMarker); destClickMarker = null; }
+      allDestMarkers.forEach(m => {
+        const el = m.getElement();
+        if (!el) return;
+        const ic = el.querySelector('.dest-marker-icon');
+        if (!ic) return;
+        if (m._destKey === S.destKey) { ic.classList.add('dest-marker-selected'); m.openPopup(); }
+        else { ic.classList.remove('dest-marker-selected'); }
+      });
+      const ml = document.getElementById('mapLabel');
+      if (ml) ml.textContent = `📍 ${name} — ${parseFloat(lat).toFixed(2)}°, ${parseFloat(lon).toFixed(2)}°`;
+    }
+
+    function hideDestMap() {
+      if (destClickMarker && destMap) { destMap.removeLayer(destClickMarker); destClickMarker = null; }
+      allDestMarkers.forEach(m => {
+        const el = m.getElement();
+        if (el) el.querySelector('.dest-marker-icon')?.classList.remove('dest-marker-selected');
+      });
+      const ml = document.getElementById('mapLabel');
+      if (ml) ml.textContent = '📍 Click on map or select a card to set destination';
+    }
+
+    document.addEventListener('keydown', e => {
+      if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.tagName === 'SELECT') return;
+      if (e.key === 'Enter') {
+        if (S.cur === 1) doS1(); else if (S.cur === 2) doS2(); else if (S.cur === 3) doS3();
+        else if (S.cur === 4) doS4(); else if (S.cur === 5) doS5(); else if (S.cur === 6) doLaunch();
+      }
+      if (e.key === 'Escape') { if (document.getElementById('drawer').classList.contains('show')) closeDrawer(); }
+    });
+
+    renderProgress();
+    onDur();
+    setTimeout(() => toggleDoraTip(), 1800);
+    setInterval(() => { if (S.cur === 3) return; const stab = 80 + Math.round(Math.sin(Date.now() / 6000) * 15); document.getElementById('stabilityTxt').textContent = stab > 85 ? 'STABLE' : stab > 65 ? 'MODERATE' : 'UNSTABLE'; document.getElementById('stabilityDot').className = 'ind-dot' + (stab > 85 ? '' : stab > 65 ? ' warn' : ' danger'); }, 3000);
+  </script>
+</body>
+
+</html>
